@@ -1,0 +1,33 @@
+<databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+
+    <changeSet id="v1-create-master_hoods" author="Irina Fedina">
+        <createTable tableName="master_hoods">
+            <column name="master_id" type="bigint"/>
+            <column name="hood_id" type="bigint"/>
+        </createTable>
+
+        <addForeignKeyConstraint baseTableName="master_hoods"
+                                 baseColumnNames="master_id"
+                                 constraintName="fk_master_hoods_master"
+                                 referencedTableName="master_profile_for_me"
+                                 referencedColumnNames="master_id"/>
+
+        <addForeignKeyConstraint baseTableName="master_hoods"
+                                 baseColumnNames="hood_id"
+                                 constraintName="fk_master_hoods_hood"
+                                 referencedTableName="hoods"
+                                 referencedColumnNames="hood_id"/>
+    </changeSet>
+
+    <changeSet id="v1-insert-data-master_hoods" author="Irina Fedina">
+        <preConditions>
+            <not>
+                <tableIsEmpty tableName="master_hoods"/>
+            </not>
+        </preConditions>
+        <loadData tableName="master_hoods" file="db/data/master-hoods-data.csv"/>
+    </changeSet>
+</databaseChangeLog>

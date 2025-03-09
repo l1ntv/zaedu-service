@@ -1,0 +1,34 @@
+<databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+
+    <changeSet id="v1-create-master_services" author="Irina Fedina">
+        <createTable tableName="master_services">
+            <column name="master_id" type="bigint"/>
+            <column name="service_id" type="bigint"/>
+            <column name="price" type="bigint"/>
+        </createTable>
+
+        <addForeignKeyConstraint baseTableName="master_services"
+                                 baseColumnNames="master_id"
+                                 constraintName="fk_master_services_master"
+                                 referencedTableName="master_profile_for_other"
+                                 referencedColumnNames="master_id"/>
+
+        <addForeignKeyConstraint baseTableName="master_services"
+                                 baseColumnNames="service_id"
+                                 constraintName="fk_master_services_service"
+                                 referencedTableName="services"
+                                 referencedColumnNames="id"/>
+    </changeSet>
+
+    <changeSet id="v1-insert-data-master_services" author="Irina Fedina">
+        <preConditions>
+            <not>
+                <tableIsEmpty tableName="master_services"/>
+            </not>
+        </preConditions>
+        <loadData tableName="master_services" file="db/data/master-services-data.csv"/>
+    </changeSet>
+</databaseChangeLog>
