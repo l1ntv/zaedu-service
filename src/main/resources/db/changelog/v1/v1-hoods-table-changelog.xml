@@ -1,0 +1,21 @@
+<databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+
+    <changeSet id="v1-create-hoods" author="Vadim Lint">
+        <createTable tableName="hoods">
+            <column name="hood_id" type="bigint">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="hood_name" type="varchar(255)"/>
+            <column name="city_id" type="bigint"/>
+        </createTable>
+
+        <addForeignKeyConstraint baseTableName="hoods"
+                                 baseColumnNames="city_id"
+                                 constraintName="fk_hoods_cities"
+                                 referencedTableName="cities"
+                                 referencedColumnNames="city_id"/>
+    </changeSet>
+</databaseChangeLog>
