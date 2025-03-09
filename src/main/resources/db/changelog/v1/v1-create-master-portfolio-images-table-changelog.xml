@@ -1,0 +1,28 @@
+<databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+    <changeSet id="v1-create-master_portfolio_images" author="YourName">
+        <createTable tableName="master_profile_for_other_portfolio_images">
+            <column name="portfolio_image_id" type="bigint">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="master_id" type="bigint"/>
+            <column name="url" type="varchar(255)"/>
+        </createTable>
+        <addForeignKeyConstraint baseTableName="master_profile_for_other_portfolio_images"
+                                 baseColumnNames="master_id"
+                                 constraintName="fk_portfolio_images_master"
+                                 referencedTableName="master_profile_for_other"
+                                 referencedColumnNames="master_id"/>
+    </changeSet>
+    <changeSet id="v1-insert-data-master_portfolio_images" author="Vadim Duz">
+        <preConditions>
+            <not>
+                <tableIsEmpty tableName="master_profile_for_other_portfolio_images"/>
+            </not>
+        </preConditions>
+        <loadData tableName="master_profile_for_other_portfolio_images"
+                  file="db/data/master-portfolio-images-data.csv"/>
+    </changeSet>
+</databaseChangeLog>

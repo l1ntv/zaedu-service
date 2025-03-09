@@ -1,0 +1,36 @@
+<databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+    <changeSet id="v1-create-client_profile" author="Vadim Duz">
+        <createTable tableName="client_profile">
+            <column name="client_id" type="bigint">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="surname" type="varchar(255)"/>
+            <column name="name" type="varchar(255)"/>
+            <column name="patronymic" type="varchar(255)"/>
+            <column name="city_id" type="bigint"/>
+            <column name="email" type="varchar(255)"/>
+            <column name="telephoneNumber" type="varchar(255)"/>
+        </createTable>
+        <addForeignKeyConstraint baseTableName="client_profile"
+                                 baseColumnNames="client_id"
+                                 constraintName="fk_client_profile_user"
+                                 referencedTableName="users"
+                                 referencedColumnNames="id"/>
+        <addForeignKeyConstraint baseTableName="client_profile"
+                                 baseColumnNames="city_id"
+                                 constraintName="fk_client_profile_city"
+                                 referencedTableName="cities"
+                                 referencedColumnNames="id"/>
+    </changeSet>
+    <changeSet id="v1-insert-data-client_profile" author="YourName">
+        <preConditions>
+            <not>
+                <tableIsEmpty tableName="client_profile"/>
+            </not>
+        </preConditions>
+        <loadData tableName="client_profile" file="db/data/client-profile-data.csv"/>
+    </changeSet>
+</databaseChangeLog>

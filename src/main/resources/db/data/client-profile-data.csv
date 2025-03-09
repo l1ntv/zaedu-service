@@ -1,0 +1,5 @@
+client_id,surname,name,patronymic,city_id,email,telephoneNumber
+1,Иванов,Иван,Иванович,1,ivan@example.com,+79001234567
+2,Петрова,Мария,Сергеевна,2,maria@example.com,+79007654321
+3,Сидоров,Алексей,Петрович,3,alex@example.com,+79001112233
+4,Кузнецова,Ольга,Викторовна,4,olga@example.com,+79004445566
