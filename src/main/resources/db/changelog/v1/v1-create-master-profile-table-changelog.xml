@@ -3,8 +3,8 @@
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
    http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
 
-    <changeSet id="v1-create-master_profile_for_me" author="Vadim Lint">
-        <createTable tableName="master_profile_for_me">
+    <changeSet id="v1-create-master_profile" author="Vadim Lint">
+        <createTable tableName="master_profile">
             <column name="master_id" type="bigint">
                 <constraints primaryKey="true"/>
             </column>
@@ -19,18 +19,22 @@
             <column name="passport_series" type="varchar(255)"/>
             <column name="passport_number" type="varchar(255)"/>
             <column name="create_date" type="date"/>
+            <column name="profile_name" type="varchar(255)"/>
+            <column name="description" type="varchar(255)"/>
+            <column name="is_online" type="boolean"/>
+            <column name="is_working_with_contract" type="boolean"/>
         </createTable>
 
-        <addForeignKeyConstraint baseTableName="master_profile_for_me"
+        <addForeignKeyConstraint baseTableName="master_profile"
                                  baseColumnNames="master_id"
-                                 constraintName="fk_master_profile_for_me_users"
+                                 constraintName="fk_master_profile_users"
                                  referencedTableName="users"
-                                 referencedColumnNames="id"/>
+                                 referencedColumnNames="user_id"/>
 
-        <addForeignKeyConstraint baseTableName="master_profile_for_me"
+        <addForeignKeyConstraint baseTableName="master_profile"
                                  baseColumnNames="city_id"
-                                 constraintName="fk_master_profile_for_me_cities"
+                                 constraintName="fk_master_profile_cities"
                                  referencedTableName="cities"
-                                 referencedColumnNames="id"/>
+                                 referencedColumnNames="city_id"/>
     </changeSet>
 </databaseChangeLog>

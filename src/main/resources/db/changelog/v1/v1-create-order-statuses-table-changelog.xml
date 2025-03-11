@@ -4,7 +4,7 @@
    http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
     <changeSet id="v1-create-order_statuses" author="Vadim Duz">
         <createTable tableName="order_statuses">
-            <column name="id" type="bigint">
+            <column name="status_id" type="bigint">
                 <constraints primaryKey="true"/>
             </column>
             <column name="name" type="varchar(255)"/>

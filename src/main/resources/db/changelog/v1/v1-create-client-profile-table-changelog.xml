@@ -12,20 +12,20 @@
             <column name="patronymic" type="varchar(255)"/>
             <column name="city_id" type="bigint"/>
             <column name="email" type="varchar(255)"/>
-            <column name="telephoneNumber" type="varchar(255)"/>
+            <column name="telephone_number" type="varchar(255)"/>
         </createTable>
         <addForeignKeyConstraint baseTableName="client_profile"
                                  baseColumnNames="client_id"
                                  constraintName="fk_client_profile_user"
                                  referencedTableName="users"
-                                 referencedColumnNames="id"/>
+                                 referencedColumnNames="user_id"/>
         <addForeignKeyConstraint baseTableName="client_profile"
                                  baseColumnNames="city_id"
                                  constraintName="fk_client_profile_city"
                                  referencedTableName="cities"
-                                 referencedColumnNames="id"/>
+                                 referencedColumnNames="city_id"/>
     </changeSet>
-    <changeSet id="v1-insert-data-client_profile" author="YourName">
+    <changeSet id="v1-insert-data-client_profile" author="Vadim Duz">
         <preConditions>
             <not>
                 <tableIsEmpty tableName="client_profile"/>

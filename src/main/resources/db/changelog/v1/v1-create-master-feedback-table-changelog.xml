@@ -4,7 +4,7 @@
    http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
     <changeSet id="v1-create-master_feedback" author="Vadim Duz">
         <createTable tableName="master_feedback">
-            <column name="id" type="bigint">
+            <column name="feedback_id" type="bigint">
                 <constraints primaryKey="true"/>
             </column>
             <column name="master_id" type="bigint"/>
@@ -16,7 +16,7 @@
         <addForeignKeyConstraint baseTableName="master_feedback"
                                  baseColumnNames="master_id"
                                  constraintName="fk_feedback_master"
-                                 referencedTableName="master_profile_for_other"
+                                 referencedTableName="master_profile"
                                  referencedColumnNames="master_id"/>
         <addForeignKeyConstraint baseTableName="master_feedback"
                                  baseColumnNames="client_id"
@@ -29,7 +29,7 @@
                                  referencedTableName="order"
                                  referencedColumnNames="order_id"/>
     </changeSet>
-    <changeSet id="v1-insert-data-master_feedback" author="YourName">
+    <changeSet id="v1-insert-data-master_feedback" author="Vadim Duz">
         <preConditions>
             <not>
                 <tableIsEmpty tableName="master_feedback"/>

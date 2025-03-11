@@ -12,7 +12,7 @@
         <addForeignKeyConstraint baseTableName="master_hoods"
                                  baseColumnNames="master_id"
                                  constraintName="fk_master_hoods_master"
-                                 referencedTableName="master_profile_for_me"
+                                 referencedTableName="master_profile"
                                  referencedColumnNames="master_id"/>
 
         <addForeignKeyConstraint baseTableName="master_hoods"

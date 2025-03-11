@@ -28,19 +28,19 @@
                                  baseColumnNames="service_id"
                                  constraintName="fk_order_service"
                                  referencedTableName="services"
-                                 referencedColumnNames="id"/>
+                                 referencedColumnNames="service_id"/>
         <addForeignKeyConstraint baseTableName="order"
                                  baseColumnNames="master_id"
                                  constraintName="fk_order_master"
-                                 referencedTableName="master_profile_for_other"
+                                 referencedTableName="master_profile"
                                  referencedColumnNames="master_id"/>
         <addForeignKeyConstraint baseTableName="order"
                                  baseColumnNames="order_status_id"
                                  constraintName="fk_order_status"
                                  referencedTableName="order_statuses"
-                                 referencedColumnNames="id"/>
+                                 referencedColumnNames="status_id"/>
     </changeSet>
-    <changeSet id="v1-insert-data-order" author="YourName">
+    <changeSet id="v1-insert-data-order" author="Vadim Duz">
         <preConditions>
             <not>
                 <tableIsEmpty tableName="order"/>

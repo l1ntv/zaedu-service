@@ -13,14 +13,14 @@
         <addForeignKeyConstraint baseTableName="master_services"
                                  baseColumnNames="master_id"
                                  constraintName="fk_master_services_master"
-                                 referencedTableName="master_profile_for_other"
+                                 referencedTableName="master_profile"
                                  referencedColumnNames="master_id"/>
 
         <addForeignKeyConstraint baseTableName="master_services"
                                  baseColumnNames="service_id"
                                  constraintName="fk_master_services_service"
                                  referencedTableName="services"
-                                 referencedColumnNames="id"/>
+                                 referencedColumnNames="service_id"/>
     </changeSet>
 
     <changeSet id="v1-insert-data-master_services" author="Irina Fedina">

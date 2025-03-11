@@ -5,7 +5,7 @@
 
     <changeSet id="v1-create-users" author="Vadim Lint">
         <createTable tableName="users">
-            <column name="id" type="bigint">
+            <column name="user_id" type="bigint">
                 <constraints primaryKey="true"/>
             </column>
             <column name="login" type="varchar(255)"/>
@@ -18,12 +18,12 @@
                                  baseColumnNames="role_id"
                                  constraintName="fk_users_user_roles"
                                  referencedTableName="user_roles"
-                                 referencedColumnNames="id"/>
+                                 referencedColumnNames="role_id"/>
 
         <addForeignKeyConstraint baseTableName="users"
                                  baseColumnNames="status_id"
                                  constraintName="fk_users_user_statuses"
                                  referencedTableName="user_statuses"
-                                 referencedColumnNames="id"/>
+                                 referencedColumnNames="status_id"/>
     </changeSet>
 </databaseChangeLog>
