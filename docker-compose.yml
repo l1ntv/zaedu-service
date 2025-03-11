@@ -1,0 +1,28 @@
+services:
+  postgres:
+    container_name: zaEdu-postgres
+    image: postgres:latest
+    restart: on-failure
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: root
+      POSTGRES_DB: zaEdu
+    ports:
+      - "5432:5432"
+    volumes:
+      - ../volumes/postgres:/var/lib/postgresql/data
+
+  app:
+    container_name: zaEdu-app
+    depends_on:
+      - postgres
+    build:
+      context: .
+    restart: no
+    environment:
+      DB_USERNAME: root
+      DB_PASSWORD: root
+      DB_URL: jdbc:postgresql://postgres:5432/zaEdu
+      DB_SCHEMA: core
+    ports:
+      - "8001:8001"
