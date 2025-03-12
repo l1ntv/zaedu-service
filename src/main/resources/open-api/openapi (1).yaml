@@ -1,0 +1,365 @@
+openapi: 3.0.2
+info:
+  title: Zaedu API
+  version: 1.0.0
+  description: REST API для платформы Zaedu
+servers:
+  - url: https://api.zaedu.com/v1
+    description: Production server
+
+tags:
+  - name: Authentication
+  - name: Clients
+  - name: Masters
+  - name: Orders
+
+paths:
+  /auth/register/master:
+    post:
+      tags:
+        - Authentication
+      summary: Регистрация мастера
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MasterRegistrationRequest'
+      responses:
+        '201':
+          description: Успешная регистрация
+        '400':
+          description: Неверные данные
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error: { type: string }
+
+  /auth/register/client:
+    post:
+      tags:
+        - Authentication
+      summary: Регистрация клиента
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ClientRegistrationRequest'
+      responses:
+        '201':
+          description: Успешная регистрация
+        '400':
+          description: Неверные данные
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error: { type: string }
+
+  /auth/login:
+    post:
+      tags:
+        - Authentication
+      summary: Авторизация
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                login: { type: string }
+                password: { type: string }
+              required: [login, password]
+      responses:
+        '200':
+          description: Успешная авторизация
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token: { type: string }
+        '400':
+          description: Неверные учетные данные
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error: { type: string }
+
+  /clients/main:
+    get:
+      tags:
+        - Clients
+      summary: Основная информация клиента
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Успешный запрос
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClientMainResponse'
+        '401':
+          description: Неавторизованный доступ
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error: { type: string }
+
+  /clients/orders:
+    get:
+      tags:
+        - Clients
+      summary: Список заказов клиента
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Успешный запрос
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ClientOrder'
+        '401':
+          description: Неавторизованный доступ
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error: { type: string }
+
+  /masters:
+    get:
+      tags:
+        - Masters
+      summary: Поиск мастеров по категории
+      parameters:
+        - name: category
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Список мастеров
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MastersListResponse'
+        '400':
+          description: Неверные параметры запроса
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error: { type: string }
+
+  /masters/{id}:
+    get:
+      tags:
+        - Masters
+      summary: Профиль мастера
+      parameters:
+        - $ref: '#/components/parameters/MasterId'
+      responses:
+        '200':
+          description: Профиль мастера
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MasterProfile'
+        '404':
+          description: Мастер не найден
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error: { type: string }
+
+  /masters/{id}/update:
+    put:
+      tags:
+        - Masters
+      summary: Обновление профиля мастера
+      parameters:
+        - $ref: '#/components/parameters/MasterId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MasterUpdateRequest'
+      responses:
+        '200':
+          description: Профиль обновлен
+        '400':
+          description: Неверные данные
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error: { type: string }
+        '401':
+          description: Неавторизованный доступ
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error: { type: string }
+
+components:
+  schemas:
+    ClientRegistrationRequest:
+      type: object
+      properties:
+        login: { type: string, format: email }
+        password: { type: string, minLength: 8 }
+      required: [login, password]
+
+    MasterRegistrationRequest:
+      type: object
+      properties:
+        login: { type: string, format: email }
+        password: { type: string, minLength: 8 }
+        lastName: { type: string }
+        firstName: { type: string }
+        patronymic: { type: string }
+        services: 
+          type: array
+          items:
+            $ref: '#/components/schemas/Service'
+        isOrganization: { type: boolean }
+        organizationName: { type: string }
+      required: [login, password, lastName, firstName, services]
+
+    ClientMainResponse:
+      type: object
+      properties:
+        photoUrl: { type: string, format: uri }
+        balance: { type: integer }
+
+    ClientOrder:
+      type: object
+      properties:
+        serviceName: { type: string }
+        description: { type: string }
+        serviceType: 
+          type: string
+          enum: [DECORATOR, SOUND_ENGINEER, LIGHT_ENGINEER, PHOTOGRAPHER, VIDEOGRAPHER, CHEF, WAITER, HOST]
+        address: { type: string }
+        price: { type: integer }
+        dateFrom: { type: string, format: date }
+        dateTo: { type: string, format: date }
+        phone: { type: string }
+
+    Service:
+      type: object
+      properties:
+        serviceName: 
+          type: string
+          enum: [DECORATOR, SOUND_ENGINEER, LIGHT_ENGINEER, PHOTOGRAPHER, VIDEOGRAPHER, CHEF, WAITER, HOST]
+        cost: { type: integer }
+
+    MasterProfile:
+      type: object
+      properties:
+        id: { type: integer }
+        fullName: { type: string }
+        description: { type: string }
+        onlineStatus: { type: boolean }
+        photos: 
+          type: array
+          items: { type: string, format: uri }
+        personalPhoto: { type: string, format: uri }
+        averageRating: { type: number, format: float }
+        ratingCount: { type: integer }
+        passportVerified: { type: boolean }
+        contractWork: { type: boolean }
+        services: 
+          type: array
+          items: 
+            $ref: '#/components/schemas/Service'
+        districts: 
+          type: array
+          items: 
+            type: string
+        reports: 
+          type: array
+          items: 
+            $ref: '#/components/schemas/Report'
+
+    MastersListResponse:
+      type: object
+      properties:
+        masters: 
+          type: array
+          items: 
+            $ref: '#/components/schemas/MasterProfile'
+        photoUrl: { type: string, format: uri }
+        balance: { type: integer }
+
+    Report:
+      type: object
+      properties:
+        id: { type: integer }
+        text: { type: string }
+        rating: { type: integer }
+        date: { type: string, format: date }
+
+    MasterUpdateRequest:
+      type: object
+      properties:
+        description: { type: string }
+        photos: 
+          type: array
+          items: { type: string, format: uri }
+        services: 
+          type: array
+          items: 
+            $ref: '#/components/schemas/Service'
+        districts: 
+          type: array
+          items: 
+            type: string
+
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  parameters:
+    MasterId:
+      name: id
+      in: path
+      description: ID мастера
+      required: true
+      schema:
+        type: integer
+
+  responses:
+    UnauthorizedError:
+      description: Неавторизованный доступ
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error: { type: string }
