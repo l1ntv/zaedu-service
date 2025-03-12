@@ -15,6 +15,14 @@ public class MasterPortfolioImage {
 
     private String url;
 
+    // Конструктор
+    public MasterPortfolioImage() {}
+
+    public MasterPortfolioImage(MasterProfile master, String url) {
+        this.master = master;
+        this.url = url;
+    }
+
     public Long getId() {
         return id;
     }

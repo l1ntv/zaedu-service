@@ -7,7 +7,7 @@ import java.util.List;
 
 @Entity
 @Table(name = "services")
-public class Service {
+public class Services {
     @Id
     @Column(name = "service_id")
     private Long id;
