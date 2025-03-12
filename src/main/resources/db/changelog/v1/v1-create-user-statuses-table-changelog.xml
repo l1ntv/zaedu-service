@@ -23,4 +23,23 @@
         <loadData tableName="user_statuses" file="db/data/user-statuses-data.csv"/>
     </changeSet>
 
+    <!-- Исправление таблицы user_statuses -->
+    <changeSet id="v2-fix-user_statuses" author="Vadim Duz">
+        <!-- Удаляем старую таблицу -->
+        <dropTable tableName="user_statuses"/>
+
+        <!-- Создаем таблицу с правильной структурой -->
+        <createTable tableName="user_statuses">
+            <column name="status_id" type="bigint">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="name" type="varchar(255)"/>
+        </createTable>
+    </changeSet>
+
+    <!-- Перезагружаем данные -->
+    <changeSet id="v2-reload-user_statuses" author="Vadim Duz">
+        <loadData tableName="user_statuses" file="db/data/user-statuses-data.csv"/>
+    </changeSet>
+
 </databaseChangeLog>

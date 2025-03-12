@@ -18,7 +18,10 @@ public class MasterServiceEntity {
     @ManyToOne
     @MapsId("serviceId")
     @JoinColumn(name = "service_id")
-    private Service service;
+    private Services services;
+
+    public MasterServiceEntity(MasterProfile master, Services service, Long price) {
+    }
 
     public MasterServiceId getId() {
         return id;
@@ -44,11 +47,11 @@ public class MasterServiceEntity {
         this.master = master;
     }
 
-    public Service getService() {
-        return service;
+    public Services getService() {
+        return services;
     }
 
-    public void setService(Service service) {
-        this.service = service;
+    public void setService(Services services) {
+        this.services = services;
     }
 }

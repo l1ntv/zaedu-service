@@ -17,7 +17,7 @@ public class Order {
 
     @ManyToOne
     @JoinColumn(name = "service_id")
-    private Service service;
+    private Services services;
 
     @ManyToOne
     @JoinColumn(name = "master_id")
@@ -49,12 +49,12 @@ public class Order {
         this.client = client;
     }
 
-    public Service getService() {
-        return service;
+    public Services getService() {
+        return services;
     }
 
-    public void setService(Service service) {
-        this.service = service;
+    public void setService(Services services) {
+        this.services = services;
     }
 
     public MasterProfile getMaster() {

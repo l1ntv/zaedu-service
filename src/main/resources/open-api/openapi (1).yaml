@@ -158,7 +158,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/MastersListResponse'
+                $ref: '#/components/schemas/MastersListResponseDTO'
         '400':
           description: Неверные параметры запроса
           content:
@@ -244,7 +244,7 @@ components:
         services: 
           type: array
           items:
-            $ref: '#/components/schemas/Service'
+            $ref: '#/components/schemas/Services'
         isOrganization: { type: boolean }
         organizationName: { type: string }
       required: [login, password, lastName, firstName, services]
@@ -295,7 +295,7 @@ components:
         services: 
           type: array
           items: 
-            $ref: '#/components/schemas/Service'
+            $ref: '#/components/schemas/Services'
         districts: 
           type: array
           items: 
@@ -333,7 +333,7 @@ components:
         services: 
           type: array
           items: 
-            $ref: '#/components/schemas/Service'
+            $ref: '#/components/schemas/Services'
         districts: 
           type: array
           items: 

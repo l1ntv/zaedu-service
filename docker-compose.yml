@@ -11,11 +11,17 @@ services:
       - "5432:5432"
     volumes:
       - ../volumes/postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U root -d zaEdu" ]
+      interval: 5s
+      timeout: 5s
+      retries: 10
 
   app:
     container_name: zaEdu-app
     depends_on:
-      - postgres
+      postgres:
+        condition: service_healthy
     build:
       context: .
     restart: no
@@ -25,4 +31,4 @@ services:
       DB_URL: jdbc:postgresql://postgres:5432/zaEdu
       DB_SCHEMA: core
     ports:
-      - "8001:8001"
+      - "8080:8080"

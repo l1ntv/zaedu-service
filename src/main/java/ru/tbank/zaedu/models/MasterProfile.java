@@ -3,6 +3,7 @@ package ru.tbank.zaedu.models;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -50,7 +51,7 @@ public class MasterProfile {
             joinColumns = @JoinColumn(name = "master_id"),
             inverseJoinColumns = @JoinColumn(name = "hood_id")
     )
-    private List<Hood> hoods;
+    private List<Hood> hoods = new ArrayList<>();
 
     @OneToMany(mappedBy = "master")
     private List<Order> orders;
@@ -58,8 +59,8 @@ public class MasterProfile {
     @OneToMany(mappedBy = "master")
     private List<MasterMainImage> mainImages;
 
-    @OneToMany(mappedBy = "master")
-    private List<MasterPortfolioImage> portfolioImages;
+    @OneToMany(mappedBy = "master", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<MasterPortfolioImage> portfolioImages = new ArrayList<>();
 
     public Long getId() {
         return id;
