@@ -25,4 +25,4 @@ services:
       DB_URL: jdbc:postgresql://postgres:5432/zaEdu
       DB_SCHEMA: core
     ports:
-      - "8001:8001"
+      - "8080:8080"
