@@ -1,14 +1,22 @@
 package ru.tbank.zaedu.models;
 
 import jakarta.persistence.*;
+import lombok.*;
+import lombok.experimental.Accessors;
 
+import static ru.tbank.zaedu.models.AbstractEntity.DEFAULT_GENERATOR;
+
+@Accessors(chain = true)
 @Entity
+@Getter
+@Setter
+@ToString
+@RequiredArgsConstructor
+@AllArgsConstructor
+@Builder
 @Table(name = "users")
-public class User {
-    @Id
-    @Column(name = "user_id")
-    private Long id;
-
+@SequenceGenerator(name = DEFAULT_GENERATOR, sequenceName = "users_seq")
+public class User extends AbstractEntity {
     private String login;
     private String password;
 
@@ -19,44 +27,4 @@ public class User {
     @ManyToOne
     @JoinColumn(name = "status_id")
     private UserStatus status;
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getLogin() {
-        return login;
-    }
-
-    public void setLogin(String login) {
-        this.login = login;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public UserRole getRole() {
-        return role;
-    }
-
-    public void setRole(UserRole role) {
-        this.role = role;
-    }
-
-    public UserStatus getStatus() {
-        return status;
-    }
-
-    public void setStatus(UserStatus status) {
-        this.status = status;
-    }
 }

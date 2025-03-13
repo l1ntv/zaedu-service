@@ -1,14 +1,22 @@
 package ru.tbank.zaedu.models;
 
 import jakarta.persistence.*;
+import lombok.*;
+import lombok.experimental.Accessors;
 
+import static ru.tbank.zaedu.models.AbstractEntity.DEFAULT_GENERATOR;
+
+@Accessors(chain = true)
 @Entity
+@Getter
+@Setter
+@ToString
+@RequiredArgsConstructor
+@AllArgsConstructor
+@Builder
 @Table(name = "master_feedback")
-public class MasterFeedback {
-    @Id
-    @Column(name = "feedback_id")
-    private Long id;
-
+@SequenceGenerator(name = DEFAULT_GENERATOR, sequenceName = "master_feedback_seq")
+public class MasterFeedback extends AbstractEntity {
     @ManyToOne
     @JoinColumn(name = "master_id")
     private MasterProfile master;
@@ -23,52 +31,4 @@ public class MasterFeedback {
 
     private Integer evaluation;
     private String description;
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public MasterProfile getMaster() {
-        return master;
-    }
-
-    public void setMaster(MasterProfile master) {
-        this.master = master;
-    }
-
-    public ClientProfile getClient() {
-        return client;
-    }
-
-    public void setClient(ClientProfile client) {
-        this.client = client;
-    }
-
-    public Order getOrder() {
-        return order;
-    }
-
-    public void setOrder(Order order) {
-        this.order = order;
-    }
-
-    public Integer getEvaluation() {
-        return evaluation;
-    }
-
-    public void setEvaluation(Integer evaluation) {
-        this.evaluation = evaluation;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
 }

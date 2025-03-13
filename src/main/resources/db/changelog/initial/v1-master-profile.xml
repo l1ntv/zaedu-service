@@ -1,0 +1,39 @@
+<databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+
+    <changeSet id="1741898503970-1" author="fedina_irn08">
+        <createSequence incrementBy="50" sequenceName="master_profile_seq" startValue="1"/>
+        <createTable tableName="master_profile">
+            <column name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_master_profile"/>
+            </column>
+            <column name="created_at" type="DATETIME">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="DATETIME">
+                <constraints nullable="false"/>
+            </column>
+            <column name="surname" type="VARCHAR(255)"/>
+            <column name="name" type="VARCHAR(255)"/>
+            <column name="patronymic" type="VARCHAR(255)"/>
+            <column name="email" type="VARCHAR(255)"/>
+            <column name="telephone_number" type="VARCHAR(255)"/>
+            <column name="is_company" type="BOOLEAN"/>
+            <column name="is_confirmed_passport" type="BOOLEAN"/>
+            <column name="passport_series" type="VARCHAR(255)"/>
+            <column name="passport_number" type="VARCHAR(255)"/>
+            <column name="create_date" type="DATE"/>
+            <column name="profile_name" type="VARCHAR(255)"/>
+            <column name="description" type="VARCHAR(255)"/>
+            <column name="is_online" type="BOOLEAN"/>
+            <column name="is_working_with_contract" type="BOOLEAN"/>
+            <column name="city_id" type="BIGINT"/>
+            <column name="master_id" type="BIGINT"/>
+        </createTable>
+        <addUniqueConstraint columnNames="master_id" constraintName="uc_master_profile_master" tableName="master_profile"/>
+        <addForeignKeyConstraint baseColumnNames="city_id" baseTableName="master_profile" constraintName="FK_MASTER_PROFILE_ON_CITY" referencedColumnNames="id" referencedTableName="cities"/>
+        <addForeignKeyConstraint baseColumnNames="master_id" baseTableName="master_profile" constraintName="FK_MASTER_PROFILE_ON_MASTER" referencedColumnNames="id" referencedTableName="users"/>
+    </changeSet>
+</databaseChangeLog>

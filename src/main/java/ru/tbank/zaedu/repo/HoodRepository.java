@@ -8,5 +8,5 @@ import java.util.Optional;
 
 @Repository
 public interface HoodRepository extends JpaRepository<Hood, Long> {
-    Optional<Hood> findByName(String name); // Для поиска района по названию
+//    Optional<Hood> findByHoodName(String name); // Для поиска района по названию
 }

@@ -1,42 +1,26 @@
 package ru.tbank.zaedu.models;
 
 import jakarta.persistence.*;
+import lombok.*;
+import lombok.experimental.Accessors;
 
 import java.util.List;
 
-@Entity
-@Table(name = "user_statuses")
-public class UserStatus {
-    @Id
-    @Column(name = "status_id")
-    private Long id;
+import static ru.tbank.zaedu.models.AbstractEntity.DEFAULT_GENERATOR;
 
+@Accessors(chain = true)
+@Entity
+@Getter
+@Setter
+@ToString
+@RequiredArgsConstructor
+@AllArgsConstructor
+@Builder
+@Table(name = "user_statuses")
+@SequenceGenerator(name = DEFAULT_GENERATOR, sequenceName = "user_statuses_seq")
+public class UserStatus extends AbstractEntity {
     private String name;
 
     @OneToMany(mappedBy = "status")
     private List<User> users;
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public List<User> getUsers() {
-        return users;
-    }
-
-    public void setUsers(List<User> users) {
-        this.users = users;
-    }
 }
