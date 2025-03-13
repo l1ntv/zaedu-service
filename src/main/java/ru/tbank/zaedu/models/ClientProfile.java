@@ -1,9 +1,17 @@
 package ru.tbank.zaedu.models;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "client_profile")
+@AllArgsConstructor
+@NoArgsConstructor
+@Data
+@Builder
 public class ClientProfile {
     @Id
     @Column(name = "client_id")

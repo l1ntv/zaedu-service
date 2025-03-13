@@ -1,11 +1,15 @@
 package ru.tbank.zaedu.models;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 
 @Entity
 @Table(name = "user_roles")
+@AllArgsConstructor
+@NoArgsConstructor
 public class UserRole {
     @Id
     @Column(name = "role_id")
@@ -15,6 +19,11 @@ public class UserRole {
 
     @OneToMany(mappedBy = "role")
     private List<User> users;
+
+    public UserRole(Long id, String name) {
+        this.id = id;
+        this.name = name;
+    }
 
     public Long getId() {
         return id;

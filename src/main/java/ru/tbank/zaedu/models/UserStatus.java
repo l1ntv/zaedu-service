@@ -16,6 +16,11 @@ public class UserStatus {
     @OneToMany(mappedBy = "status")
     private List<User> users;
 
+    public UserStatus(Long id, String name) {
+        this.id = id;
+        this.name = name;
+    }
+
     public Long getId() {
         return id;
     }
