@@ -4,9 +4,10 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import ru.tbank.zaedu.models.MasterProfile;
+import ru.tbank.zaedu.models.Services;
 
 import java.util.List;
 
 public interface MasterProfileRepository extends JpaRepository<MasterProfile, Long> {
-    List<MasterProfile> findByServices_Name(String serviceName);
+//    List<MasterProfile> findByServices_Name(String serviceName);
 }

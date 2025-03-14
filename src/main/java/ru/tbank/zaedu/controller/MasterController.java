@@ -11,10 +11,13 @@ import ru.tbank.zaedu.service.MasterService;
 
 @RestController
 @RequestMapping("/masters")
-@RequiredArgsConstructor
 public class MasterController {
 
     private final MasterService masterService;
+
+    public MasterController(MasterService masterService) {
+        this.masterService = masterService;
+    }
 
     @GetMapping
     public ResponseEntity<MastersListResponseDTO> searchMastersByCategory(

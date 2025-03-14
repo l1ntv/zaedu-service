@@ -1,0 +1,23 @@
+<databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+
+    <changeSet id="1741898457608-1" author="fedina_irn08">
+        <createSequence incrementBy="50" sequenceName="master_portfolio_images_seq" startValue="1"/>
+        <createTable tableName="master_portfolio_images">
+            <column name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_master_portfolio_images"/>
+            </column>
+            <column name="created_at" type="DATETIME">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="DATETIME">
+                <constraints nullable="false"/>
+            </column>
+            <column name="master_id" type="BIGINT"/>
+            <column name="url" type="VARCHAR(255)"/>
+        </createTable>
+        <addForeignKeyConstraint baseColumnNames="master_id" baseTableName="master_portfolio_images" constraintName="FK_MASTER_PORTFOLIO_IMAGES_ON_MASTER" referencedColumnNames="id" referencedTableName="master_profile"/>
+    </changeSet>
+</databaseChangeLog>

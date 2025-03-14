@@ -1,54 +1,31 @@
 package ru.tbank.zaedu.models;
 
 import jakarta.persistence.*;
+import lombok.*;
+import lombok.experimental.Accessors;
 
 import java.util.List;
 
-@Entity
-@Table(name = "hoods")
-public class Hood {
-    @Id
-    @Column(name = "hood_id")
-    private Long id;
+import static ru.tbank.zaedu.models.AbstractEntity.DEFAULT_GENERATOR;
 
-    private String hoodName;
+@Accessors(chain = true)
+@Entity
+@Getter
+@Setter
+@ToString
+@RequiredArgsConstructor
+@AllArgsConstructor
+@Builder
+@Table(name = "hood")
+@SequenceGenerator(name = DEFAULT_GENERATOR, sequenceName = "hood_seq")
+public class Hood extends AbstractEntity {
+    private String name;
 
     @ManyToOne
     @JoinColumn(name = "city_id")
     private City city;
 
     @ManyToMany(mappedBy = "hoods")
+    @ToString.Exclude
     private List<MasterProfile> masters;
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getHoodName() {
-        return hoodName;
-    }
-
-    public void setHoodName(String hoodName) {
-        this.hoodName = hoodName;
-    }
-
-    public City getCity() {
-        return city;
-    }
-
-    public void setCity(City city) {
-        this.city = city;
-    }
-
-    public List<MasterProfile> getMasters() {
-        return masters;
-    }
-
-    public void setMasters(List<MasterProfile> masters) {
-        this.masters = masters;
-    }
 }

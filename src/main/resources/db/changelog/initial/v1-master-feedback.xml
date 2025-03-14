@@ -1,0 +1,28 @@
+<databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+
+    <changeSet id="1741898364010-1" author="fedina_irn08">
+        <createSequence incrementBy="50" sequenceName="master_feedback_seq" startValue="1"/>
+        <createTable tableName="master_feedback">
+            <column name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_master_feedback"/>
+            </column>
+            <column name="created_at" type="DATETIME">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="DATETIME">
+                <constraints nullable="false"/>
+            </column>
+            <column name="master_id" type="BIGINT"/>
+            <column name="client_id" type="BIGINT"/>
+            <column name="order_id" type="BIGINT"/>
+            <column name="evaluation" type="INT"/>
+            <column name="description" type="VARCHAR(255)"/>
+        </createTable>
+        <addForeignKeyConstraint baseColumnNames="client_id" baseTableName="master_feedback" constraintName="FK_MASTER_FEEDBACK_ON_CLIENT" referencedColumnNames="id" referencedTableName="client_profile"/>
+        <addForeignKeyConstraint baseColumnNames="master_id" baseTableName="master_feedback" constraintName="FK_MASTER_FEEDBACK_ON_MASTER" referencedColumnNames="id" referencedTableName="master_profile"/>
+        <addForeignKeyConstraint baseColumnNames="order_id" baseTableName="master_feedback" constraintName="FK_MASTER_FEEDBACK_ON_ORDER" referencedColumnNames="id" referencedTableName="order"/>
+    </changeSet>
+</databaseChangeLog>

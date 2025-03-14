@@ -1,16 +1,24 @@
 package ru.tbank.zaedu.models;
 
 import jakarta.persistence.*;
+import lombok.*;
+import lombok.experimental.Accessors;
 
 import java.time.LocalDate;
 
-@Entity
-@Table(name = "order")
-public class Order {
-    @Id
-    @Column(name = "order_id")
-    private Long id;
+import static ru.tbank.zaedu.models.AbstractEntity.DEFAULT_GENERATOR;
 
+@Accessors(chain = true)
+@Entity
+@Getter
+@Setter
+@ToString
+@RequiredArgsConstructor
+@AllArgsConstructor
+@Builder
+@Table(name = "order")
+@SequenceGenerator(name = DEFAULT_GENERATOR, sequenceName = "order_seq")
+public class Order extends AbstractEntity {
     @ManyToOne
     @JoinColumn(name = "client_id")
     private ClientProfile client;
@@ -32,84 +40,4 @@ public class Order {
     @ManyToOne
     @JoinColumn(name = "order_status_id")
     private OrderStatus status;
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public ClientProfile getClient() {
-        return client;
-    }
-
-    public void setClient(ClientProfile client) {
-        this.client = client;
-    }
-
-    public Services getService() {
-        return services;
-    }
-
-    public void setService(Services services) {
-        this.services = services;
-    }
-
-    public MasterProfile getMaster() {
-        return master;
-    }
-
-    public void setMaster(MasterProfile master) {
-        this.master = master;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getAddress() {
-        return address;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
-    }
-
-    public Long getPrice() {
-        return price;
-    }
-
-    public void setPrice(Long price) {
-        this.price = price;
-    }
-
-    public LocalDate getDateFrom() {
-        return dateFrom;
-    }
-
-    public void setDateFrom(LocalDate dateFrom) {
-        this.dateFrom = dateFrom;
-    }
-
-    public LocalDate getDateTo() {
-        return dateTo;
-    }
-
-    public void setDateTo(LocalDate dateTo) {
-        this.dateTo = dateTo;
-    }
-
-    public OrderStatus getStatus() {
-        return status;
-    }
-
-    public void setStatus(OrderStatus status) {
-        this.status = status;
-    }
 }

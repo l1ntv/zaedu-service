@@ -1,49 +1,25 @@
 package ru.tbank.zaedu.models;
 
 import jakarta.persistence.*;
+import lombok.*;
+import lombok.experimental.Accessors;
 
+import static ru.tbank.zaedu.models.AbstractEntity.DEFAULT_GENERATOR;
+
+@Accessors(chain = true)
 @Entity
+@Getter
+@Setter
+@ToString
+@RequiredArgsConstructor
+@AllArgsConstructor
+@Builder
 @Table(name = "master_portfolio_images")
-public class MasterPortfolioImage {
-    @Id
-    @Column(name = "portfolio_image_id")
-    private Long id;
-
+@SequenceGenerator(name = DEFAULT_GENERATOR, sequenceName = "master_portfolio_images_seq")
+public class MasterPortfolioImage extends AbstractEntity {
     @ManyToOne
     @JoinColumn(name = "master_id")
     private MasterProfile master;
 
     private String url;
-
-    // Конструктор
-    public MasterPortfolioImage() {}
-
-    public MasterPortfolioImage(MasterProfile master, String url) {
-        this.master = master;
-        this.url = url;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public MasterProfile getMaster() {
-        return master;
-    }
-
-    public void setMaster(MasterProfile master) {
-        this.master = master;
-    }
-
-    public String getUrl() {
-        return url;
-    }
-
-    public void setUrl(String url) {
-        this.url = url;
-    }
 }

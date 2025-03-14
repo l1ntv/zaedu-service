@@ -1,64 +1,35 @@
 package ru.tbank.zaedu.models;
 
 import jakarta.persistence.*;
+import lombok.*;
+import lombok.experimental.Accessors;
 
 import java.util.List;
 
-@Entity
-@Table(name = "cities")
-public class City {
-    @Id
-    @Column(name = "city_id")
-    private Long id;
+import static ru.tbank.zaedu.models.AbstractEntity.DEFAULT_GENERATOR;
 
-    private String cityName;
+@Accessors(chain = true)
+@Entity
+@Getter
+@Setter
+@ToString
+@RequiredArgsConstructor
+@AllArgsConstructor
+@Builder
+@Table(name = "cities")
+@SequenceGenerator(name = DEFAULT_GENERATOR, sequenceName = "cities_seq")
+public class City extends AbstractEntity {
+    private String name;
 
     @OneToMany(mappedBy = "city")
+    @ToString.Exclude
     private List<ClientProfile> clients;
 
     @OneToMany(mappedBy = "city")
+    @ToString.Exclude
     private List<MasterProfile> masters;
 
     @OneToMany(mappedBy = "city")
+    @ToString.Exclude
     private List<Hood> hoods;
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getCityName() {
-        return cityName;
-    }
-
-    public void setCityName(String cityName) {
-        this.cityName = cityName;
-    }
-
-    public List<ClientProfile> getClients() {
-        return clients;
-    }
-
-    public void setClients(List<ClientProfile> clients) {
-        this.clients = clients;
-    }
-
-    public List<MasterProfile> getMasters() {
-        return masters;
-    }
-
-    public void setMasters(List<MasterProfile> masters) {
-        this.masters = masters;
-    }
-
-    public List<Hood> getHoods() {
-        return hoods;
-    }
-
-    public void setHoods(List<Hood> hoods) {
-        this.hoods = hoods;
-    }
 }
