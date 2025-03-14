@@ -9,10 +9,9 @@ import ru.tbank.zaedu.DTO.AuthenticationRequest;
 import ru.tbank.zaedu.DTO.AuthenticationResponse;
 import ru.tbank.zaedu.DTO.RegistrationClientRequest;
 import ru.tbank.zaedu.DTO.RegistrationMasterRequest;
+import ru.tbank.zaedu.exceptionhandler.ResourceNotFoundException;
 import ru.tbank.zaedu.models.*;
-import ru.tbank.zaedu.repo.ClientProfileRepository;
-import ru.tbank.zaedu.repo.MasterProfileRepository;
-import ru.tbank.zaedu.repo.UserRepository;
+import ru.tbank.zaedu.repo.*;
 import ru.tbank.zaedu.service.AuthenticationService;
 
 @Service
@@ -24,6 +23,10 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     private final MasterProfileRepository masterProfileRepository;
 
+    private final UserRoleRepository userRoleRepository;
+
+    private final UserStatusRepository userStatusRepository;
+
     private final PasswordEncoder passwordEncoder;
 
     private final JwtService jwtService;
@@ -32,11 +35,14 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Override
     public AuthenticationResponse registerClient(RegistrationClientRequest request) {
+        var clientRole = userRoleRepository.findByName("CLIENT").orElseThrow(() -> new ResourceNotFoundException("NotFoundUserRole"));
+        var onlineStatus = userStatusRepository.findByName("ONLINE").orElseThrow(() -> new ResourceNotFoundException("NotFoundOnlineStatus"));
+
         var user = User.builder()
                 .login(request.getLogin())
                 .password(passwordEncoder.encode(request.getPassword()))
-                .role(new UserRole(1L, "CLIENT"))
-                .status(new UserStatus(1L, "ONLINE"))
+                .role(clientRole)
+                .status(onlineStatus)
                 .build();
         userRepository.save(user);
 
@@ -53,11 +59,14 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Override
     public AuthenticationResponse registerMaster(RegistrationMasterRequest request) {
+        var clientRole = userRoleRepository.findByName("MASTER").orElseThrow(() -> new ResourceNotFoundException("NotFoundUserRole"));
+        var onlineStatus = userStatusRepository.findByName("ONLINE").orElseThrow(() -> new ResourceNotFoundException("NotFoundOnlineStatus"));
+
         var user = User.builder()
                 .login(request.getLogin())
                 .password(passwordEncoder.encode(request.getPassword()))
-                .role(new UserRole(2L, "MASTER"))
-                .status(new UserStatus(1L, "ONLINE"))
+                .role(clientRole)
+                .status(onlineStatus)
                 .build();
         userRepository.save(user);
 
