@@ -1,4 +1,4 @@
-package ru.tbank.zaedu.service;
+package ru.tbank.zaedu.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import ru.tbank.zaedu.models.*;
@@ -10,6 +10,7 @@ import ru.tbank.zaedu.exceptionhandler.ResourceNotFoundException;
 import ru.tbank.zaedu.repo.HoodRepository;
 import ru.tbank.zaedu.repo.MasterProfileRepository;
 import ru.tbank.zaedu.repo.ServiceRepository;
+import ru.tbank.zaedu.service.MasterService;
 
 import java.util.List;
 
