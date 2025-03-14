@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <include file="v1-cities.xml" relativeToChangelogFile="true"/>
+    <include file="v1-order-statuses.xml" relativeToChangelogFile="true"/>
+    <include file="v1-services.xml" relativeToChangelogFile="true"/>
+    <include file="v1-user-roles.xml" relativeToChangelogFile="true"/>
+    <include file="v1-user-statuses.xml" relativeToChangelogFile="true"/>
+    <include file="v1-users.xml" relativeToChangelogFile="true"/>
+    <include file="v1-client-profile.xml" relativeToChangelogFile="true"/>
+    <include file="v1-hoods.xml" relativeToChangelogFile="true"/>
+    <include file="v1-master-profile.xml" relativeToChangelogFile="true"/>
+    <include file="v1-order.xml" relativeToChangelogFile="true"/>
+    <include file="v1-master-feedback.xml" relativeToChangelogFile="true"/>
+    <include file="v1-master-main-images.xml" relativeToChangelogFile="true"/>
+    <include file="v1-master-portfolio-images.xml" relativeToChangelogFile="true"/>
+    <include file="v1-master-services.xml" relativeToChangelogFile="true"/>
+</databaseChangeLog>
