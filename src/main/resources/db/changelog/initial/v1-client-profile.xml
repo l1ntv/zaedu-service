@@ -21,8 +21,9 @@
             <column name="email" type="VARCHAR(255)"/>
             <column name="telephone_number" type="VARCHAR(255)"/>
             <column name="city_id" type="BIGINT"/>
+            <column name="client_id" type="BIGINT"/>
         </createTable>
         <addForeignKeyConstraint baseColumnNames="city_id" baseTableName="client_profile" constraintName="FK_CLIENT_PROFILE_ON_CITY" referencedColumnNames="id" referencedTableName="cities"/>
-        <addForeignKeyConstraint baseColumnNames="id" baseTableName="client_profile" constraintName="FK_CLIENT_PROFILE_ON_CLIENT" referencedColumnNames="id" referencedTableName="users"/>
+        <addForeignKeyConstraint baseColumnNames="client_id" baseTableName="client_profile" constraintName="FK_CLIENT_PROFILE_ON_CLIENT" referencedColumnNames="id" referencedTableName="users"/>
     </changeSet>
 </databaseChangeLog>

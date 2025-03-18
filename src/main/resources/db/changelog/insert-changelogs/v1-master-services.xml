@@ -1,0 +1,18 @@
+<databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+
+    <changeSet id="v2-insert-data-master_services" author="Vadim Duz">
+        <loadData tableName="master_services"
+                  file="db/data/master-services-data.csv"
+                  separator=",">
+            <column name="id" type="NUMERIC"/>
+            <column name="created_at" type="DATETIME"/>
+            <column name="updated_at" type="DATETIME"/>
+            <column name="price" type="NUMERIC"/>
+            <column name="master_id" type="NUMERIC"/>
+            <column name="service_id" type="NUMERIC"/>
+        </loadData>
+    </changeSet>
+</databaseChangeLog>

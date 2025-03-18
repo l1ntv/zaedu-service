@@ -1,0 +1,2 @@
+id,client_id,service_id,master_id,description,address,price,date_from,date_to,order_status_id,created_at,updated_at
+1,1,1,1,"Нужен декоратор","Moscow, Tverskaya 1",5000,2024-05-01,2024-05-02,1,2024-01-01 00:00:00,2024-01-01 00:00:00

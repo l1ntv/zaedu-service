@@ -14,7 +14,6 @@
     <include file="v1-hoods.xml" relativeToChangelogFile="true"/>
     <include file="v1-master-profile.xml" relativeToChangelogFile="true"/>
     <include file="v1-order.xml" relativeToChangelogFile="true"/>
-    <include file="v1-master-feedback.xml" relativeToChangelogFile="true"/>
     <include file="v1-master-main-images.xml" relativeToChangelogFile="true"/>
     <include file="v1-master-portfolio-images.xml" relativeToChangelogFile="true"/>
     <include file="v1-master-services.xml" relativeToChangelogFile="true"/>

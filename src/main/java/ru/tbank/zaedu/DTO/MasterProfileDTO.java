@@ -1,7 +1,9 @@
 package ru.tbank.zaedu.DTO;
 
-import java.util.List;
+import lombok.ToString;
 
+import java.util.List;
+@ToString
 public class MasterProfileDTO {
     private Integer id;
     private String fullName;
@@ -9,7 +11,7 @@ public class MasterProfileDTO {
     private Boolean onlineStatus;
     private List<String> photos; // URLs of photos
     private String personalPhoto; // URL of personal photo
-    private Float averageRating;
+    private Double averageRating;
     private Integer ratingCount;
     private Boolean passportVerified;
     private Boolean contractWork;
@@ -65,11 +67,11 @@ public class MasterProfileDTO {
         this.personalPhoto = personalPhoto;
     }
 
-    public Float getAverageRating() {
+    public Double getAverageRating() {
         return averageRating;
     }
 
-    public void setAverageRating(Float averageRating) {
+    public void setAverageRating(Double averageRating) {
         this.averageRating = averageRating;
     }
 
@@ -120,4 +122,5 @@ public class MasterProfileDTO {
     public void setReports(List<ReportDTO> reports) {
         this.reports = reports;
     }
+
 }

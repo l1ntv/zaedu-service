@@ -22,5 +22,6 @@ public class UserStatus extends AbstractEntity {
     private String name;
 
     @OneToMany(mappedBy = "status")
+    @ToString.Exclude
     private List<User> users;
 }

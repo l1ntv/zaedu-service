@@ -22,5 +22,6 @@ public class UserRole extends AbstractEntity {
     private String name;
 
     @OneToMany(mappedBy = "role")
+    @ToString.Exclude
     private List<User> users;
 }

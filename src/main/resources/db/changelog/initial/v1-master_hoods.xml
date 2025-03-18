@@ -1,0 +1,28 @@
+<databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+
+    <changeSet id="v1-create-master_hoods" author="Vadim Duz">
+        <createTable tableName="master_hoods">
+            <column name="master_id" type="BIGINT"/>
+            <column name="hood_id" type="BIGINT"/>
+            <column name="created_at" type="DATETIME" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="DATETIME" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <addForeignKeyConstraint baseTableName="master_hoods"
+                                 baseColumnNames="master_id"
+                                 constraintName="fk_master_hoods_master"
+                                 referencedTableName="master_profile"
+                                 referencedColumnNames="id"/>
+        <addForeignKeyConstraint baseTableName="master_hoods"
+                                 baseColumnNames="hood_id"
+                                 constraintName="fk_master_hoods_hood"
+                                 referencedTableName="hood"
+                                 referencedColumnNames="id"/>
+    </changeSet>
+</databaseChangeLog>

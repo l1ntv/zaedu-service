@@ -23,6 +23,6 @@
         </createTable>
         <addForeignKeyConstraint baseColumnNames="client_id" baseTableName="master_feedback" constraintName="FK_MASTER_FEEDBACK_ON_CLIENT" referencedColumnNames="id" referencedTableName="client_profile"/>
         <addForeignKeyConstraint baseColumnNames="master_id" baseTableName="master_feedback" constraintName="FK_MASTER_FEEDBACK_ON_MASTER" referencedColumnNames="id" referencedTableName="master_profile"/>
-        <addForeignKeyConstraint baseColumnNames="order_id" baseTableName="master_feedback" constraintName="FK_MASTER_FEEDBACK_ON_ORDER" referencedColumnNames="id" referencedTableName="order"/>
+        <addForeignKeyConstraint baseColumnNames="order_id" baseTableName="master_feedback" constraintName="FK_MASTER_FEEDBACK_ON_ORDER" referencedColumnNames="id" referencedTableName="orders"/>
     </changeSet>
 </databaseChangeLog>
