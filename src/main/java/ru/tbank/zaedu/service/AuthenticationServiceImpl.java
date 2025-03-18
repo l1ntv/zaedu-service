@@ -15,6 +15,7 @@ import ru.tbank.zaedu.repo.*;
 @Service
 @RequiredArgsConstructor
 public class AuthenticationServiceImpl implements AuthenticationService {
+
     private final UserRepository userRepository;
 
     private final ClientProfileRepository clientProfileRepository;
@@ -24,6 +25,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private final UserRoleRepository userRoleRepository;
 
     private final UserStatusRepository userStatusRepository;
+
     private final MasterServiceEntityRepository masterServiceEntityRepository;
 
     private final ServiceRepository serviceRepository;
@@ -34,10 +36,16 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     private final AuthenticationManager authenticationManager;
 
+    private static final String ROLE_CUSTOMER_CONST = "ROLE_CUSTOMER";
+
+    private static final String ROLE_EXECUTOR_CONST = "ROLE_EXECUTOR";
+
+    private static final String ONLINE_STATUS_CONST = "ONLINE";
+
     @Override
     public AuthenticationResponse registerClient(RegistrationClientRequest request) {
-        var clientRole = userRoleRepository.findByName("ROLE_CUSTOMER").orElseThrow(() -> new ResourceNotFoundException("NotFoundUserRole"));
-        var onlineStatus = userStatusRepository.findByName("ONLINE").orElseThrow(() -> new ResourceNotFoundException("NotFoundOnlineStatus"));
+        var clientRole = userRoleRepository.findByName(AuthenticationServiceImpl.ROLE_CUSTOMER_CONST).orElseThrow(() -> new ResourceNotFoundException("NotFoundUserRole"));
+        var onlineStatus = userStatusRepository.findByName(AuthenticationServiceImpl.ONLINE_STATUS_CONST).orElseThrow(() -> new ResourceNotFoundException("NotFoundOnlineStatus"));
 
         var user = User.builder()
                 .login(request.getLogin())
@@ -52,7 +60,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .build();
         clientProfileRepository.save(clientProfile);
 
-        var jwtToken = jwtService.generateToken((UserDetails) user);
+        var jwtToken = jwtService.generateToken(user);
         return AuthenticationResponse.builder()
                 .token(jwtToken)
                 .build();
@@ -60,8 +68,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Override
     public AuthenticationResponse registerMaster(RegistrationMasterRequest request) {
-        var clientRole = userRoleRepository.findByName("ROLE_EXECUTOR").orElseThrow(() -> new ResourceNotFoundException("NotFoundUserRole"));
-        var onlineStatus = userStatusRepository.findByName("ONLINE").orElseThrow(() -> new ResourceNotFoundException("NotFoundOnlineStatus"));
+        var clientRole = userRoleRepository.findByName(AuthenticationServiceImpl.ROLE_EXECUTOR_CONST).orElseThrow(() -> new ResourceNotFoundException("NotFoundUserRole"));
+        var onlineStatus = userStatusRepository.findByName(AuthenticationServiceImpl.ONLINE_STATUS_CONST).orElseThrow(() -> new ResourceNotFoundException("NotFoundOnlineStatus"));
 
         var user = User.builder()
                 .login(request.getLogin())
@@ -91,7 +99,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             }
         }
 
-        var jwtToken = jwtService.generateToken((UserDetails) user);
+        var jwtToken = jwtService.generateToken(user);
         return AuthenticationResponse.builder()
                 .token(jwtToken)
                 .build();
@@ -106,7 +114,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 )
         );
         var user = userRepository.findByLogin(request.getLogin())
-                .orElseThrow();
+                .orElseThrow(() -> new ResourceNotFoundException("NotFoundUser"));
 
         var jwtToken = jwtService.generateToken(user);
         return AuthenticationResponse.builder()
