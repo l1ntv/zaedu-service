@@ -16,7 +16,7 @@ import static ru.tbank.zaedu.models.AbstractEntity.DEFAULT_GENERATOR;
 @RequiredArgsConstructor
 @AllArgsConstructor
 @Builder
-@Table(name = "order")
+@Table(name = "orders")
 @SequenceGenerator(name = DEFAULT_GENERATOR, sequenceName = "order_seq")
 public class Order extends AbstractEntity {
     @ManyToOne

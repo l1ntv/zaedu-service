@@ -5,10 +5,9 @@ import lombok.*;
 import lombok.experimental.Accessors;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static ru.tbank.zaedu.models.AbstractEntity.DEFAULT_GENERATOR;
 
@@ -71,7 +70,13 @@ public class MasterProfile extends AbstractEntity {
     @ToString.Exclude
     private List<MasterMainImage> mainImages;
 
-    @OneToMany(mappedBy = "master", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "master", cascade = CascadeType.ALL)
     @ToString.Exclude
     private List<MasterPortfolioImage> portfolioImages = new ArrayList<>();
+
+    public String getFullName() {
+        return Stream.of(surname, name, patronymic)
+                .filter(Objects::nonNull)
+                .collect(Collectors.joining(" "));
+    }
 }

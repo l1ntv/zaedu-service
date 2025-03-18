@@ -7,7 +7,10 @@ public class MastersListResponseDTO {
     private String photoUrl;
     private Integer balance;
 
-    public MastersListResponseDTO(List<MasterProfileDTO> dtos, Object o, Object o1) {
+    public MastersListResponseDTO(List<MasterProfileDTO> masters, String photoUrl, Integer balance) {
+        this.masters = masters;
+        this.photoUrl = photoUrl;
+        this.balance = balance;
     }
 
     public List<MasterProfileDTO> getMasters() {

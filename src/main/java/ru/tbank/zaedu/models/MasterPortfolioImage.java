@@ -22,4 +22,12 @@ public class MasterPortfolioImage extends AbstractEntity {
     private MasterProfile master;
 
     private String url;
+
+    public MasterPortfolioImage setMaster(MasterProfile master) {
+        this.master = master;
+        if (master != null && !master.getPortfolioImages().contains(this)) {
+            master.getPortfolioImages().add(this);
+        }
+        return this;
+    }
 }
