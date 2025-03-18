@@ -1,0 +1,4 @@
+id,login,password,role_id,status_id,created_at,updated_at
+1,customer_user,password,2,1,2024-01-01 00:00:00,2024-01-01 00:00:00
+2,executor_user,password,1,1,2024-01-01 00:00:00,2024-01-01 00:00:00
+3,blocked_user,password,2,3,2024-01-01 00:00:00,2024-01-01 00:00:00

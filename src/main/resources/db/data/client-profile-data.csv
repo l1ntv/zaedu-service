@@ -1,0 +1,2 @@
+id,surname,name,patronymic,email,telephone_number,city_id,created_at,updated_at
+1,Ivanov,Ivan,Ivanovich,ivanov@example.com,+79991234567,1,2024-01-01 00:00:00,2024-01-01 00:00:00

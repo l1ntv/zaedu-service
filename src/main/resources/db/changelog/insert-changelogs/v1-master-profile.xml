@@ -1,0 +1,31 @@
+<databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+
+    <changeSet id="v2-insert-data-master_profile" author="Vadim Duz">
+        <loadData tableName="master_profile"
+                  file="db/data/master-profile-data.csv"
+                  separator=",">
+            <column name="id" type="NUMERIC"/>
+            <column name="created_at" type="DATETIME"/>
+            <column name="updated_at" type="DATETIME"/>
+            <column name="surname" type="STRING"/>
+            <column name="name" type="STRING"/>
+            <column name="patronymic" type="STRING"/>
+            <column name="email" type="STRING"/>
+            <column name="telephone_number" type="STRING"/>
+            <column name="is_company" type="BOOLEAN"/>
+            <column name="is_confirmed_passport" type="BOOLEAN"/>
+            <column name="passport_series" type="STRING"/>
+            <column name="passport_number" type="STRING"/>
+            <column name="create_date" type="DATE"/>
+            <column name="profile_name" type="STRING"/>
+            <column name="description" type="STRING"/>
+            <column name="is_online" type="BOOLEAN"/>
+            <column name="is_working_with_contract" type="BOOLEAN"/>
+            <column name="city_id" type="NUMERIC"/>
+            <column name="master_id" type="NUMERIC"/>
+        </loadData>
+    </changeSet>
+</databaseChangeLog>

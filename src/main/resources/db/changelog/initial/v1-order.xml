@@ -5,7 +5,7 @@
 
     <changeSet id="1741898591915-1" author="fedina_irn08">
         <createSequence incrementBy="50" sequenceName="order_seq" startValue="1"/>
-        <createTable tableName="order">
+        <createTable tableName="orders">
             <column name="id" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="pk_order"/>
             </column>
@@ -25,9 +25,9 @@
             <column name="date_to" type="DATE"/>
             <column name="order_status_id" type="BIGINT"/>
         </createTable>
-        <addForeignKeyConstraint baseColumnNames="client_id" baseTableName="order" constraintName="FK_ORDER_ON_CLIENT" referencedColumnNames="id" referencedTableName="client_profile"/>
-        <addForeignKeyConstraint baseColumnNames="master_id" baseTableName="order" constraintName="FK_ORDER_ON_MASTER" referencedColumnNames="id" referencedTableName="master_profile"/>
-        <addForeignKeyConstraint baseColumnNames="order_status_id" baseTableName="order" constraintName="FK_ORDER_ON_ORDER_STATUS" referencedColumnNames="id" referencedTableName="order_statuses"/>
-        <addForeignKeyConstraint baseColumnNames="service_id" baseTableName="order" constraintName="FK_ORDER_ON_SERVICE" referencedColumnNames="id" referencedTableName="services"/>
+        <addForeignKeyConstraint baseColumnNames="client_id" baseTableName="orders" constraintName="FK_ORDER_ON_CLIENT" referencedColumnNames="id" referencedTableName="client_profile"/>
+        <addForeignKeyConstraint baseColumnNames="master_id" baseTableName="orders" constraintName="FK_ORDER_ON_MASTER" referencedColumnNames="id" referencedTableName="master_profile"/>
+        <addForeignKeyConstraint baseColumnNames="order_status_id" baseTableName="orders" constraintName="FK_ORDER_ON_ORDER_STATUS" referencedColumnNames="id" referencedTableName="order_statuses"/>
+        <addForeignKeyConstraint baseColumnNames="service_id" baseTableName="orders" constraintName="FK_ORDER_ON_SERVICE" referencedColumnNames="id" referencedTableName="services"/>
     </changeSet>
 </databaseChangeLog>

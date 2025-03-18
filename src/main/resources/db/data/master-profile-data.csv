@@ -1,0 +1,2 @@
+id,surname,name,patronymic,email,telephone_number,is_company,is_confirmed_passport,passport_series,passport_number,create_date,profile_name,description,is_online,is_working_with_contract,city_id,master_id,created_at,updated_at
+1,Petrov,Petr,Petrovich,petrov@example.com,+79997654321,false,true,1234,567890,2024-01-01,MasterPetr,"Опытный декоратор",true,true,1,2,2024-01-01 00:00:00,2024-01-01 00:00:00

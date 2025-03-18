@@ -1,0 +1,16 @@
+<databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+
+    <changeSet id="v2-insert-data-user_roles" author="Vadim Duz">
+        <loadData tableName="user_roles"
+                  file="db/data/user-roles-data.csv"
+                  separator=",">
+            <column name="id" type="NUMERIC"/>
+            <column name="created_at" type="DATETIME"/>
+            <column name="updated_at" type="DATETIME"/>
+            <column name="name" type="STRING"/>
+        </loadData>
+    </changeSet>
+</databaseChangeLog>

@@ -1,0 +1,16 @@
+<databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+
+    <changeSet id="v2-insert-data-master_hoods" author="Vadim Duz">
+        <loadData tableName="master_hoods"
+                  file="db/data/master-hoods-data.csv"
+                  separator=",">
+            <column name="master_id" type="NUMERIC"/>
+            <column name="hood_id" type="NUMERIC"/>
+            <column name="created_at" type="DATETIME"/>
+            <column name="updated_at" type="DATETIME"/>
+        </loadData>
+    </changeSet>
+</databaseChangeLog>
