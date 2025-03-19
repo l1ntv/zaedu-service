@@ -5,6 +5,9 @@
 
     <changeSet id="v1-create-master_hoods" author="Vadim Duz">
         <createTable tableName="master_hoods">
+            <column name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_master_hoods"/>
+            </column>
             <column name="master_id" type="BIGINT"/>
             <column name="hood_id" type="BIGINT"/>
             <column name="created_at" type="DATETIME" defaultValueComputed="CURRENT_TIMESTAMP">
