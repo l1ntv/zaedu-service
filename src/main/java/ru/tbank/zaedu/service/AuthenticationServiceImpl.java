@@ -2,13 +2,16 @@ package ru.tbank.zaedu.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import ru.tbank.zaedu.DTO.*;
 import ru.tbank.zaedu.config.JwtService;
+import ru.tbank.zaedu.exceptionhandler.InvalidDataException;
 import ru.tbank.zaedu.exceptionhandler.ResourceNotFoundException;
+import ru.tbank.zaedu.exceptionhandler.WrongDataException;
 import ru.tbank.zaedu.models.*;
 import ru.tbank.zaedu.repo.*;
 
@@ -44,6 +47,11 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Override
     public AuthenticationResponse registerClient(RegistrationClientRequest request) {
+        if (userRepository.existsByLogin(request.getLogin())) {
+            throw new InvalidDataException("LoginAlreadyExists");
+        }
+
+
         var clientRole = userRoleRepository.findByName(AuthenticationServiceImpl.ROLE_CUSTOMER_CONST).orElseThrow(() -> new ResourceNotFoundException("NotFoundUserRole"));
         var onlineStatus = userStatusRepository.findByName(AuthenticationServiceImpl.ONLINE_STATUS_CONST).orElseThrow(() -> new ResourceNotFoundException("NotFoundOnlineStatus"));
 
@@ -68,6 +76,10 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Override
     public AuthenticationResponse registerMaster(RegistrationMasterRequest request) {
+        if (userRepository.existsByLogin(request.getLogin())) {
+            throw new InvalidDataException("LoginAlreadyExists");
+        }
+
         var clientRole = userRoleRepository.findByName(AuthenticationServiceImpl.ROLE_EXECUTOR_CONST).orElseThrow(() -> new ResourceNotFoundException("NotFoundUserRole"));
         var onlineStatus = userStatusRepository.findByName(AuthenticationServiceImpl.ONLINE_STATUS_CONST).orElseThrow(() -> new ResourceNotFoundException("NotFoundOnlineStatus"));
 
@@ -107,14 +119,20 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Override
     public AuthenticationResponse authenticate(AuthenticationRequest request) {
-        authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        request.getLogin(),
-                        request.getPassword()
-                )
-        );
+
+        try {
+            authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(
+                            request.getLogin(),
+                            request.getPassword()
+                    )
+            );
+        } catch (BadCredentialsException ex) {
+            throw new WrongDataException("WrongAuthData");
+        }
+
         var user = userRepository.findByLogin(request.getLogin())
-                .orElseThrow(() -> new ResourceNotFoundException("NotFoundUser"));
+                .orElseThrow(() -> new InvalidDataException("NotFoundUser"));
 
         var jwtToken = jwtService.generateToken(user);
         return AuthenticationResponse.builder()

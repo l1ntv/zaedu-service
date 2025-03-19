@@ -28,6 +28,12 @@ paths:
       responses:
         '201':
           description: Успешная регистрация
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token: { type: string }
         '400':
           description: Неверные данные
           content:
@@ -51,6 +57,12 @@ paths:
       responses:
         '201':
           description: Успешная регистрация
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token: { type: string }
         '400':
           description: Неверные данные
           content:
@@ -229,25 +241,25 @@ components:
     ClientRegistrationRequest:
       type: object
       properties:
-        login: { type: string, format: email }
-        password: { type: string, minLength: 8 }
+        login: { type: string }
+        password: { type: string }
       required: [login, password]
 
     MasterRegistrationRequest:
       type: object
       properties:
-        login: { type: string, format: email }
-        password: { type: string, minLength: 8 }
-        lastName: { type: string }
-        firstName: { type: string }
+        login: { type: string }
+        password: { type: string }
+        surname: { type: string }
+        name: { type: string }
         patronymic: { type: string }
-        services: 
+        services:
           type: array
           items:
-            $ref: '#/components/schemas/Services'
-        isOrganization: { type: boolean }
-        organizationName: { type: string }
-      required: [login, password, lastName, firstName, services]
+            $ref: '#/components/schemas/ServiceDTO'
+        isCompany: { type: boolean }
+        profileName: { type: string }
+      required: [login, password, surname, name, patronymic, services, isCompany, profileName]
 
     ClientMainResponse:
       type: object
@@ -260,7 +272,7 @@ components:
       properties:
         serviceName: { type: string }
         description: { type: string }
-        serviceType: 
+        serviceType:
           type: string
           enum: [DECORATOR, SOUND_ENGINEER, LIGHT_ENGINEER, PHOTOGRAPHER, VIDEOGRAPHER, CHEF, WAITER, HOST]
         address: { type: string }
@@ -269,10 +281,11 @@ components:
         dateTo: { type: string, format: date }
         phone: { type: string }
 
-    Service:
+    ServiceDTO:
       type: object
       properties:
-        serviceName: 
+        id: { type: integer }
+        serviceName:
           type: string
           enum: [DECORATOR, SOUND_ENGINEER, LIGHT_ENGINEER, PHOTOGRAPHER, VIDEOGRAPHER, CHEF, WAITER, HOST]
         cost: { type: integer }
@@ -284,7 +297,7 @@ components:
         fullName: { type: string }
         description: { type: string }
         onlineStatus: { type: boolean }
-        photos: 
+        photos:
           type: array
           items: { type: string, format: uri }
         personalPhoto: { type: string, format: uri }
@@ -292,25 +305,25 @@ components:
         ratingCount: { type: integer }
         passportVerified: { type: boolean }
         contractWork: { type: boolean }
-        services: 
+        services:
           type: array
-          items: 
-            $ref: '#/components/schemas/Services'
-        districts: 
+          items:
+            $ref: '#/components/schemas/ServiceDTO'
+        districts:
           type: array
-          items: 
+          items:
             type: string
-        reports: 
+        reports:
           type: array
-          items: 
+          items:
             $ref: '#/components/schemas/Report'
 
     MastersListResponse:
       type: object
       properties:
-        masters: 
+        masters:
           type: array
-          items: 
+          items:
             $ref: '#/components/schemas/MasterProfile'
         photoUrl: { type: string, format: uri }
         balance: { type: integer }
@@ -327,16 +340,16 @@ components:
       type: object
       properties:
         description: { type: string }
-        photos: 
+        photos:
           type: array
           items: { type: string, format: uri }
-        services: 
+        services:
           type: array
-          items: 
-            $ref: '#/components/schemas/Services'
-        districts: 
+          items:
+            $ref: '#/components/schemas/ServiceDTO'
+        districts:
           type: array
-          items: 
+          items:
             type: string
 
   securitySchemes:

@@ -1,6 +1,7 @@
 package ru.tbank.zaedu.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -23,14 +24,14 @@ public class AuthenticationController {
     public ResponseEntity<AuthenticationResponse> registerClient(
             @RequestBody RegistrationClientRequest request
     ) {
-        return ResponseEntity.ok(authenticationService.registerClient(request));
+        return ResponseEntity.status(HttpStatus.CREATED).body(authenticationService.registerClient(request));
     }
 
     @PostMapping("/register/master")
     public ResponseEntity<AuthenticationResponse> registerMaster(
             @RequestBody RegistrationMasterRequest request
     ) {
-        return ResponseEntity.ok(authenticationService.registerMaster(request));
+        return ResponseEntity.status(HttpStatus.CREATED).body(authenticationService.registerMaster(request));
     }
 
     @PostMapping("/login")
