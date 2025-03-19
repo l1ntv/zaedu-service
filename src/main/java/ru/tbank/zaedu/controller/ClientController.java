@@ -8,8 +8,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
-import ru.tbank.zaedu.models.ClientProfile;
-import ru.tbank.zaedu.models.Order;
+import ru.tbank.zaedu.DTO.ClientProfileDTO;
+import ru.tbank.zaedu.DTO.OrderDTO;
 import ru.tbank.zaedu.service.ClientService;
 
 import java.util.List;
@@ -23,14 +23,15 @@ public class ClientController {
 
     @GetMapping("/{clientId}/main")
     public ResponseEntity<?> getClientMainInfo(@PathVariable long clientId) {
-        ClientProfile clientProfile = clientService.getClientProfileById(clientId)
+        ClientProfileDTO clientProfileDTO = clientService.getClientProfileById(clientId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
-        return ResponseEntity.ok(clientProfile);
+
+        return ResponseEntity.ok(clientProfileDTO);
     }
 
     @GetMapping("/{clientId}/orders")
-    public ResponseEntity<?> getClientOrders(@PathVariable long clientId) {
-        List<Order> orders = clientService.getClientOrders(clientId);
+    public ResponseEntity<List<OrderDTO>> getClientOrders(@PathVariable long clientId) {
+        List<OrderDTO> orders = clientService.getClientOrders(clientId);
         return ResponseEntity.ok(orders);
     }
 }

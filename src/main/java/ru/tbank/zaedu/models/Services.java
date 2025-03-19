@@ -3,7 +3,6 @@ package ru.tbank.zaedu.models;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.Accessors;
-import ru.tbank.zaedu.service.MasterService;
 
 import java.util.List;
 
