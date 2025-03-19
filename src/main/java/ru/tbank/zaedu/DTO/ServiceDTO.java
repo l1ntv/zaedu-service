@@ -2,7 +2,13 @@ package ru.tbank.zaedu.DTO;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 
+@AllArgsConstructor
+@Getter
+@Setter
 public class ServiceDTO {
     private Long id;
     private String serviceName;
@@ -20,35 +26,5 @@ public class ServiceDTO {
         this.id = i;
         this.serviceName = serviceName;
         this.cost = null;
-    }
-
-    public ServiceDTO(Long id, String serviceName, Long cost) {
-        this.id = id;
-        this.serviceName = serviceName;
-        this.cost = cost;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getServiceName() {
-        return serviceName;
-    }
-
-    public void setServiceName(String name) {
-        this.serviceName = name;
-    }
-
-    public Long getCost() {
-        return cost;
-    }
-
-    public void setCost(Long cost) {
-        this.cost = cost;
     }
 }
