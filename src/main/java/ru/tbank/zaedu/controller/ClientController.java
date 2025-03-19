@@ -21,6 +21,8 @@ public class ClientController {
 
     private final ClientService clientService;
 
+    // вместо clientId делаем Principal /my-profile
+    // /profile-for-other
     @GetMapping("/{clientId}/main")
     public ResponseEntity<?> getClientMainInfo(@PathVariable long clientId) {
         ClientProfile clientProfile = clientService.getClientProfileById(clientId)
@@ -28,9 +30,13 @@ public class ClientController {
         return ResponseEntity.ok(clientProfile);
     }
 
+    // вместо clientId делаем Principal /my-profile
+    // отсортировать заказы
     @GetMapping("/{clientId}/orders")
     public ResponseEntity<?> getClientOrders(@PathVariable long clientId) {
         List<Order> orders = clientService.getClientOrders(clientId);
         return ResponseEntity.ok(orders);
     }
+
+    // сделать ручку для обновления профиля, использовать Principal
 }

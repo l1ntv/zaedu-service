@@ -9,6 +9,8 @@ import ru.tbank.zaedu.DTO.MasterUpdateRequestDTO;
 import ru.tbank.zaedu.DTO.MastersListResponseDTO;
 import ru.tbank.zaedu.service.MasterService;
 
+import java.security.Principal;
+
 @RestController
 @RequestMapping("/masters")
 public class MasterController {
@@ -32,11 +34,22 @@ public class MasterController {
         return ResponseEntity.ok(profile);
     }
 
-    @PutMapping("/{id}/update")
+    // Сделать ручку для просмотра своего профиля for other от лица мастера
+    // public ResponseEntity<MasterProfileDTO> getMasterProfileForOther(Principal principal) {
+
+    // Сделать ручку для просмотра своего профиля for me от лица мастера
+    // public ResponseEntity<MasterProfileDTO> getMasterProfileForMe(Principal principal) {
+
+
+    @PutMapping("/{id}/update") // Разделить эту ручку на 2: updateMasterProfileForMe и updateMasterProfileForOther
+    // убрать id - добавить Principal
     public ResponseEntity<Void> updateMasterProfile(
             @PathVariable Long id,
             @RequestBody MasterUpdateRequestDTO request) {
         masterService.updateMasterProfile(id, request);
         return ResponseEntity.ok().build();
     }
+
+    // Сделать ручку для просмотра своих заказов, возвращать отсортированный список заказов по status
+    // вытаскивать данные по Principal
 }
