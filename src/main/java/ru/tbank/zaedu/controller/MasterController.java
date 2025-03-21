@@ -1,7 +1,7 @@
 package ru.tbank.zaedu.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.tbank.zaedu.DTO.MasterProfileDTO;
@@ -29,7 +29,7 @@ public class MasterController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<MasterProfileDTO> getMasterProfile(@PathVariable Long id) {
+    public ResponseEntity<MasterProfileDTO> getMasterProfile(Principal principal, @PathVariable Long id) {
         MasterProfileDTO profile = masterService.getMasterProfile(id);
         return ResponseEntity.ok(profile);
     }
