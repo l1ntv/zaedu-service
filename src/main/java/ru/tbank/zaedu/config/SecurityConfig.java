@@ -29,14 +29,14 @@ public class SecurityConfig {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/**", "/clients/**", "/masters/**").permitAll()
+                        .requestMatchers("/auth/**", "/clients/**").permitAll()
                         .requestMatchers("/swagger-ui/**", "/swagger-resources/*", "/api.zaedu.com/v1/**").permitAll()
                         .anyRequest().authenticated())
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider)
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
-                .cors(Customizer.withDefaults()); // Настройка CORS через Spring Security
+                .cors(Customizer.withDefaults());
 
         return http.build();
     }
