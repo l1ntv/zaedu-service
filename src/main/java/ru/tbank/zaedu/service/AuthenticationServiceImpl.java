@@ -80,7 +80,15 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             throw new InvalidDataException("LoginAlreadyExists");
         }
 
-        var clientRole = userRoleRepository.findByName(AuthenticationServiceImpl.ROLE_EXECUTOR_CONST).orElseThrow(() -> new ResourceNotFoundException("NotFoundUserRole"));
+        if (request.getServices() == null && request.getServices().isEmpty()) {
+            throw new InvalidDataException("IncorrectServicesParameter");
+        }
+
+        for (ServiceDTO service : request.getServices()) {
+            Services existingService = serviceRepository.findByName(service.getServiceName()).orElseThrow(() -> new ResourceNotFoundException("NotFoundService"));
+        }
+
+            var clientRole = userRoleRepository.findByName(AuthenticationServiceImpl.ROLE_EXECUTOR_CONST).orElseThrow(() -> new ResourceNotFoundException("NotFoundUserRole"));
         var onlineStatus = userStatusRepository.findByName(AuthenticationServiceImpl.ONLINE_STATUS_CONST).orElseThrow(() -> new ResourceNotFoundException("NotFoundOnlineStatus"));
 
         var user = User.builder()
@@ -100,16 +108,15 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .build();
         masterProfileRepository.save(masterProfile);
 
-        if (request.getServices() != null && !request.getServices().isEmpty()) {
-            for (ServiceDTO service : request.getServices()) {
-                Services existingService = serviceRepository.findByName(service.getServiceName()).orElseThrow(() -> new ResourceNotFoundException("NotFoundService"));
-                MasterServiceEntity masterServiceEntity = new MasterServiceEntity();
-                masterServiceEntity.setMaster(masterProfile);
-                masterServiceEntity.setServices(existingService);
-                masterServiceEntity.setPrice(service.getCost());
-                masterServiceEntityRepository.save(masterServiceEntity);
-            }
+        for (ServiceDTO service : request.getServices()) {
+            Services existingService = serviceRepository.findByName(service.getServiceName()).orElseThrow(() -> new ResourceNotFoundException("NotFoundService"));
+            MasterServiceEntity masterServiceEntity = new MasterServiceEntity();
+            masterServiceEntity.setMaster(masterProfile);
+            masterServiceEntity.setServices(existingService);
+            masterServiceEntity.setPrice(service.getCost());
+            masterServiceEntityRepository.save(masterServiceEntity);
         }
+
 
         var jwtToken = jwtService.generateToken(user);
         return AuthenticationResponse.builder()
@@ -119,6 +126,9 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Override
     public AuthenticationResponse authenticate(AuthenticationRequest request) {
+
+        var user = userRepository.findByLogin(request.getLogin())
+                .orElseThrow(() -> new InvalidDataException("NotFoundUser"));
 
         try {
             authenticationManager.authenticate(
@@ -130,9 +140,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         } catch (BadCredentialsException ex) {
             throw new WrongDataException("WrongAuthData");
         }
-
-        var user = userRepository.findByLogin(request.getLogin())
-                .orElseThrow(() -> new InvalidDataException("NotFoundUser"));
 
         var jwtToken = jwtService.generateToken(user);
         return AuthenticationResponse.builder()
