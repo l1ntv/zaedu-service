@@ -236,6 +236,24 @@ paths:
                 properties:
                   error: { type: string }
 
+    /orders:
+      get:
+      tags:
+        - Orders
+      summary: Выставленные заказы клиентами
+      responses:
+        '200':
+          description: Список выставленных заказов клиентами, фото и баланс мастера
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClientsOrdersResponse'
+        '403':
+          description: Мастер не был авторизован
+          content: {}
+
+
+
 components:
   schemas:
     ClientRegistrationRequest:
@@ -351,6 +369,29 @@ components:
           type: array
           items:
             type: string
+
+    ClientsOrdersResponse:
+      type: object
+      properties:
+        placedOrdersByClients:
+          type: array
+          items:
+            $ref: '#/components/schemas/PlacedOrdersByClientsResponse'
+        photoUrl: { type: string }
+        balance: { type: integer }
+      required: [placedOrdersByClients, balance]
+
+    PlacedOrdersByClientsResponse:
+      type: object
+      properties:
+        id: { type: integer }
+        serviceDTO: { $ref: '#/components/schemas/ServiceDTO' }
+        clientName: { type: string }
+        address: { type: string }
+        price: { type: integer }
+        dateFrom: { type: string, format: date }
+        dateTo: { type: string, format: date }
+
 
   securitySchemes:
     bearerAuth:

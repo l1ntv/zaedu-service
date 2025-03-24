@@ -1,11 +1,10 @@
 package ru.tbank.zaedu.service;
 
 
-import ru.tbank.zaedu.DTO.PlacedOrdersByClientsResponse;
-
-import java.util.List;
+import ru.tbank.zaedu.DTO.ClientsOrdersResponse;
+import java.security.Principal;
 
 public interface OrderService {
 
-    List<PlacedOrdersByClientsResponse> findPlacedOrdersByClients();
+    ClientsOrdersResponse findPlacedOrdersByClients(Principal principal);
 }
