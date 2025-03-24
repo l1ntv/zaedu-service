@@ -1,5 +1,6 @@
 package ru.tbank.zaedu.service;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -45,6 +46,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     private static final String ONLINE_STATUS_CONST = "ONLINE";
 
+    @Transactional
     @Override
     public AuthenticationResponse registerClient(RegistrationClientRequest request) {
         if (userRepository.existsByLogin(request.getLogin())) {
@@ -74,6 +76,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .build();
     }
 
+    @Transactional
     @Override
     public AuthenticationResponse registerMaster(RegistrationMasterRequest request) {
         if (userRepository.existsByLogin(request.getLogin())) {
@@ -88,7 +91,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             Services existingService = serviceRepository.findByName(service.getServiceName()).orElseThrow(() -> new ResourceNotFoundException("NotFoundService"));
         }
 
-            var clientRole = userRoleRepository.findByName(AuthenticationServiceImpl.ROLE_EXECUTOR_CONST).orElseThrow(() -> new ResourceNotFoundException("NotFoundUserRole"));
+        var clientRole = userRoleRepository.findByName(AuthenticationServiceImpl.ROLE_EXECUTOR_CONST).orElseThrow(() -> new ResourceNotFoundException("NotFoundUserRole"));
         var onlineStatus = userStatusRepository.findByName(AuthenticationServiceImpl.ONLINE_STATUS_CONST).orElseThrow(() -> new ResourceNotFoundException("NotFoundOnlineStatus"));
 
         var user = User.builder()
