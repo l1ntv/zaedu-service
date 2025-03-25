@@ -1,0 +1,24 @@
+<databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+
+    <changeSet id="1742475630975-1" author="fedina_irn08">
+        <createSequence incrementBy="50" sequenceName="client_main_images_seq" startValue="1"/>
+        <createTable tableName="client_main_images">
+            <column name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_client_main_images"/>
+            </column>
+            <column name="created_at" type="DATETIME">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="DATETIME">
+                <constraints nullable="false"/>
+            </column>
+            <column name="client_id" type="BIGINT"/>
+            <column name="url" type="VARCHAR(255)"/>
+        </createTable>
+        <addUniqueConstraint columnNames="client_id" constraintName="uc_client_main_images_client" tableName="client_main_images"/>
+        <addForeignKeyConstraint baseColumnNames="client_id" baseTableName="client_main_images" constraintName="FK_CLIENT_MAIN_IMAGES_ON_CLIENT" referencedColumnNames="id" referencedTableName="client_profile"/>
+    </changeSet>
+</databaseChangeLog>

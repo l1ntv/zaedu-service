@@ -11,6 +11,7 @@
     <include file="v1-user-statuses.xml" relativeToChangelogFile="true"/>
     <include file="v1-users.xml" relativeToChangelogFile="true"/>
     <include file="v1-client-profile.xml" relativeToChangelogFile="true"/>
+    <include file="v1-client-main-images.xml" relativeToChangelogFile="true"/>
     <include file="v1-hoods.xml" relativeToChangelogFile="true"/>
     <include file="v1-master-profile.xml" relativeToChangelogFile="true"/>
     <include file="v1-order.xml" relativeToChangelogFile="true"/>
