@@ -28,12 +28,6 @@ paths:
       responses:
         '201':
           description: Успешная регистрация
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  token: { type: string }
         '400':
           description: Неверные данные
           content:
@@ -57,12 +51,6 @@ paths:
       responses:
         '201':
           description: Успешная регистрация
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  token: { type: string }
         '400':
           description: Неверные данные
           content:
@@ -105,7 +93,7 @@ paths:
                 properties:
                   error: { type: string }
 
-  /clients/main:
+  /clients/my-profile:
     get:
       tags:
         - Clients
@@ -144,6 +132,37 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/ClientOrder'
+        '401':
+          description: Неавторизованный доступ
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error: { type: string }
+
+  /clients/update:
+    put:
+      tags:
+        - Clients
+      summary: Обновление профиля клиента
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ClientUpdateRequest'
+      responses:
+        '200':
+          description: Профиль обновлен
+        '400':
+          description: Неверные данные
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error: { type: string }
         '401':
           description: Неавторизованный доступ
           content:
@@ -259,25 +278,25 @@ components:
     ClientRegistrationRequest:
       type: object
       properties:
-        login: { type: string }
-        password: { type: string }
+        login: { type: string, format: email }
+        password: { type: string, minLength: 8 }
       required: [login, password]
 
     MasterRegistrationRequest:
       type: object
       properties:
-        login: { type: string }
-        password: { type: string }
-        surname: { type: string }
-        name: { type: string }
+        login: { type: string, format: email }
+        password: { type: string, minLength: 8 }
+        lastName: { type: string }
+        firstName: { type: string }
         patronymic: { type: string }
         services:
           type: array
           items:
-            $ref: '#/components/schemas/ServiceDTO'
-        isCompany: { type: boolean }
-        profileName: { type: string }
-      required: [login, password, surname, name, patronymic, services, isCompany, profileName]
+            $ref: '#/components/schemas/Services'
+        isOrganization: { type: boolean }
+        organizationName: { type: string }
+      required: [login, password, lastName, firstName, services]
 
     ClientMainResponse:
       type: object
@@ -288,21 +307,30 @@ components:
     ClientOrder:
       type: object
       properties:
-        serviceName: { type: string }
-        description: { type: string }
         serviceType:
           type: string
           enum: [DECORATOR, SOUND_ENGINEER, LIGHT_ENGINEER, PHOTOGRAPHER, VIDEOGRAPHER, CHEF, WAITER, HOST]
+        description: { type: string }
         address: { type: string }
         price: { type: integer }
         dateFrom: { type: string, format: date }
         dateTo: { type: string, format: date }
-        phone: { type: string }
+        phoneMaster: { type: string }
 
-    ServiceDTO:
+    ClientUpdateRequest:
       type: object
       properties:
-        id: { type: integer }
+        surname: { type: string }
+        name: { type: string }
+        patronymic: { type: string }
+        email: { type: string }
+        telephoneNumber: { type: string }
+        city: { type: string }
+        mainImage: { type: string }
+
+    Service:
+      type: object
+      properties:
         serviceName:
           type: string
           enum: [DECORATOR, SOUND_ENGINEER, LIGHT_ENGINEER, PHOTOGRAPHER, VIDEOGRAPHER, CHEF, WAITER, HOST]
@@ -326,7 +354,7 @@ components:
         services:
           type: array
           items:
-            $ref: '#/components/schemas/ServiceDTO'
+            $ref: '#/components/schemas/Services'
         districts:
           type: array
           items:
@@ -364,7 +392,7 @@ components:
         services:
           type: array
           items:
-            $ref: '#/components/schemas/ServiceDTO'
+            $ref: '#/components/schemas/Services'
         districts:
           type: array
           items:
