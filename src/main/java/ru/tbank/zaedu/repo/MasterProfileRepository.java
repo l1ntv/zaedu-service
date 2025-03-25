@@ -8,6 +8,7 @@ import ru.tbank.zaedu.models.MasterProfile;
 import ru.tbank.zaedu.models.Services;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface MasterProfileRepository extends JpaRepository<MasterProfile, Long> {
@@ -16,4 +17,6 @@ public interface MasterProfileRepository extends JpaRepository<MasterProfile, Lo
             "JOIN FETCH ms.services s " +
             "WHERE s.name = :category")
     List<MasterProfile> findByServiceCategory(@Param("category") String category);
+
+    Optional<MasterProfile> findMasterProfileByUser_Login(String login);
 }

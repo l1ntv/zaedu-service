@@ -31,6 +31,12 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(error);
     }
 
+    @ExceptionHandler(ConflictResourceException.class)
+    public ResponseEntity<ErrorResponseDTO> handleConflictResource(ConflictResourceException ex) {
+        ErrorResponseDTO error = new ErrorResponseDTO(ex.getMessage());
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
+    }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorResponseDTO> handleValidationExceptions(MethodArgumentNotValidException ex) {
         String errorMessage = ex.getBindingResult().getFieldErrors().stream()
