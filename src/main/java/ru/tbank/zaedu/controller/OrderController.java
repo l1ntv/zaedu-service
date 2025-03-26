@@ -27,7 +27,8 @@ public class OrderController extends EntityController<Order> {
         this.orderService = orderService;
     }
 
-    @GetMapping("/clients/orders")
+    // Отображение заказов клиента
+    @GetMapping("/clients/my-orders")
     public ResponseEntity<List<OrderDTO>> getClientOrders(Principal principal) {
         List<Order> orders = orderService.getClientOrders(principal.getName());
         return ResponseEntity.ok(serialize(orders, DTO_CLASS));
