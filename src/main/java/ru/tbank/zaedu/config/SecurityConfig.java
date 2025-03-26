@@ -29,7 +29,7 @@ public class SecurityConfig {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/**", "/clients/**").permitAll()
+                        .requestMatchers("/auth/**", "/clients/**", "/masters", "/masters/{id}").permitAll()
                         .requestMatchers("/swagger-ui/**", "/swagger-resources/*", "/api.zaedu.com/v1/**").permitAll()
                         .anyRequest().authenticated())
                 .sessionManagement(session -> session
