@@ -45,7 +45,7 @@ public class MasterProfile extends AbstractEntity {
     @JoinColumn(name = "master_id")
     private User user;
 
-    @OneToMany(mappedBy = "master")
+    @OneToMany(mappedBy = "master", cascade = CascadeType.ALL, orphanRemoval = true)
     @ToString.Exclude
     private List<MasterServiceEntity> services;
 
@@ -53,20 +53,24 @@ public class MasterProfile extends AbstractEntity {
     @ToString.Exclude
     private List<MasterFeedback> feedbacks;
 
-    @ManyToMany
-    @JoinTable(
-            name = "master_hoods",
-            joinColumns = @JoinColumn(name = "master_id"),
-            inverseJoinColumns = @JoinColumn(name = "hood_id")
-    )
+    @OneToMany(mappedBy = "master", cascade = CascadeType.ALL, orphanRemoval = true)
     @ToString.Exclude
-    private List<Hood> hoods = new ArrayList<>();
+    private List<MasterHoodsEntity> hoods = new ArrayList<>();
+
+    public void addHood(Hood hood) {
+        MasterHoodsEntity masterHood = MasterHoodsEntity.builder()
+                .master(this)
+                .hood(hood)
+                .build();
+        hoods.add(masterHood);
+        hood.getMasters().add(masterHood); // Если в Hood есть обратная связь
+    }
 
     @OneToMany(mappedBy = "master")
     @ToString.Exclude
     private List<Order> orders;
 
-    @OneToMany(mappedBy = "master")
+    @OneToMany(mappedBy = "master", cascade = CascadeType.ALL, orphanRemoval = true)
     @ToString.Exclude
     private List<MasterMainImage> mainImages;
 

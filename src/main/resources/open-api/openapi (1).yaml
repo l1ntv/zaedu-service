@@ -230,7 +230,7 @@ paths:
                 properties:
                   error: { type: string }
 
-  /masters/{id}/update:
+  /masters/update:
     put:
       tags:
         - Masters
@@ -394,6 +394,11 @@ components:
       type: object
       properties:
         description: { type: string }
+        personalPhoto:
+          type: string
+          format: uri
+          nullable: true
+          description: URL основного изображения профиля (необязательный параметр)
         photos:
           type: array
           items: { type: string, format: uri }
