@@ -28,13 +28,19 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(WrongDataException.class)
     public ResponseEntity<ErrorResponseDTO> handleWrongData(WrongDataException ex) {
         ErrorResponseDTO error = new ErrorResponseDTO(ex.getMessage());
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(error);
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(error);
     }
 
     @ExceptionHandler(ConflictResourceException.class)
     public ResponseEntity<ErrorResponseDTO> handleConflictResource(ConflictResourceException ex) {
         ErrorResponseDTO error = new ErrorResponseDTO(ex.getMessage());
         return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
+    }
+
+    @ExceptionHandler(LockedUserException.class)
+    public ResponseEntity<ErrorResponseDTO> handleLockedUser(ConflictResourceException ex) {
+        ErrorResponseDTO error = new ErrorResponseDTO(ex.getMessage());
+        return ResponseEntity.status(HttpStatus.LOCKED).body(error);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
