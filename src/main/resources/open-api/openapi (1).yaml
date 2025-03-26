@@ -124,7 +124,7 @@ paths:
                 properties:
                   error: { type: string }
 
-  /clients/orders:
+  /clients/my-orders:
     get:
       tags:
         - Clients
