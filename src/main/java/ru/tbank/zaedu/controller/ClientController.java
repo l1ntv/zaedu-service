@@ -1,43 +1,39 @@
 package ru.tbank.zaedu.controller;
 
-import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
+import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.server.ResponseStatusException;
-import ru.tbank.zaedu.DTO.ClientProfileDTO;
-import ru.tbank.zaedu.DTO.OrderDTO;
+import org.springframework.web.bind.annotation.*;
+import ru.tbank.zaedu.DTO.ClientProfileRequestDTO;
+import ru.tbank.zaedu.DTO.ClientProfileResponseDTO;
+import ru.tbank.zaedu.models.ClientProfile;
 import ru.tbank.zaedu.service.ClientService;
 
-import java.util.List;
+import java.security.Principal;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/clients")
-@RequiredArgsConstructor
-public class ClientController {
+public class ClientController extends EntityController<ClientProfile> {
 
     private final ClientService clientService;
 
-    // вместо clientId делаем Principal /my-profile
-    // /profile-for-other
-    @GetMapping("/{clientId}/main")
-    public ResponseEntity<?> getClientMainInfo(@PathVariable long clientId) {
-        ClientProfileDTO clientProfileDTO = clientService.getClientProfileById(clientId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+    private static final Class<ClientProfileResponseDTO> CLIENT_PROFILE_DTO_CLASS = ClientProfileResponseDTO.class;
 
-        return ResponseEntity.ok(clientProfileDTO);
+    public ClientController(ModelMapper modelMapper, ClientService clientService) {
+        super(modelMapper);
+        this.clientService = clientService;
     }
 
-    // вместо clientId делаем Principal /my-profile
-    // отсортировать заказы
-    @GetMapping("/{clientId}/orders")
-    public ResponseEntity<List<OrderDTO>> getClientOrders(@PathVariable long clientId) {
-        List<OrderDTO> orders = clientService.getClientOrders(clientId);
-        return ResponseEntity.ok(orders);
+    @GetMapping("/my-profile")
+    public ResponseEntity<?> getClientProfileInfo(Principal principal) {
+        ClientProfile clientProfile = clientService.getClientProfileByName(principal.getName());
+        return ResponseEntity.ok(serialize(clientProfile, CLIENT_PROFILE_DTO_CLASS));
     }
 
-    // сделать ручку для обновления профиля, использовать Principal
+    @PutMapping("/update")
+    private ResponseEntity<Optional<ClientProfileRequestDTO>> updateClientProfile(Principal principal,
+                                                                                  @RequestBody ClientProfileRequestDTO requestDTO) {
+        clientService.updateClientProfile(principal.getName(), requestDTO);
+        return ResponseEntity.ok().build();
+    }
 }
