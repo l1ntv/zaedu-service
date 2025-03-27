@@ -1,10 +1,10 @@
 package ru.tbank.zaedu.models;
 
+import static ru.tbank.zaedu.models.AbstractEntity.DEFAULT_GENERATOR;
+
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.Accessors;
-
-import static ru.tbank.zaedu.models.AbstractEntity.DEFAULT_GENERATOR;
 
 @Accessors(chain = true)
 @Entity

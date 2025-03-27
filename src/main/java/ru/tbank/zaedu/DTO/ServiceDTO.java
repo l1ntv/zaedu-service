@@ -17,9 +17,7 @@ public class ServiceDTO {
     private Long cost;
 
     @JsonCreator
-    public ServiceDTO(
-            @JsonProperty("serviceName") String serviceName,
-            @JsonProperty("cost") Long cost) {
+    public ServiceDTO(@JsonProperty("serviceName") String serviceName, @JsonProperty("cost") Long cost) {
         this.serviceName = serviceName;
         this.cost = cost;
     }

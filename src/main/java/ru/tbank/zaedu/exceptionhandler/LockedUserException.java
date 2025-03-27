@@ -10,5 +10,4 @@ public class LockedUserException extends RuntimeException {
     public String getMessage() {
         return super.getMessage();
     }
-
 }
