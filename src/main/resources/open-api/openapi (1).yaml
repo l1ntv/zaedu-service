@@ -230,6 +230,23 @@ paths:
                 properties:
                   error: { type: string }
 
+  /masters/my-public-profile:
+    get:
+      tags:
+        - Masters
+      summary: Получение публичного профиля мастера
+      security:
+        - bearerAuth: [ ]
+      responses:
+        '200':
+          description: Профиль успешно получен
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MasterProfile'
+        '404':
+          description: Профиль мастера не найден
+
   /masters/update:
     put:
       tags:

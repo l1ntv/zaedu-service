@@ -6,7 +6,13 @@ import org.modelmapper.Converter;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 import ru.tbank.zaedu.DTO.MasterProfileDTO;
-import ru.tbank.zaedu.models.MasterProfile;
+import ru.tbank.zaedu.DTO.MasterProfileForMeDTO;
+import ru.tbank.zaedu.DTO.ServiceDTO;
+import ru.tbank.zaedu.models.*;
+
+import java.util.Collections;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
@@ -19,6 +25,8 @@ public class MasterProfileConverter {
         modelMapper
                 .createTypeMap(MasterProfile.class, MasterProfileDTO.class)
                 .setPostConverter(getConverter());
+        modelMapper
+                .createTypeMap(MasterProfile.class, MasterProfileForMeDTO.class);
     }
 
     Converter<MasterProfile, MasterProfileDTO> getConverter() {
@@ -29,6 +37,37 @@ public class MasterProfileConverter {
             destination.setOnlineStatus(source.getIsOnline());
             destination.setPassportVerified(source.getIsConfirmedPassport());
             destination.setContractWork(source.getIsWorkingWithContract());
+
+            // Расчет рейтинга
+            double averageRating = Optional.ofNullable(source.getFeedbacks())
+                    .orElse(Collections.emptyList()).stream()
+                    .mapToInt(MasterFeedback::getEvaluation)
+                    .average()
+                    .orElse(0.0);
+            destination.setAverageRating(averageRating);
+            destination.setRatingCount(source.getFeedbacks().size());
+
+            // Преобразование связей
+            destination.setServices(source.getServices().stream()
+                    .filter(ms -> ms.getServices() != null) // Исключаем null-значения
+                    .map(ms -> new ServiceDTO(
+                            ms.getServices().getId(),
+                            ms.getServices().getName(),
+                            ms.getPrice()))
+                    .collect(Collectors.toList()));
+
+            destination.setDistricts(source.getHoods().stream()
+                    .map(MasterHoodsEntity::getHood) // Получаем объект Hood из MasterHoodsEntity
+                    .map(Hood::getName)             // Получаем имя района
+                    .collect(Collectors.toList()));
+
+            destination.setPhotos(source.getPortfolioImages().stream()
+                    .map(MasterPortfolioImage::getUrl)
+                    .collect(Collectors.toList()));
+
+            if (source.getMainImages() != null && !source.getMainImages().isEmpty()) {
+                destination.setPersonalPhoto(source.getMainImages().get(0).getUrl());
+            }
 
             return destination;
         };
