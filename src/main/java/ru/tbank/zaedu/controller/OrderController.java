@@ -1,18 +1,17 @@
 package ru.tbank.zaedu.controller;
 
+import java.security.Principal;
+import java.util.List;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.tbank.zaedu.DTO.ClientsOrdersResponse;
 import ru.tbank.zaedu.DTO.CreatedOrderRequest;
 import ru.tbank.zaedu.DTO.EnumServicesResponse;
-import ru.tbank.zaedu.enums.ServicesEnum;
 import ru.tbank.zaedu.DTO.OrderDTO;
+import ru.tbank.zaedu.enums.ServicesEnum;
 import ru.tbank.zaedu.models.Order;
 import ru.tbank.zaedu.service.OrderService;
-
-import java.security.Principal;
-import java.util.List;
 
 @RestController
 @RequestMapping
@@ -52,18 +51,15 @@ public class OrderController extends EntityController<Order> {
 
     @GetMapping("/get-services")
     public ResponseEntity<EnumServicesResponse> getEnumServices() {
-        return ResponseEntity
-                .ok(new EnumServicesResponse(
-                        List.of(
-                                ServicesEnum.DECORATOR.toString(),
-                                ServicesEnum.SOUND_ENGINEER.toString(),
-                                ServicesEnum.LIGHT_ENGINEER.toString(),
-                                ServicesEnum.PHOTOGRAPHER.toString(),
-                                ServicesEnum.VIDEOGRAPHER.toString(),
-                                ServicesEnum.CHEF.toString(),
-                                ServicesEnum.WAITER.toString(),
-                                ServicesEnum.HOST.toString()
-                        )));
+        return ResponseEntity.ok(new EnumServicesResponse(List.of(
+                ServicesEnum.DECORATOR.toString(),
+                ServicesEnum.SOUND_ENGINEER.toString(),
+                ServicesEnum.LIGHT_ENGINEER.toString(),
+                ServicesEnum.PHOTOGRAPHER.toString(),
+                ServicesEnum.VIDEOGRAPHER.toString(),
+                ServicesEnum.CHEF.toString(),
+                ServicesEnum.WAITER.toString(),
+                ServicesEnum.HOST.toString())));
     }
 
     @PostMapping("/create-order")
@@ -81,11 +77,10 @@ public class OrderController extends EntityController<Order> {
     }
 
     @PostMapping("/{masterId}/offer-order")
-    public ResponseEntity<Void> offerOrder(@PathVariable Long masterId, @RequestBody CreatedOrderRequest request,
-                                           Principal principal) {
+    public ResponseEntity<Void> offerOrder(
+            @PathVariable Long masterId, @RequestBody CreatedOrderRequest request, Principal principal) {
         String clientLogin = principal.getName();
         orderService.offerOrder(masterId, request, clientLogin);
         return ResponseEntity.ok().build();
     }
 }
-

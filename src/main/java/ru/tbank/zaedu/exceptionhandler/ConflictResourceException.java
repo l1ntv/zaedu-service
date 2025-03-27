@@ -10,5 +10,4 @@ public class ConflictResourceException extends RuntimeException {
     public String getMessage() {
         return super.getMessage();
     }
-
 }

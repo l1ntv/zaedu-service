@@ -1,10 +1,9 @@
 package ru.tbank.zaedu.controller;
 
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import ru.tbank.zaedu.models.AbstractEntity;
-
-import java.util.List;
 
 @RequiredArgsConstructor
 public class EntityController<E extends AbstractEntity> {

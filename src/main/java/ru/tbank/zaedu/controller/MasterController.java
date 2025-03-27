@@ -1,7 +1,6 @@
 package ru.tbank.zaedu.controller;
 
-import lombok.RequiredArgsConstructor;
-
+import java.security.Principal;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -9,11 +8,8 @@ import ru.tbank.zaedu.DTO.MasterProfileDTO;
 import ru.tbank.zaedu.DTO.MasterProfileForMeDTO;
 import ru.tbank.zaedu.DTO.MasterUpdateRequestDTO;
 import ru.tbank.zaedu.DTO.MastersListResponseDTO;
-import ru.tbank.zaedu.models.ClientProfile;
 import ru.tbank.zaedu.models.MasterProfile;
 import ru.tbank.zaedu.service.MasterService;
-
-import java.security.Principal;
 
 @RestController
 @RequestMapping("/masters")
@@ -30,8 +26,7 @@ public class MasterController extends EntityController<MasterProfile> {
     }
 
     @GetMapping
-    public ResponseEntity<MastersListResponseDTO> searchMastersByCategory(
-            @RequestParam String category) {
+    public ResponseEntity<MastersListResponseDTO> searchMastersByCategory(@RequestParam String category) {
         MastersListResponseDTO response = masterService.searchMastersByCategory(category);
         return ResponseEntity.ok(response);
     }
@@ -41,7 +36,6 @@ public class MasterController extends EntityController<MasterProfile> {
         MasterProfileDTO profile = masterService.getMasterProfile(id);
         return ResponseEntity.ok(profile);
     }
-
 
     @GetMapping("/my-public-profile")
     public ResponseEntity<?> getMyPublicProfile(Principal principal) {
@@ -57,8 +51,7 @@ public class MasterController extends EntityController<MasterProfile> {
 
     @PutMapping("/update") // Разделить эту ручку на 2: updateMasterProfileForMe и updateMasterProfileForOther
     public ResponseEntity<Void> updateMasterProfileForMe(
-            Principal principal,
-            @RequestBody MasterUpdateRequestDTO request) {
+            Principal principal, @RequestBody MasterUpdateRequestDTO request) {
         masterService.updateMasterProfile(principal, request);
         return ResponseEntity.ok().build();
     }

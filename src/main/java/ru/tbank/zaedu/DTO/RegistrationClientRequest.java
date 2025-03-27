@@ -14,5 +14,4 @@ public class RegistrationClientRequest {
     private String login;
 
     private String password;
-
 }

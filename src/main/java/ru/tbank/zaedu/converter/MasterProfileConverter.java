@@ -1,6 +1,9 @@
 package ru.tbank.zaedu.converter;
 
 import jakarta.annotation.PostConstruct;
+import java.util.Collections;
+import java.util.Optional;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.Converter;
 import org.modelmapper.ModelMapper;
@@ -10,10 +13,6 @@ import ru.tbank.zaedu.DTO.MasterProfileForMeDTO;
 import ru.tbank.zaedu.DTO.ServiceDTO;
 import ru.tbank.zaedu.models.*;
 
-import java.util.Collections;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
 @Component
 @RequiredArgsConstructor
 public class MasterProfileConverter {
@@ -22,11 +21,8 @@ public class MasterProfileConverter {
 
     @PostConstruct
     public void register() {
-        modelMapper
-                .createTypeMap(MasterProfile.class, MasterProfileDTO.class)
-                .setPostConverter(getConverter());
-        modelMapper
-                .createTypeMap(MasterProfile.class, MasterProfileForMeDTO.class);
+        modelMapper.createTypeMap(MasterProfile.class, MasterProfileDTO.class).setPostConverter(getConverter());
+        modelMapper.createTypeMap(MasterProfile.class, MasterProfileForMeDTO.class);
     }
 
     Converter<MasterProfile, MasterProfileDTO> getConverter() {
@@ -39,8 +35,7 @@ public class MasterProfileConverter {
             destination.setContractWork(source.getIsWorkingWithContract());
 
             // Расчет рейтинга
-            double averageRating = Optional.ofNullable(source.getFeedbacks())
-                    .orElse(Collections.emptyList()).stream()
+            double averageRating = Optional.ofNullable(source.getFeedbacks()).orElse(Collections.emptyList()).stream()
                     .mapToInt(MasterFeedback::getEvaluation)
                     .average()
                     .orElse(0.0);
@@ -51,14 +46,12 @@ public class MasterProfileConverter {
             destination.setServices(source.getServices().stream()
                     .filter(ms -> ms.getServices() != null) // Исключаем null-значения
                     .map(ms -> new ServiceDTO(
-                            ms.getServices().getId(),
-                            ms.getServices().getName(),
-                            ms.getPrice()))
+                            ms.getServices().getId(), ms.getServices().getName(), ms.getPrice()))
                     .collect(Collectors.toList()));
 
             destination.setDistricts(source.getHoods().stream()
                     .map(MasterHoodsEntity::getHood) // Получаем объект Hood из MasterHoodsEntity
-                    .map(Hood::getName)             // Получаем имя района
+                    .map(Hood::getName) // Получаем имя района
                     .collect(Collectors.toList()));
 
             destination.setPhotos(source.getPortfolioImages().stream()
