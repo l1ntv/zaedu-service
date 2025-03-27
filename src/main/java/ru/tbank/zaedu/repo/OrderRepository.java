@@ -8,6 +8,7 @@ import ru.tbank.zaedu.models.OrderStatus;
 
 public interface OrderRepository extends JpaRepository<Order, Long> {
     List<Order> findByClientId(long clientId);
+    List<Order> findByMasterId(Long masterId);
 
     List<Order> findByStatus(OrderStatus orderStatus);
 

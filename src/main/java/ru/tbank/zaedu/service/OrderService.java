@@ -18,4 +18,6 @@ public interface OrderService {
     void offerOrder(Long masterId, CreatedOrderRequest request, String clientLogin);
 
     List<Order> getClientOrders(String name);
+
+    List<Order> getMasterOrders(String name);
 }
