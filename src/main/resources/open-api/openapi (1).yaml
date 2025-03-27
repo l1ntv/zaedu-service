@@ -264,7 +264,7 @@ paths:
         '404':
           description: Профиль мастера не найден
 
-  /masters/update:
+  /masters/update-public-profile:
     put:
       tags:
         - Masters
@@ -297,8 +297,31 @@ paths:
                 properties:
                   error: { type: string }
 
-    /orders:
-      get:
+  /masters/update-private-profile:
+    put:
+      tags:
+        - Masters
+      summary: Обновление приватного профиля мастера
+      security:
+        - bearerAuth: [ ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MasterPrivateProfileUpdateRequestDTO'
+      responses:
+        '200':
+          description: Профиль успешно обновлен
+        '400':
+          description: Некорректные данные в запросе
+        '403':
+          description: Необходима авторизация
+        '404':
+          description: Профиль мастера не найден
+
+  /orders:
+    get:
       tags:
         - Orders
       summary: Выставленные заказы клиентами
@@ -314,6 +337,26 @@ paths:
           content: {}
 
 
+  /masters/my-orders:
+    get:
+      tags:
+        - Masters
+      summary: Получение списка заказов мастера
+      security:
+        - bearerAuth: [ ]
+      responses:
+        '200':
+          description: Список заказов успешно получен
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/OrderMasterDTO'
+        '401':
+          description: Необходима авторизация
+        '404':
+          description: Заказы мастера не найдены
 
 components:
   schemas:
@@ -424,6 +467,38 @@ components:
         rating: { type: integer }
         date: { type: string, format: date }
 
+    MasterPrivateProfileUpdateRequestDTO:
+      type: object
+      properties:
+        surname:
+          type: string
+          description: Фамилия мастера
+        name:
+          type: string
+          description: Имя мастера
+        patronymic:
+          type: string
+          description: Отчество мастера
+        email:
+          type: string
+          format: email
+          description: Email мастера
+        telephoneNumber:
+          type: string
+          description: Номер телефона мастера
+        isCompany:
+          type: boolean
+          description: Является ли мастер компанией
+        isConfirmedPassport:
+          type: boolean
+          description: Подтвержден ли паспорт мастера
+        passportSeries:
+          type: string
+          description: Серия паспорта мастера
+        passportNumber:
+          type: string
+          description: Номер паспорта мастера
+
     MasterUpdateRequest:
       type: object
       properties:
@@ -477,6 +552,33 @@ components:
         passportNumber:
           type: string
           description: Номер паспорта мастера
+
+    OrderMasterDTO:
+      type: object
+      properties:
+        serviceType:
+          type: string
+          description: Тип услуги
+        description:
+          type: string
+          description: Описание заказа
+        address:
+          type: string
+          description: Адрес выполнения заказа
+        price:
+          type: integer
+          description: Цена заказа
+        dateFrom:
+          type: string
+          format: date
+          description: Дата начала выполнения заказа
+        dateTo:
+          type: string
+          format: date
+          description: Дата окончания выполнения заказа
+        phoneClient:
+          type: string
+          description: Номер телефона клиента
 
     ClientsOrdersResponse:
       type: object

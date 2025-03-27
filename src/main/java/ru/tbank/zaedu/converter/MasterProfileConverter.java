@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.modelmapper.Converter;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
+import ru.tbank.zaedu.DTO.MasterPrivateProfileUpdateRequestDTO;
 import ru.tbank.zaedu.DTO.MasterProfileDTO;
 import ru.tbank.zaedu.DTO.MasterProfileForMeDTO;
 import ru.tbank.zaedu.DTO.ServiceDTO;
@@ -23,6 +24,7 @@ public class MasterProfileConverter {
     public void register() {
         modelMapper.createTypeMap(MasterProfile.class, MasterProfileDTO.class).setPostConverter(getConverter());
         modelMapper.createTypeMap(MasterProfile.class, MasterProfileForMeDTO.class);
+        modelMapper.createTypeMap(MasterPrivateProfileUpdateRequestDTO.class, MasterProfile.class);
     }
 
     Converter<MasterProfile, MasterProfileDTO> getConverter() {
