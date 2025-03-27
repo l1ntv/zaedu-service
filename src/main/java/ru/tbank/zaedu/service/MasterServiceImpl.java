@@ -118,6 +118,28 @@ public class MasterServiceImpl implements MasterService {
         masterProfileRepository.save(master);
     }
 
+    @Override
+    @Transactional
+    public void updatePrivateProfile(Principal principal, MasterPrivateProfileUpdateRequestDTO request) {
+        String masterLogin = principal.getName();
+        MasterProfile master = masterProfileRepository
+                .findByUser_Login(masterLogin)
+                .orElseThrow(() -> new ResourceNotFoundException("Master not found for login: " + masterLogin));
+
+        // Обновление полей приватного профиля
+        master.setSurname(request.getSurname());
+        master.setName(request.getName());
+        master.setPatronymic(request.getPatronymic());
+        master.setEmail(request.getEmail());
+        master.setTelephoneNumber(request.getTelephoneNumber());
+        master.setIsCompany(request.getIsCompany());
+        master.setIsConfirmedPassport(request.getIsConfirmedPassport());
+        master.setPassportSeries(request.getPassportSeries());
+        master.setPassportNumber(request.getPassportNumber());
+
+        masterProfileRepository.save(master);
+    }
+
     private MasterProfileDTO convertToDTO(MasterProfile master) {
 
         MasterProfileDTO dto = modelMapper.map(master, MasterProfileDTO.class);

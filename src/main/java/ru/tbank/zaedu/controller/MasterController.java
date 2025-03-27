@@ -4,10 +4,7 @@ import java.security.Principal;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.tbank.zaedu.DTO.MasterProfileDTO;
-import ru.tbank.zaedu.DTO.MasterProfileForMeDTO;
-import ru.tbank.zaedu.DTO.MasterUpdateRequestDTO;
-import ru.tbank.zaedu.DTO.MastersListResponseDTO;
+import ru.tbank.zaedu.DTO.*;
 import ru.tbank.zaedu.models.MasterProfile;
 import ru.tbank.zaedu.service.MasterService;
 
@@ -49,13 +46,17 @@ public class MasterController extends EntityController<MasterProfile> {
         return ResponseEntity.ok(serialize(masterProfile, MASTER_PROFILE_FOR_ME_DTO_CLASS));
     }
 
-    @PutMapping("/update") // Разделить эту ручку на 2: updateMasterProfileForMe и updateMasterProfileForOther
+    @PutMapping("/update-public-profile")
     public ResponseEntity<Void> updateMasterProfileForMe(
             Principal principal, @RequestBody MasterUpdateRequestDTO request) {
         masterService.updateMasterProfile(principal, request);
         return ResponseEntity.ok().build();
     }
 
-    // Сделать ручку для просмотра своих заказов, возвращать отсортированный список заказов по status
-    // вытаскивать данные по Principal
+    @PutMapping("/update-private-profile")
+    public ResponseEntity<Void> updateMasterProfileForMe(
+            Principal principal, @RequestBody MasterPrivateProfileUpdateRequestDTO request) {
+        masterService.updatePrivateProfile(principal, request);
+        return ResponseEntity.ok().build();
+    }
 }

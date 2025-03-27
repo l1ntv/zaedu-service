@@ -1,6 +1,7 @@
 package ru.tbank.zaedu.service;
 
 import java.security.Principal;
+import ru.tbank.zaedu.DTO.MasterPrivateProfileUpdateRequestDTO;
 import ru.tbank.zaedu.DTO.MasterProfileDTO;
 import ru.tbank.zaedu.DTO.MasterUpdateRequestDTO;
 import ru.tbank.zaedu.DTO.MastersListResponseDTO;
@@ -12,6 +13,8 @@ public interface MasterService {
     MasterProfileDTO getMasterProfile(Long masterId);
 
     void updateMasterProfile(Principal principal, MasterUpdateRequestDTO request);
+
+    void updatePrivateProfile(Principal principal, MasterPrivateProfileUpdateRequestDTO request);
 
     MasterProfile getMyPublicProfile(Principal principal);
 
