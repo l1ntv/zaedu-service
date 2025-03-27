@@ -135,39 +135,4 @@ public class MasterServiceImpl implements MasterService {
 
         masterProfileRepository.save(master);
     }
-
-    private MasterProfileDTO convertToDTO(MasterProfile master) {
-
-        MasterProfileDTO dto = modelMapper.map(master, MasterProfileDTO.class);
-
-        // Расчет рейтинга
-        double averageRating = Optional.ofNullable(master.getFeedbacks()).orElse(Collections.emptyList()).stream()
-                .mapToInt(MasterFeedback::getEvaluation)
-                .average()
-                .orElse(0.0);
-        dto.setAverageRating(averageRating);
-        dto.setRatingCount(master.getFeedbacks().size());
-
-        // Преобразование связей
-        dto.setServices(master.getServices().stream()
-                .filter(ms -> ms.getServices() != null) // Исключаем null-значения
-                .map(ms -> new ServiceDTO(
-                        ms.getServices().getId(), ms.getServices().getName(), ms.getPrice()))
-                .collect(Collectors.toList()));
-
-        dto.setDistricts(master.getHoods().stream()
-                .map(MasterHoodsEntity::getHood) // Получаем объект Hood из MasterHoodsEntity
-                .map(Hood::getName) // Получаем имя района
-                .collect(Collectors.toList()));
-
-        dto.setPhotos(master.getPortfolioImages().stream()
-                .map(MasterPortfolioImage::getUrl)
-                .collect(Collectors.toList()));
-
-        if (master.getMainImages() != null && !master.getMainImages().isEmpty()) {
-            dto.setPersonalPhoto(master.getMainImages().get(0).getUrl());
-        }
-
-        return dto;
-    }
 }
