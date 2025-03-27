@@ -26,19 +26,15 @@ public class MasterServiceImpl implements MasterService {
     private final ModelMapper modelMapper; // Добавьте ModelMapper
 
     @Override
-    public MastersListResponseDTO searchMastersByCategory(String category) {
-        List<MasterProfile> masters = masterProfileRepository.findByServiceCategory(category);
-        List<MasterProfileDTO> dtos = masters.stream().map(this::convertToDTO).collect(Collectors.toList());
-
-        return new MastersListResponseDTO(dtos, null, null);
+    public List<MasterProfile> searchMastersByCategory(String category) {
+        return masterProfileRepository.findByServiceCategory(category);
     }
 
     @Override
-    public MasterProfileDTO getMasterProfile(Long masterId) {
-        MasterProfile master = masterProfileRepository
+    public MasterProfile getMasterProfile(Long masterId) {
+        return masterProfileRepository
                 .findById(masterId)
                 .orElseThrow(() -> new ResourceNotFoundException("Master not found"));
-        return convertToDTO(master);
     }
 
     @Override

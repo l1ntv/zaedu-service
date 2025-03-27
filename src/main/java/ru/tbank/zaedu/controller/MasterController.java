@@ -1,6 +1,7 @@
 package ru.tbank.zaedu.controller;
 
 import java.security.Principal;
+import java.util.List;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,6 +15,7 @@ public class MasterController extends EntityController<MasterProfile> {
 
     private final MasterService masterService;
 
+    private static final Class<MastersListResponseDTO> MASTERS_LIST_RESPONSE_DTO_CLASS = MastersListResponseDTO.class;
     private static final Class<MasterProfileForMeDTO> MASTER_PROFILE_FOR_ME_DTO_CLASS = MasterProfileForMeDTO.class;
     private static final Class<MasterProfileDTO> MASTER_PROFILE_DTO_CLASS = MasterProfileDTO.class;
 
@@ -24,14 +26,15 @@ public class MasterController extends EntityController<MasterProfile> {
 
     @GetMapping
     public ResponseEntity<MastersListResponseDTO> searchMastersByCategory(@RequestParam String category) {
-        MastersListResponseDTO response = masterService.searchMastersByCategory(category);
-        return ResponseEntity.ok(response);
+        List<MasterProfile> masters = masterService.searchMastersByCategory(category);
+        List<MasterProfileDTO> dtos = serialize(masters, MASTER_PROFILE_DTO_CLASS);
+        return ResponseEntity.ok(new MastersListResponseDTO(dtos, null, null));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<MasterProfileDTO> getMasterProfile(Principal principal, @PathVariable Long id) {
-        MasterProfileDTO profile = masterService.getMasterProfile(id);
-        return ResponseEntity.ok(profile);
+    public ResponseEntity<MasterProfileDTO> getMasterProfile(@PathVariable Long id) {
+        MasterProfile master = masterService.getMasterProfile(id);
+        return ResponseEntity.ok(serialize(master, MASTER_PROFILE_DTO_CLASS));
     }
 
     @GetMapping("/my-public-profile")
