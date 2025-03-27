@@ -230,6 +230,40 @@ paths:
                 properties:
                   error: { type: string }
 
+  /masters/my-public-profile:
+    get:
+      tags:
+        - Masters
+      summary: Получение публичного профиля мастера
+      security:
+        - bearerAuth: [ ]
+      responses:
+        '200':
+          description: Профиль успешно получен
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MasterProfile'
+        '404':
+          description: Профиль мастера не найден
+
+  /masters/my-private-profile:
+    get:
+      tags:
+        - Masters
+      summary: Получение приватного профиля мастера
+      security:
+        - bearerAuth: [ ]
+      responses:
+        '200':
+          description: Профиль успешно получен
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MasterProfileForMeDTO'
+        '404':
+          description: Профиль мастера не найден
+
   /masters/update:
     put:
       tags:
@@ -410,6 +444,39 @@ components:
           type: array
           items:
             type: string
+
+
+    MasterProfileForMeDTO:
+      type: object
+      properties:
+        surname:
+          type: string
+          description: Фамилия мастера
+        name:
+          type: string
+          description: Имя мастера
+        patronymic:
+          type: string
+          description: Отчество мастера
+        email:
+          type: string
+          format: email
+          description: Email мастера
+        telephoneNumber:
+          type: string
+          description: Номер телефона мастера
+        isCompany:
+          type: boolean
+          description: Является ли мастер компанией
+        isConfirmedPassport:
+          type: boolean
+          description: Подтвержден ли паспорт мастера
+        passportSeries:
+          type: string
+          description: Серия паспорта мастера
+        passportNumber:
+          type: string
+          description: Номер паспорта мастера
 
     ClientsOrdersResponse:
       type: object

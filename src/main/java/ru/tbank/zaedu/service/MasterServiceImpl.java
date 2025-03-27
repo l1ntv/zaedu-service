@@ -3,12 +3,9 @@ package ru.tbank.zaedu.service;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
-import ru.tbank.zaedu.DTO.ServiceDTO;
+import ru.tbank.zaedu.DTO.*;
 import ru.tbank.zaedu.models.*;
 import org.springframework.stereotype.Service;
-import ru.tbank.zaedu.DTO.MasterProfileDTO;
-import ru.tbank.zaedu.DTO.MasterUpdateRequestDTO;
-import ru.tbank.zaedu.DTO.MastersListResponseDTO;
 import ru.tbank.zaedu.exceptionhandler.ResourceNotFoundException;
 import ru.tbank.zaedu.repo.HoodRepository;
 import ru.tbank.zaedu.repo.MasterProfileRepository;
@@ -45,6 +42,21 @@ public class MasterServiceImpl implements MasterService {
                 .orElseThrow(() -> new ResourceNotFoundException("Master not found"));
         return convertToDTO(master);
     }
+
+    @Override
+    public MasterProfile getMyPublicProfile(Principal principal) {
+        String masterLogin = principal.getName();
+        return masterProfileRepository.findByUser_Login(masterLogin)
+                .orElseThrow(() -> new ResourceNotFoundException("Master not found for login: " + masterLogin));
+    }
+
+    @Override
+    public MasterProfile getMyPrivateProfile(Principal principal) {
+        String masterLogin = principal.getName();
+        return masterProfileRepository.findByUser_Login(masterLogin)
+                .orElseThrow(() -> new ResourceNotFoundException("Master not found for login: " + masterLogin));
+    }
+
 
     @Override
     @Transactional
