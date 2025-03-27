@@ -193,4 +193,20 @@ public class OrderServiceImpl implements OrderService {
 
         return orders;
     }
+
+    @Override
+    public List<Order> getMasterOrders(String name) {
+        Optional<User> user = userRepository.findByLogin(name);
+        List<Order> orders = orderRepository.findByMasterId(user.get().getId());
+
+        Map<String, Integer> statusOrder = Map.of(
+                "IN_PROGRESS", 1,
+                "PENDING", 2,
+                "COMPLETED", 3);
+
+        orders.sort(Comparator.comparingInt(
+                order -> statusOrder.getOrDefault(order.getStatus().getName(), Integer.MAX_VALUE)));
+
+        return orders;
+    }
 }

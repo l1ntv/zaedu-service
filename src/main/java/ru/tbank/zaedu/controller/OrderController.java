@@ -5,10 +5,7 @@ import java.util.List;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.tbank.zaedu.DTO.ClientsOrdersResponse;
-import ru.tbank.zaedu.DTO.CreatedOrderRequest;
-import ru.tbank.zaedu.DTO.EnumServicesResponse;
-import ru.tbank.zaedu.DTO.OrderDTO;
+import ru.tbank.zaedu.DTO.*;
 import ru.tbank.zaedu.enums.ServicesEnum;
 import ru.tbank.zaedu.models.Order;
 import ru.tbank.zaedu.service.OrderService;
@@ -17,7 +14,8 @@ import ru.tbank.zaedu.service.OrderService;
 @RequestMapping
 public class OrderController extends EntityController<Order> {
 
-    private static final Class<OrderDTO> DTO_CLASS = OrderDTO.class;
+    private static final Class<OrderClientDTO> ORDER_CLIENT_DTO_CLASS = OrderClientDTO.class;
+    private static final Class<OrderMasterDTO> ORDER_MASTER_DTO_CLASS = OrderMasterDTO.class;
 
     private final OrderService orderService;
 
@@ -28,9 +26,15 @@ public class OrderController extends EntityController<Order> {
 
     // Отображение заказов клиента
     @GetMapping("/clients/my-orders")
-    public ResponseEntity<List<OrderDTO>> getClientOrders(Principal principal) {
+    public ResponseEntity<List<OrderClientDTO>> getClientOrders(Principal principal) {
         List<Order> orders = orderService.getClientOrders(principal.getName());
-        return ResponseEntity.ok(serialize(orders, DTO_CLASS));
+        return ResponseEntity.ok(serialize(orders, ORDER_CLIENT_DTO_CLASS));
+    }
+
+    @GetMapping("/masters/my-orders")
+    public ResponseEntity<List<OrderMasterDTO>> getMasterOrders(Principal principal) {
+        List<Order> orders = orderService.getMasterOrders(principal.getName());
+        return ResponseEntity.ok(serialize(orders, ORDER_MASTER_DTO_CLASS));
     }
 
     // Отображение исполнителю выставленных клиентами заказов
