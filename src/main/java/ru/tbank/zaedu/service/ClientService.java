@@ -29,6 +29,10 @@ public class ClientService {
         return clientProfileOptional.get();
     }
 
+    public Optional<ClientProfile> getClientProfileById(long clientId) {
+        return clientProfileRepository.findById(clientId);
+    }
+
     public void updateClientProfile(String name, ClientProfileRequestDTO requestDTO) {
         Optional<User> user = userRepository.findByLogin(name);
         ClientProfile clientProfile =
