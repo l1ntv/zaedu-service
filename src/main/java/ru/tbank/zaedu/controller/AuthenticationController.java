@@ -21,23 +21,17 @@ public class AuthenticationController {
     private final AuthenticationService authenticationService;
 
     @PostMapping("/register/client")
-    public ResponseEntity<AuthenticationResponse> registerClient(
-            @RequestBody RegistrationClientRequest request
-    ) {
+    public ResponseEntity<AuthenticationResponse> registerClient(@RequestBody RegistrationClientRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(authenticationService.registerClient(request));
     }
 
     @PostMapping("/register/master")
-    public ResponseEntity<AuthenticationResponse> registerMaster(
-            @RequestBody RegistrationMasterRequest request
-    ) {
+    public ResponseEntity<AuthenticationResponse> registerMaster(@RequestBody RegistrationMasterRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(authenticationService.registerMaster(request));
     }
 
     @PostMapping("/login")
-    public ResponseEntity<AuthenticationResponse> authenticate(
-            @RequestBody AuthenticationRequest request
-    ) {
+    public ResponseEntity<AuthenticationResponse> authenticate(@RequestBody AuthenticationRequest request) {
         return ResponseEntity.ok(authenticationService.authenticate(request));
     }
 }

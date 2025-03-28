@@ -12,5 +12,4 @@ public interface AuthenticationService {
     AuthenticationResponse registerMaster(RegistrationMasterRequest request);
 
     AuthenticationResponse authenticate(AuthenticationRequest request);
-
 }

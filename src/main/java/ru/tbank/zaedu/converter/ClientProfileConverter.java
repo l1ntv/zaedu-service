@@ -1,6 +1,7 @@
 package ru.tbank.zaedu.converter;
 
 import jakarta.annotation.PostConstruct;
+import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.Converter;
 import org.modelmapper.ModelMapper;
@@ -10,8 +11,6 @@ import ru.tbank.zaedu.DTO.ClientProfileResponseDTO;
 import ru.tbank.zaedu.models.City;
 import ru.tbank.zaedu.models.ClientProfile;
 import ru.tbank.zaedu.repo.CityRepository;
-
-import java.util.Objects;
 
 @Component
 @RequiredArgsConstructor
@@ -39,7 +38,8 @@ public class ClientProfileConverter {
             var destination = it.getDestination();
 
             if (source.getCity() != null) {
-                City city = cityRepository.findByName(source.getCity())
+                City city = cityRepository
+                        .findByName(source.getCity())
                         .orElseThrow(() -> new RuntimeException("Город не найден"));
                 destination.setCity(city);
             }

@@ -1,54 +1,65 @@
 package ru.tbank.zaedu.controller;
 
-import lombok.RequiredArgsConstructor;
-
+import java.security.Principal;
+import java.util.List;
+import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.tbank.zaedu.DTO.MasterProfileDTO;
-import ru.tbank.zaedu.DTO.MasterUpdateRequestDTO;
-import ru.tbank.zaedu.DTO.MastersListResponseDTO;
+import ru.tbank.zaedu.DTO.*;
+import ru.tbank.zaedu.models.MasterProfile;
 import ru.tbank.zaedu.service.MasterService;
-
-import java.security.Principal;
 
 @RestController
 @RequestMapping("/masters")
-public class MasterController {
+public class MasterController extends EntityController<MasterProfile> {
 
     private final MasterService masterService;
 
-    public MasterController(MasterService masterService) {
+    private static final Class<MastersListResponseDTO> MASTERS_LIST_RESPONSE_DTO_CLASS = MastersListResponseDTO.class;
+    private static final Class<MasterProfileForMeDTO> MASTER_PROFILE_FOR_ME_DTO_CLASS = MasterProfileForMeDTO.class;
+    private static final Class<MasterProfileDTO> MASTER_PROFILE_DTO_CLASS = MasterProfileDTO.class;
+
+    public MasterController(ModelMapper modelMapper, MasterService masterService) {
+        super(modelMapper);
         this.masterService = masterService;
     }
 
     @GetMapping
-    public ResponseEntity<MastersListResponseDTO> searchMastersByCategory(
-            @RequestParam String category) {
-        MastersListResponseDTO response = masterService.searchMastersByCategory(category);
-        return ResponseEntity.ok(response);
+    public ResponseEntity<MastersListResponseDTO> searchMastersByCategory(@RequestParam String category) {
+        List<MasterProfile> masters = masterService.searchMastersByCategory(category);
+        List<MasterProfileDTO> dtos = serialize(masters, MASTER_PROFILE_DTO_CLASS);
+        return ResponseEntity.ok(new MastersListResponseDTO(dtos, null, null));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<MasterProfileDTO> getMasterProfile(Principal principal, @PathVariable Long id) {
-        MasterProfileDTO profile = masterService.getMasterProfile(id);
-        return ResponseEntity.ok(profile);
+    public ResponseEntity<MasterProfileDTO> getMasterProfile(@PathVariable Long id) {
+        MasterProfile master = masterService.getMasterProfile(id);
+        return ResponseEntity.ok(serialize(master, MASTER_PROFILE_DTO_CLASS));
     }
 
-    // Сделать ручку для просмотра своего профиля for other от лица мастера
-    // public ResponseEntity<MasterProfileDTO> getMasterProfileForOther(Principal principal) {
+    @GetMapping("/my-public-profile")
+    public ResponseEntity<?> getMyPublicProfile(Principal principal) {
+        MasterProfile masterProfile = masterService.getMyPublicProfile(principal);
+        return ResponseEntity.ok(serialize(masterProfile, MASTER_PROFILE_DTO_CLASS));
+    }
 
-    // Сделать ручку для просмотра своего профиля for me от лица мастера
-    // public ResponseEntity<MasterProfileDTO> getMasterProfileForMe(Principal principal) {
+    @GetMapping("/my-private-profile")
+    public ResponseEntity<?> getMyPrivateProfile(Principal principal) {
+        MasterProfile masterProfile = masterService.getMyPrivateProfile(principal);
+        return ResponseEntity.ok(serialize(masterProfile, MASTER_PROFILE_FOR_ME_DTO_CLASS));
+    }
 
-
-    @PutMapping("/update") // Разделить эту ручку на 2: updateMasterProfileForMe и updateMasterProfileForOther
+    @PutMapping("/update-public-profile")
     public ResponseEntity<Void> updateMasterProfileForMe(
-            Principal principal,
-            @RequestBody MasterUpdateRequestDTO request) {
+            Principal principal, @RequestBody MasterUpdateRequestDTO request) {
         masterService.updateMasterProfile(principal, request);
         return ResponseEntity.ok().build();
     }
 
-    // Сделать ручку для просмотра своих заказов, возвращать отсортированный список заказов по status
-    // вытаскивать данные по Principal
+    @PutMapping("/update-private-profile")
+    public ResponseEntity<Void> updateMasterProfileForMe(
+            Principal principal, @RequestBody MasterPrivateProfileUpdateRequestDTO request) {
+        masterService.updatePrivateProfile(principal, request);
+        return ResponseEntity.ok().build();
+    }
 }

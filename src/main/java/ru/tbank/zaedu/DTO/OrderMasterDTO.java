@@ -2,18 +2,18 @@ package ru.tbank.zaedu.DTO;
 
 import java.time.LocalDate;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-@Getter
-@Setter
+@Data
+@NoArgsConstructor
 @AllArgsConstructor
-public class CreatedOrderRequest {
-    private String serviceName;
+public class OrderMasterDTO {
+    private String serviceType;
     private String description;
-    private Long price;
     private String address;
+    private Long price;
     private LocalDate dateFrom;
     private LocalDate dateTo;
-    private String phone;
+    private String phoneClient;
 }

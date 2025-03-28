@@ -1,12 +1,11 @@
 package ru.tbank.zaedu.models;
 
+import static ru.tbank.zaedu.models.AbstractEntity.DEFAULT_GENERATOR;
+
 import jakarta.persistence.*;
+import java.time.LocalDate;
 import lombok.*;
 import lombok.experimental.Accessors;
-
-import java.time.LocalDate;
-
-import static ru.tbank.zaedu.models.AbstractEntity.DEFAULT_GENERATOR;
 
 @Accessors(chain = true)
 @Entity
