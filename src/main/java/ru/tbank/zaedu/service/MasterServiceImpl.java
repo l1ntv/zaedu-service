@@ -14,6 +14,7 @@ import ru.tbank.zaedu.repo.HoodRepository;
 import ru.tbank.zaedu.repo.MasterProfileRepository;
 import ru.tbank.zaedu.repo.ServiceRepository;
 
+import java.security.Principal;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -47,9 +48,10 @@ public class MasterServiceImpl implements MasterService {
 
     @Override
     @Transactional
-    public void updateMasterProfile(Long masterId, MasterUpdateRequestDTO request) {
-        MasterProfile master = masterProfileRepository.findById(masterId)
-                .orElseThrow(() -> new ResourceNotFoundException("Master not found"));
+    public void updateMasterProfile(Principal principal, MasterUpdateRequestDTO request) {
+        String masterLogin = principal.getName();
+        MasterProfile master = masterProfileRepository.findByUser_Login(masterLogin)
+                .orElseThrow(() -> new ResourceNotFoundException("Master not found for login: " + masterLogin));
 
         // Обновление основных полей
         master.setDescription(request.getDescription());
@@ -65,7 +67,7 @@ public class MasterServiceImpl implements MasterService {
                             .setPrice(dto.getCost());
                 })
                 .collect(Collectors.toList());
-        master.setServices(services);
+        master.getServices().addAll(services);
 
         // Обновление районов
         List<Hood> hoods = request.getDistricts().stream()
@@ -75,8 +77,9 @@ public class MasterServiceImpl implements MasterService {
 
         // Проверяем существующие связи и добавляем только новые
         for (Hood hood : hoods) {
-            if (!master.getHoods().contains(hood)) {
-                master.getHoods().add(hood);
+            if (!master.getHoods().stream()
+                    .anyMatch(mh -> mh.getHood().equals(hood))) {
+                master.addHood(hood);
             }
         }
 
@@ -88,6 +91,20 @@ public class MasterServiceImpl implements MasterService {
                 .collect(Collectors.toList());
 
         master.getPortfolioImages().addAll(portfolio); // Добавляем новые изображения
+
+        // Обновление основного изображения профиля
+        if (request.getPersonalPhoto() != null) {
+            // Удаляем старые основные изображения, если они есть
+            if (master.getMainImages() != null && !master.getMainImages().isEmpty()) {
+                master.getMainImages().clear();
+            }
+
+            // Добавляем новое основное изображение
+            MasterMainImage mainImage = new MasterMainImage()
+                    .setMaster(master)
+                    .setUrl(request.getPersonalPhoto());
+            master.getMainImages().add(mainImage);
+        }
 
         masterProfileRepository.save(master);
     }
@@ -115,18 +132,19 @@ public class MasterServiceImpl implements MasterService {
                 .collect(Collectors.toList()));
 
         dto.setDistricts(master.getHoods().stream()
-                .map(Hood::getName)
+                .map(MasterHoodsEntity::getHood) // Получаем объект Hood из MasterHoodsEntity
+                .map(Hood::getName)             // Получаем имя района
                 .collect(Collectors.toList()));
 
         dto.setPhotos(master.getPortfolioImages().stream()
                 .map(MasterPortfolioImage::getUrl)
                 .collect(Collectors.toList()));
 
-        if (Optional.ofNullable(master.getMainImages())
-                .filter(images -> !images.isEmpty())
-                .isPresent()) {
+
+        if (master.getMainImages() != null && !master.getMainImages().isEmpty()) {
             dto.setPersonalPhoto(master.getMainImages().get(0).getUrl());
         }
+
 
         return dto;
     }

@@ -18,5 +18,6 @@ public interface MasterProfileRepository extends JpaRepository<MasterProfile, Lo
             "WHERE s.name = :category")
     List<MasterProfile> findByServiceCategory(@Param("category") String category);
 
-    Optional<MasterProfile> findMasterProfileByUser_Login(String login);
+    Optional<MasterProfile> findByUser_Id(Long id);
+    Optional<MasterProfile> findByUser_Login(String login);
 }

@@ -4,8 +4,10 @@ import ru.tbank.zaedu.DTO.MasterProfileDTO;
 import ru.tbank.zaedu.DTO.MasterUpdateRequestDTO;
 import ru.tbank.zaedu.DTO.MastersListResponseDTO;
 
+import java.security.Principal;
+
 public interface MasterService {
     MastersListResponseDTO searchMastersByCategory(String category);
     MasterProfileDTO getMasterProfile(Long masterId);
-    void updateMasterProfile(Long masterId, MasterUpdateRequestDTO request);
+    void updateMasterProfile(Principal principal, MasterUpdateRequestDTO request);
 }

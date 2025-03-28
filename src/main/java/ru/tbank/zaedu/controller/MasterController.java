@@ -41,12 +41,11 @@ public class MasterController {
     // public ResponseEntity<MasterProfileDTO> getMasterProfileForMe(Principal principal) {
 
 
-    @PutMapping("/{id}/update") // Разделить эту ручку на 2: updateMasterProfileForMe и updateMasterProfileForOther
-    // убрать id - добавить Principal
-    public ResponseEntity<Void> updateMasterProfile(
-            @PathVariable Long id,
+    @PutMapping("/update") // Разделить эту ручку на 2: updateMasterProfileForMe и updateMasterProfileForOther
+    public ResponseEntity<Void> updateMasterProfileForMe(
+            Principal principal,
             @RequestBody MasterUpdateRequestDTO request) {
-        masterService.updateMasterProfile(id, request);
+        masterService.updateMasterProfile(principal, request);
         return ResponseEntity.ok().build();
     }
 

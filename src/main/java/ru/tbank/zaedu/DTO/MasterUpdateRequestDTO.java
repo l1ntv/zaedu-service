@@ -10,6 +10,7 @@ import java.util.List;
 @Setter
 public class MasterUpdateRequestDTO {
     private String description;
+    private String personalPhoto;
     private List<String> photos; // URLs of photos
     private List<ServiceDTO> services;
     private List<String> districts;

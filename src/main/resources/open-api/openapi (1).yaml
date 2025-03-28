@@ -105,7 +105,7 @@ paths:
     get:
       tags:
         - Clients
-      summary: Профиль клиента
+      summary: Основная информация клиента
       security:
         - bearerAuth: []
       responses:
@@ -124,30 +124,7 @@ paths:
                 properties:
                   error: { type: string }
 
-  /clients/{id}:
-    get:
-      tags:
-        - Clients
-      summary: Профиль клиента по id
-      parameters:
-        - $ref: '#/components/parameters/ClientId'
-      responses:
-        '200':
-          description: Профиль клиента
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ClientMainResponse'
-        '404':
-          description: Клиент не найден
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  error: { type: string }
-
-  /clients/my-orders:
+  /clients/orders:
     get:
       tags:
         - Clients
@@ -172,7 +149,7 @@ paths:
                 properties:
                   error: { type: string }
 
-  /clients/update-profile:
+  /clients/update:
     put:
       tags:
         - Clients
@@ -332,12 +309,6 @@ components:
     ClientMainResponse:
       type: object
       properties:
-        surname: { type: string }
-        name: { type: string }
-        patronymic: { type: string }
-        email: { type: string }
-        telephoneNumber: { type: string }
-        city: { type: string }
         photoUrl: { type: string, format: uri }
         balance: { type: integer }
 
@@ -472,15 +443,6 @@ components:
       required: true
       schema:
         type: integer
-
-    ClientId:
-      name: id
-      in: path
-      description: ID клиента
-      required: true
-      schema:
-        type: integer
-
 
   responses:
     UnauthorizedError:

@@ -6,6 +6,9 @@ import ru.tbank.zaedu.models.User;
 
 import java.util.Optional;
 
+
 public interface ClientProfileRepository extends JpaRepository<ClientProfile, Long> {
+    Optional<ClientProfile> findByUser_Id(Long id);
+
     Optional<ClientProfile> findByUser(User user);
 }
