@@ -58,6 +58,7 @@ public class ClientProfileConverter {
             var source = it.getSource();
             var destination = it.getDestination();
 
+            destination.setCity(source.getCity().getName());
             destination.setPhotoUrl(String.valueOf(source.getMainImage().getUrl()));
             destination.setBalance(DEFAULT_BALANCE);
 

@@ -1,8 +1,10 @@
 package ru.tbank.zaedu.controller;
 
 import org.modelmapper.ModelMapper;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 import ru.tbank.zaedu.DTO.ClientProfileRequestDTO;
 import ru.tbank.zaedu.DTO.ClientProfileResponseDTO;
 import ru.tbank.zaedu.models.ClientProfile;
@@ -30,7 +32,14 @@ public class ClientController extends EntityController<ClientProfile> {
         return ResponseEntity.ok(serialize(clientProfile, CLIENT_PROFILE_DTO_CLASS));
     }
 
-    @PutMapping("/update")
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getClientProfileInfoByID(@PathVariable Long id) {
+        ClientProfile clientProfile = clientService.getClientProfileById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        return ResponseEntity.ok(serialize(clientProfile, CLIENT_PROFILE_DTO_CLASS));
+    }
+
+    @PutMapping("/update-profile")
     private ResponseEntity<Optional<ClientProfileRequestDTO>> updateClientProfile(Principal principal,
                                                                                   @RequestBody ClientProfileRequestDTO requestDTO) {
         clientService.updateClientProfile(principal.getName(), requestDTO);
