@@ -14,21 +14,33 @@ import ru.tbank.zaedu.service.MasterService;
 public class MasterController extends EntityController<MasterProfile> {
 
     private final MasterService masterService;
+    private final ClientController clientController;
 
-    private static final Class<MastersListResponseDTO> MASTERS_LIST_RESPONSE_DTO_CLASS = MastersListResponseDTO.class;
+    private static final Class<ClientProfileResponseDTO> CLIENT_PROFILE_DTO_CLASS = ClientProfileResponseDTO.class;
     private static final Class<MasterProfileForMeDTO> MASTER_PROFILE_FOR_ME_DTO_CLASS = MasterProfileForMeDTO.class;
     private static final Class<MasterProfileDTO> MASTER_PROFILE_DTO_CLASS = MasterProfileDTO.class;
 
-    public MasterController(ModelMapper modelMapper, MasterService masterService) {
+    public MasterController(ModelMapper modelMapper, MasterService masterService, ClientController clientController) {
         super(modelMapper);
         this.masterService = masterService;
+        this.clientController = clientController;
     }
 
     @GetMapping
-    public ResponseEntity<MastersListResponseDTO> searchMastersByCategory(@RequestParam String category) {
+    public ResponseEntity<MastersListResponseDTO> searchMastersByCategory(
+            @RequestParam String category, Principal principal) {
         List<MasterProfile> masters = masterService.searchMastersByCategory(category);
         List<MasterProfileDTO> dtos = serialize(masters, MASTER_PROFILE_DTO_CLASS);
-        return ResponseEntity.ok(new MastersListResponseDTO(dtos, null, null));
+
+        String photoUrl = null;
+        Long balance = 0L;
+
+        if (principal != null) {
+            ClientProfileResponseDTO clientProfileResponseDTO = clientController.getClientProfileResponseDTO(principal);
+            photoUrl = clientProfileResponseDTO.getPhotoUrl();
+            balance = clientProfileResponseDTO.getBalance();
+        }
+        return ResponseEntity.ok(new MastersListResponseDTO(dtos, photoUrl, balance));
     }
 
     @GetMapping("/{id}")

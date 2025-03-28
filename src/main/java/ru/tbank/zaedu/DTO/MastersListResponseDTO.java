@@ -11,5 +11,5 @@ import lombok.Setter;
 public class MastersListResponseDTO {
     private List<MasterProfileDTO> masters;
     private String photoUrl;
-    private Integer balance;
+    private Long balance;
 }
