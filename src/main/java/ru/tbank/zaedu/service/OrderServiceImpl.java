@@ -1,6 +1,13 @@
 package ru.tbank.zaedu.service;
 
 import jakarta.transaction.Transactional;
+
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.tbank.zaedu.DTO.ClientsOrdersResponse;
@@ -14,15 +21,11 @@ import ru.tbank.zaedu.models.*;
 import ru.tbank.zaedu.repo.*;
 
 import java.time.LocalDate;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class OrderServiceImpl implements OrderService {
+public class
+OrderServiceImpl implements OrderService {
 
     private final UserRepository userRepository;
 
@@ -49,12 +52,8 @@ public class OrderServiceImpl implements OrderService {
                 .map(order -> {
                     PlacedOrdersByClientsResponse response = new PlacedOrdersByClientsResponse();
                     response.setId(order.getId());
-                    response.setServiceDTO(
-                            new ServiceDTO(
-                                    order.getServices().getId(),
-                                    order.getServices().getName(),
-                                    order.getPrice())
-                    );
+                    response.setServiceDTO(new ServiceDTO(
+                            order.getServices().getId(), order.getServices().getName(), order.getPrice()));
                     response.setClientName(order.getClient().getName());
                     response.setAddress(order.getAddress());
                     response.setPrice(order.getPrice());
@@ -67,7 +66,8 @@ public class OrderServiceImpl implements OrderService {
         User user = this.findUserByLogin(masterLogin);
         Optional<MasterMainImage> masterMainImage = masterMainImageRepository.findByMasterId(user.getId());
         String imageUrl = masterMainImage.map(MasterMainImage::getUrl).orElse(null);
-        return new ClientsOrdersResponse(placedOrdersByClientsResponses, imageUrl, OrderServiceImpl.DEFAULT_BALANCE_CONST);
+        return new ClientsOrdersResponse(
+                placedOrdersByClientsResponses, imageUrl, OrderServiceImpl.DEFAULT_BALANCE_CONST);
     }
 
     @Transactional
@@ -128,7 +128,8 @@ public class OrderServiceImpl implements OrderService {
         User user = this.findUserByLogin(clientLogin);
         OrderStatus completedOrderStatus = this.findOrderStatusByName(OrderStatusEnum.COMPLETED.toString());
         ClientProfile clientProfile = this.findClientProfileByUserId(user.getId());
-        Order order = orderRepository.findByIdAndClient_Id(id, clientProfile.getId())
+        Order order = orderRepository
+                .findByIdAndClient_Id(id, clientProfile.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("OrderNotFound"));
 
         order.setStatus(completedOrderStatus);
@@ -222,6 +223,22 @@ public class OrderServiceImpl implements OrderService {
         return orders;
     }
 
+    @Override
+    public List<Order> getMasterOrders(String name) {
+        Optional<User> user = userRepository.findByLogin(name);
+        List<Order> orders = orderRepository.findByMasterId(user.get().getId());
+
+        Map<String, Integer> statusOrder = Map.of(
+                "IN_PROGRESS", 1,
+                "PENDING", 2,
+                "COMPLETED", 3);
+
+        orders.sort(Comparator.comparingInt(
+                order -> statusOrder.getOrDefault(order.getStatus().getName(), Integer.MAX_VALUE)));
+
+        return orders;
+    }
+
     private List<Order> findPossibleDuplicates(ClientProfile clientProfile, Services service, String address, LocalDate dateFrom, LocalDate dateTo) throws ConflictResourceException {
         List<Order> listPossibleDuplicates = orderRepository.findByClientAndServicesAndAddressAndDateFromLessThanEqualAndDateToGreaterThanEqual(
                 clientProfile,
@@ -240,32 +257,34 @@ public class OrderServiceImpl implements OrderService {
     }
 
     private User findUserByLogin(String login) throws ResourceNotFoundException {
-        User user = userRepository.findByLogin(login)
-                .orElseThrow(() -> new ResourceNotFoundException("UserNotFound"));
+        User user = userRepository.findByLogin(login).orElseThrow(() -> new ResourceNotFoundException("UserNotFound"));
         return user;
     }
 
     private ClientProfile findClientProfileByUserId(Long id) throws ResourceNotFoundException {
-        ClientProfile clientProfile = clientProfileRepository.findByUser_Id(id)
+        ClientProfile clientProfile = clientProfileRepository
+                .findByUser_Id(id)
                 .orElseThrow(() -> new ResourceNotFoundException("ClientNotFound"));
         return clientProfile;
     }
 
     private MasterProfile findMasterProfileByUserId(Long id) throws ResourceNotFoundException {
-        MasterProfile masterProfile = masterProfileRepository.findByUser_Id(id)
+        MasterProfile masterProfile = masterProfileRepository
+                .findByUser_Id(id)
                 .orElseThrow(() -> new ResourceNotFoundException("MasterNotFound"));
         return masterProfile;
     }
 
     private OrderStatus findOrderStatusByName(String name) throws ResourceNotFoundException {
-        OrderStatus orderStatus = orderStatusRepository.findByName(name)
+        OrderStatus orderStatus = orderStatusRepository
+                .findByName(name)
                 .orElseThrow(() -> new ResourceNotFoundException("OrderStatusNotFound"));
         return orderStatus;
     }
 
     private Services findServiceByName(String name) throws ResourceNotFoundException {
-        Services service = serviceRepository.findByName(name)
-                .orElseThrow(() -> new ResourceNotFoundException("ServiceNotFound"));
+        Services service =
+                serviceRepository.findByName(name).orElseThrow(() -> new ResourceNotFoundException("ServiceNotFound"));
         return service;
     }
 

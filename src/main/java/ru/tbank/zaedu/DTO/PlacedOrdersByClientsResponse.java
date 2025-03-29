@@ -1,8 +1,7 @@
 package ru.tbank.zaedu.DTO;
 
-import lombok.Data;
-
 import java.time.LocalDate;
+import lombok.Data;
 
 @Data
 public class PlacedOrdersByClientsResponse {

@@ -1,5 +1,7 @@
 package ru.tbank.zaedu.service;
 
+import java.util.Objects;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
@@ -8,9 +10,6 @@ import ru.tbank.zaedu.models.*;
 import ru.tbank.zaedu.repo.ClientMainImageRepository;
 import ru.tbank.zaedu.repo.ClientProfileRepository;
 import ru.tbank.zaedu.repo.UserRepository;
-
-import java.util.Objects;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -30,9 +29,14 @@ public class ClientService {
         return clientProfileOptional.get();
     }
 
+    public Optional<ClientProfile> getClientProfileById(long clientId) {
+        return clientProfileRepository.findById(clientId);
+    }
+
     public void updateClientProfile(String name, ClientProfileRequestDTO requestDTO) {
         Optional<User> user = userRepository.findByLogin(name);
-        ClientProfile clientProfile = clientProfileRepository.findById(user.get().getId()).get();
+        ClientProfile clientProfile =
+                clientProfileRepository.findById(user.get().getId()).get();
 
         modelMapper.map(requestDTO, clientProfile);
 

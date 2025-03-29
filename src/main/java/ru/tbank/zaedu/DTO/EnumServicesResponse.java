@@ -1,10 +1,9 @@
 package ru.tbank.zaedu.DTO;
 
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
-
-import java.util.List;
 
 @Getter
 @Setter

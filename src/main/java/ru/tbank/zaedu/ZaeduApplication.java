@@ -6,8 +6,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class ZaeduApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(ZaeduApplication.class, args);
-	}
-
+    public static void main(String[] args) {
+        SpringApplication.run(ZaeduApplication.class, args);
+    }
 }

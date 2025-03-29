@@ -1,23 +1,21 @@
 package ru.tbank.zaedu.service;
 
 import jakarta.transaction.Transactional;
-import lombok.RequiredArgsConstructor;
-import org.modelmapper.ModelMapper;
-import ru.tbank.zaedu.DTO.ServiceDTO;
-import ru.tbank.zaedu.models.*;
-import org.springframework.stereotype.Service;
-import ru.tbank.zaedu.DTO.MasterProfileDTO;
-import ru.tbank.zaedu.DTO.MasterUpdateRequestDTO;
-import ru.tbank.zaedu.DTO.MastersListResponseDTO;
-import ru.tbank.zaedu.exceptionhandler.ResourceNotFoundException;
-import ru.tbank.zaedu.repo.HoodRepository;
-import ru.tbank.zaedu.repo.MasterProfileRepository;
-import ru.tbank.zaedu.repo.ServiceRepository;
-
-import java.util.Collections;
+import java.security.Principal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
+import org.springframework.stereotype.Service;
+import ru.tbank.zaedu.DTO.*;
+import ru.tbank.zaedu.exceptionhandler.ConflictResourceException;
+import ru.tbank.zaedu.exceptionhandler.ResourceNotFoundException;
+import ru.tbank.zaedu.models.*;
+import ru.tbank.zaedu.repo.HoodRepository;
+import ru.tbank.zaedu.repo.MasterProfileRepository;
+import ru.tbank.zaedu.repo.ServiceRepository;
 
 @Service
 @RequiredArgsConstructor
@@ -29,105 +27,145 @@ public class MasterServiceImpl implements MasterService {
     private final ModelMapper modelMapper; // Добавьте ModelMapper
 
     @Override
-    public MastersListResponseDTO searchMastersByCategory(String category) {
-        List<MasterProfile> masters = masterProfileRepository.findByServiceCategory(category);
-        List<MasterProfileDTO> dtos = masters.stream()
-                .map(this::convertToDTO)
-                .collect(Collectors.toList());
-
-        return new MastersListResponseDTO(dtos, null, null);
+    public List<MasterProfile> searchMastersByCategory(String category) {
+        return masterProfileRepository.findByServiceCategory(category);
     }
 
     @Override
-    public MasterProfileDTO getMasterProfile(Long masterId) {
-        MasterProfile master = masterProfileRepository.findById(masterId)
+    public MasterProfile getMasterProfile(Long masterId) {
+        return masterProfileRepository
+                .findById(masterId)
                 .orElseThrow(() -> new ResourceNotFoundException("Master not found"));
-        return convertToDTO(master);
+    }
+
+    @Override
+    public MasterProfile getMyPublicProfile(Principal principal) {
+        String masterLogin = principal.getName();
+        return masterProfileRepository
+                .findByUser_Login(masterLogin)
+                .orElseThrow(() -> new ResourceNotFoundException("Master not found for login: " + masterLogin));
+    }
+
+    @Override
+    public MasterProfile getMyPrivateProfile(Principal principal) {
+        String masterLogin = principal.getName();
+        return masterProfileRepository
+                .findByUser_Login(masterLogin)
+                .orElseThrow(() -> new ResourceNotFoundException("Master not found for login: " + masterLogin));
     }
 
     @Override
     @Transactional
-    public void updateMasterProfile(Long masterId, MasterUpdateRequestDTO request) {
-        MasterProfile master = masterProfileRepository.findById(masterId)
-                .orElseThrow(() -> new ResourceNotFoundException("Master not found"));
+    public void updateMasterProfile(Principal principal, MasterUpdateRequestDTO request) {
+        String masterLogin = principal.getName();
+        MasterProfile master = masterProfileRepository
+                .findByUser_Login(masterLogin)
+                .orElseThrow(() -> new ResourceNotFoundException("Master not found for login: " + masterLogin));
 
         // Обновление основных полей
         master.setDescription(request.getDescription());
 
-        // Обновление услуг
-        List<MasterServiceEntity> services = request.getServices().stream()
-                .map(dto -> {
-                    Services service = serviceRepository.findByName(dto.getServiceName())
-                            .orElseThrow(() -> new ResourceNotFoundException("Service not found"));
-                    return new MasterServiceEntity()
-                            .setMaster(master)
-                            .setServices(service)
-                            .setPrice(dto.getCost());
-                })
-                .collect(Collectors.toList());
-        master.setServices(services);
+        // Список новых услуг из запроса
+        List<MasterServiceEntity> updatedServices = new ArrayList<>();
+
+        for (ServiceDTO dto : request.getServices()) {
+            Services service = serviceRepository
+                    .findByName(dto.getServiceName())
+                    .orElseThrow(() -> new ResourceNotFoundException("Service not found"));
+
+            // Проверяем, существует ли уже такой сервис у мастера
+            Optional<MasterServiceEntity> existingService = master.getServices().stream()
+                    .filter(ms -> ms.getServices().getName().equals(dto.getServiceName()))
+                    .findFirst();
+
+            if (existingService.isPresent()) {
+                // Обновляем цену существующего сервиса
+                MasterServiceEntity serviceToUpdate = existingService.get();
+                serviceToUpdate.setPrice(dto.getCost());
+                updatedServices.add(serviceToUpdate);
+            } else {
+                // Создаем новый сервис
+                MasterServiceEntity newService = new MasterServiceEntity()
+                        .setMaster(master)
+                        .setServices(service)
+                        .setPrice(dto.getCost());
+                updatedServices.add(newService);
+            }
+        }
+
+        // Обновляем список услуг мастера
+        // Удаляем только те услуги, которые больше не переданы в запросе
+        master.getServices()
+                .removeIf(existingService -> updatedServices.stream().noneMatch(updatedService -> updatedService
+                        .getServices()
+                        .getName()
+                        .equals(existingService.getServices().getName())));
+
+        // Добавляем обновленные и новые услуги
+        master.getServices().addAll(updatedServices);
 
         // Обновление районов
         List<Hood> hoods = request.getDistricts().stream()
-                .map(district -> hoodRepository.findByName(district)
+                .map(district -> hoodRepository
+                        .findByName(district)
                         .orElseThrow(() -> new ResourceNotFoundException("Hood not found")))
                 .collect(Collectors.toList());
 
         // Проверяем существующие связи и добавляем только новые
         for (Hood hood : hoods) {
-            if (!master.getHoods().contains(hood)) {
-                master.getHoods().add(hood);
+            if (!master.getHoods().stream().anyMatch(mh -> mh.getHood().equals(hood))) {
+                master.addHood(hood);
             }
         }
 
         // Обновление портфолио
         List<MasterPortfolioImage> portfolio = request.getPhotos().stream()
-                .map(url -> new MasterPortfolioImage()
-                        .setMaster(master)
-                        .setUrl(url))
+                .map(url -> {
+                    // Проверка на дублирование ссылки на фото
+                    if (master.getPortfolioImages().stream()
+                            .anyMatch(image -> image.getUrl().equals(url))) {
+                        throw new ConflictResourceException("Photo with URL " + url + " already exists in portfolio");
+                    }
+                    return new MasterPortfolioImage().setMaster(master).setUrl(url);
+                })
                 .collect(Collectors.toList());
 
         master.getPortfolioImages().addAll(portfolio); // Добавляем новые изображения
 
+        // Обновление основного изображения профиля
+        if (request.getPersonalPhoto() != null) {
+            // Удаляем старые основные изображения, если они есть
+            if (master.getMainImages() != null && !master.getMainImages().isEmpty()) {
+                master.getMainImages().clear();
+            }
+
+            // Добавляем новое основное изображение
+            MasterMainImage mainImage = new MasterMainImage().setMaster(master).setUrl(request.getPersonalPhoto());
+            master.getMainImages().add(mainImage);
+        }
+
         masterProfileRepository.save(master);
     }
 
-    private MasterProfileDTO convertToDTO(MasterProfile master) {
+    @Override
+    @Transactional
+    public void updatePrivateProfile(Principal principal, MasterPrivateProfileUpdateRequestDTO request) {
+        String masterLogin = principal.getName();
+        MasterProfile master = masterProfileRepository
+                .findByUser_Login(masterLogin)
+                .orElseThrow(() -> new ResourceNotFoundException("Master not found for login: " + masterLogin));
 
-        MasterProfileDTO dto = modelMapper.map(master, MasterProfileDTO.class);
+        // Обновление полей приватного профиля
+        master.setSurname(request.getSurname());
+        master.setName(request.getName());
+        master.setPatronymic(request.getPatronymic());
+        master.setEmail(request.getEmail());
+        master.setTelephoneNumber(request.getTelephoneNumber());
+        master.setIsCompany(request.getIsCompany());
+        master.setIsConfirmedPassport(request.getIsConfirmedPassport());
+        master.setPassportSeries(request.getPassportSeries());
+        master.setPassportNumber(request.getPassportNumber());
 
-        // Расчет рейтинга
-        double averageRating = Optional.ofNullable(master.getFeedbacks())
-                .orElse(Collections.emptyList()).stream()
-                .mapToInt(MasterFeedback::getEvaluation)
-                .average()
-                .orElse(0.0);
-        dto.setAverageRating(averageRating);
-        dto.setRatingCount(master.getFeedbacks().size());
-
-        // Преобразование связей
-        dto.setServices(master.getServices().stream()
-                .filter(ms -> ms.getServices() != null) // Исключаем null-значения
-                .map(ms -> new ServiceDTO(
-                        ms.getServices().getId(),
-                        ms.getServices().getName(),
-                        ms.getPrice()))
-                .collect(Collectors.toList()));
-
-        dto.setDistricts(master.getHoods().stream()
-                .map(Hood::getName)
-                .collect(Collectors.toList()));
-
-        dto.setPhotos(master.getPortfolioImages().stream()
-                .map(MasterPortfolioImage::getUrl)
-                .collect(Collectors.toList()));
-
-        if (Optional.ofNullable(master.getMainImages())
-                .filter(images -> !images.isEmpty())
-                .isPresent()) {
-            dto.setPersonalPhoto(master.getMainImages().get(0).getUrl());
-        }
-
-        return dto;
+        masterProfileRepository.save(master);
     }
 }

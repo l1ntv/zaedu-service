@@ -1,15 +1,14 @@
 package ru.tbank.zaedu.models;
 
-import jakarta.persistence.*;
-import lombok.*;
-import lombok.experimental.Accessors;
+import static ru.tbank.zaedu.models.AbstractEntity.DEFAULT_GENERATOR;
 
+import jakarta.persistence.*;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import static ru.tbank.zaedu.models.AbstractEntity.DEFAULT_GENERATOR;
+import lombok.*;
+import lombok.experimental.Accessors;
 
 @Accessors(chain = true)
 @Entity
@@ -45,7 +44,7 @@ public class MasterProfile extends AbstractEntity {
     @JoinColumn(name = "master_id")
     private User user;
 
-    @OneToMany(mappedBy = "master")
+    @OneToMany(mappedBy = "master", cascade = CascadeType.ALL, orphanRemoval = true)
     @ToString.Exclude
     private List<MasterServiceEntity> services;
 
@@ -53,20 +52,22 @@ public class MasterProfile extends AbstractEntity {
     @ToString.Exclude
     private List<MasterFeedback> feedbacks;
 
-    @ManyToMany
-    @JoinTable(
-            name = "master_hoods",
-            joinColumns = @JoinColumn(name = "master_id"),
-            inverseJoinColumns = @JoinColumn(name = "hood_id")
-    )
+    @OneToMany(mappedBy = "master", cascade = CascadeType.ALL, orphanRemoval = true)
     @ToString.Exclude
-    private List<Hood> hoods = new ArrayList<>();
+    private List<MasterHoodsEntity> hoods = new ArrayList<>();
+
+    public void addHood(Hood hood) {
+        MasterHoodsEntity masterHood =
+                MasterHoodsEntity.builder().master(this).hood(hood).build();
+        hoods.add(masterHood);
+        hood.getMasters().add(masterHood); // Если в Hood есть обратная связь
+    }
 
     @OneToMany(mappedBy = "master")
     @ToString.Exclude
     private List<Order> orders;
 
-    @OneToMany(mappedBy = "master")
+    @OneToMany(mappedBy = "master", cascade = CascadeType.ALL, orphanRemoval = true)
     @ToString.Exclude
     private List<MasterMainImage> mainImages;
 
@@ -75,8 +76,6 @@ public class MasterProfile extends AbstractEntity {
     private List<MasterPortfolioImage> portfolioImages = new ArrayList<>();
 
     public String getFullName() {
-        return Stream.of(surname, name, patronymic)
-                .filter(Objects::nonNull)
-                .collect(Collectors.joining(" "));
+        return Stream.of(surname, name, patronymic).filter(Objects::nonNull).collect(Collectors.joining(" "));
     }
 }

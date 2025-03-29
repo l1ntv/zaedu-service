@@ -1,6 +1,7 @@
 package ru.tbank.zaedu.service;
 
 import jakarta.transaction.Transactional;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -9,7 +10,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import ru.tbank.zaedu.DTO.*;
 import ru.tbank.zaedu.config.JwtService;
-import ru.tbank.zaedu.enums.OrderStatusEnum;
 import ru.tbank.zaedu.enums.UserRoleEnum;
 import ru.tbank.zaedu.enums.UserStatusEnum;
 import ru.tbank.zaedu.exceptionhandler.InvalidDataException;
@@ -18,8 +18,6 @@ import ru.tbank.zaedu.exceptionhandler.ResourceNotFoundException;
 import ru.tbank.zaedu.exceptionhandler.WrongDataException;
 import ru.tbank.zaedu.models.*;
 import ru.tbank.zaedu.repo.*;
-
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -63,15 +61,11 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .build();
         userRepository.save(user);
 
-        var clientProfile = ClientProfile.builder()
-                .user(user)
-                .build();
+        var clientProfile = ClientProfile.builder().user(user).build();
         clientProfileRepository.save(clientProfile);
 
         var jwtToken = jwtService.generateToken(user);
-        return AuthenticationResponse.builder()
-                .token(jwtToken)
-                .build();
+        return AuthenticationResponse.builder().token(jwtToken).build();
     }
 
     @Transactional
@@ -83,8 +77,12 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
         this.correctnessServiceChecking(request.getServices());
 
-        var clientRole = userRoleRepository.findByName(UserRoleEnum.ROLE_EXECUTOR.toString()).orElseThrow(() -> new ResourceNotFoundException("NotFoundUserRole"));
-        var onlineStatus = userStatusRepository.findByName(UserStatusEnum.ONLINE.toString()).orElseThrow(() -> new ResourceNotFoundException("NotFoundOnlineStatus"));
+        var clientRole = userRoleRepository
+                .findByName(UserRoleEnum.ROLE_EXECUTOR.toString())
+                .orElseThrow(() -> new ResourceNotFoundException("NotFoundUserRole"));
+        var onlineStatus = userStatusRepository
+                .findByName(UserStatusEnum.ONLINE.toString())
+                .orElseThrow(() -> new ResourceNotFoundException("NotFoundOnlineStatus"));
 
         var user = User.builder()
                 .login(request.getLogin())
@@ -105,7 +103,9 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         masterProfileRepository.save(masterProfile);
 
         for (ServiceDTO service : request.getServices()) {
-            Services existingService = serviceRepository.findByName(service.getServiceName()).orElseThrow(() -> new ResourceNotFoundException("NotFoundService"));
+            Services existingService = serviceRepository
+                    .findByName(service.getServiceName())
+                    .orElseThrow(() -> new ResourceNotFoundException("NotFoundService"));
             MasterServiceEntity masterServiceEntity = new MasterServiceEntity();
             masterServiceEntity.setMaster(masterProfile);
             masterServiceEntity.setServices(existingService);
@@ -114,9 +114,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         }
 
         var jwtToken = jwtService.generateToken(user);
-        return AuthenticationResponse.builder()
-                .token(jwtToken)
-                .build();
+        return AuthenticationResponse.builder().token(jwtToken).build();
     }
 
     @Override
@@ -129,46 +127,43 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
         try {
             authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(
-                            request.getLogin(),
-                            request.getPassword()
-                    )
-            );
+                    new UsernamePasswordAuthenticationToken(request.getLogin(), request.getPassword()));
         } catch (BadCredentialsException ex) {
             throw new WrongDataException("WrongAuthData");
         }
 
         var jwtToken = jwtService.generateToken(user);
-        return AuthenticationResponse.builder()
-                .token(jwtToken)
-                .build();
+        return AuthenticationResponse.builder().token(jwtToken).build();
     }
 
     private User findUserByLogin(String login) throws ResourceNotFoundException {
-        User user = userRepository.findByLogin(login)
-                .orElseThrow(() -> new ResourceNotFoundException("UserNotFound"));
+        User user = userRepository.findByLogin(login).orElseThrow(() -> new ResourceNotFoundException("UserNotFound"));
         return user;
     }
 
     private UserRole findUserRoleByName(String name) throws ResourceNotFoundException {
-        UserRole userRole = userRoleRepository.findByName(name)
+        UserRole userRole = userRoleRepository
+                .findByName(name)
                 .orElseThrow(() -> new ResourceNotFoundException("UserRoleNotFound"));
         return userRole;
     }
 
     private UserStatus findUserStatusByName(String name) throws ResourceNotFoundException {
-        UserStatus userStatus = userStatusRepository.findByName(name)
+        UserStatus userStatus = userStatusRepository
+                .findByName(name)
                 .orElseThrow(() -> new ResourceNotFoundException("UserStatusNotFound"));
         return userStatus;
     }
 
-    private void correctnessServiceChecking(List<ServiceDTO> services) throws InvalidDataException, ResourceNotFoundException {
+    private void correctnessServiceChecking(List<ServiceDTO> services)
+            throws InvalidDataException, ResourceNotFoundException {
         if (services == null && services.isEmpty()) {
             throw new InvalidDataException("IncorrectServicesParameter");
         }
 
         for (ServiceDTO service : services) {
-            Services existingService = serviceRepository.findByName(service.getServiceName())
+            Services existingService = serviceRepository
+                    .findByName(service.getServiceName())
                     .orElseThrow(() -> new ResourceNotFoundException("NotFoundService"));
         }
     }

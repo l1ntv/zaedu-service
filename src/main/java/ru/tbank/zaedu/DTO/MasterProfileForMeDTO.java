@@ -1,30 +1,20 @@
 package ru.tbank.zaedu.DTO;
 
-import java.util.List;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@Builder
-@AllArgsConstructor
 @NoArgsConstructor
-public class RegistrationMasterRequest {
-
-    private String login;
-
-    private String password;
-
+@AllArgsConstructor
+public class MasterProfileForMeDTO {
     private String surname;
-
     private String name;
-
     private String patronymic;
-
-    private List<ServiceDTO> services;
-
+    private String email;
+    private String telephoneNumber;
     private Boolean isCompany;
-
-    private String profileName;
+    private Boolean isConfirmedPassport;
+    private String passportSeries;
+    private String passportNumber;
 }

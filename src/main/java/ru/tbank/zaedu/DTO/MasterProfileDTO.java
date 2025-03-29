@@ -1,8 +1,8 @@
 package ru.tbank.zaedu.DTO;
 
+import java.util.List;
 import lombok.*;
 
-import java.util.List;
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor

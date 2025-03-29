@@ -1,12 +1,12 @@
 package ru.tbank.zaedu.models;
 
+import static ru.tbank.zaedu.models.AbstractEntity.DEFAULT_GENERATOR;
+
 import jakarta.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.*;
 import lombok.experimental.Accessors;
-
-import java.util.List;
-
-import static ru.tbank.zaedu.models.AbstractEntity.DEFAULT_GENERATOR;
 
 @Accessors(chain = true)
 @Entity
@@ -25,7 +25,7 @@ public class Hood extends AbstractEntity {
     @JoinColumn(name = "city_id")
     private City city;
 
-    @ManyToMany(mappedBy = "hoods")
+    @OneToMany(mappedBy = "hood", cascade = CascadeType.ALL, orphanRemoval = true)
     @ToString.Exclude
-    private List<MasterProfile> masters;
+    private List<MasterHoodsEntity> masters = new ArrayList<>();
 }
