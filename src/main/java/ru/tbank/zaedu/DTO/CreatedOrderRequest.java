@@ -15,5 +15,4 @@ public class CreatedOrderRequest {
     private String address;
     private LocalDate dateFrom;
     private LocalDate dateTo;
-    private String phone;
 }

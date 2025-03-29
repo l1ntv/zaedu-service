@@ -325,6 +325,8 @@ paths:
       tags:
         - Orders
       summary: Выставленные заказы клиентами
+      security:
+        - bearerAuth: [ ]
       responses:
         '200':
           description: Список выставленных заказов клиентами, фото и баланс мастера
@@ -335,22 +337,265 @@ paths:
         '403':
           description: Мастер не был авторизован
           content: {}
+        '404':
+          description: Статус заказа не найден/Авторизованный пользователь не найден
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error: { type: string }
 
-    /orders/{orderId}/assign-order:
-      patch:
+  /orders/{orderId}/assign-order:
+    patch:
       tags:
         - Orders
-      summary:
+      summary: Взятие выставленного клиентом заказа мастером
+      security:
+        - bearerAuth: [ ]
+      parameters:
+        - name: orderId
+          in: path
+          required: true
+          description: ID заказа
+          schema:
+            type: integer
       responses:
         '200':
-          description: Список выставленных заказов клиентами, фото и баланс мастера
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ClientsOrdersResponse'
+          description: Мастер забрал заказа клиента
+          content: {}
         '403':
           description: Мастер не был авторизован
           content: {}
+        '404':
+          description: Заказ не найден/Статус заказа не найден/Авторизованный пользователь не найден/Профиль мастера не найден
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+        '409':
+          description: Заказ уже забрал другой мастер
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+
+  /orders/get-services:
+    get:
+      tags:
+        - Orders
+      summary: Получение списка всех сервисов в системе
+      security:
+        - bearerAuth: [ ]
+      responses:
+        '200':
+          description: Список всех сервисов в системе
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EnumServicesResponse'
+
+  /orders/create-order:
+    post:
+      tags:
+        - Orders
+      summary: Выставление заказа клиентом
+      security:
+        - bearerAuth: [ ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreatedOrderRequest'
+      responses:
+        '200':
+          description: Клиент выставил заказ
+          content: {}
+        '403':
+          description: Клиент не был авторизован
+          content: {}
+        '404':
+          description: Авторизованный пользователь не найден/Профиль клиента не найден/Сервис не найден/Статус заказа не найден
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+        '409':
+          description: Дублирование выставленного заказа
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+
+  /orders/{orderId}/close-order:
+    patch:
+      tags:
+        - Orders
+      summary: Закрытие заказа клиентом
+      security:
+        - bearerAuth: [ ]
+      parameters:
+        - name: orderId
+          in: path
+          required: true
+          description: ID заказа
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Клиент закрыл заказ
+          content: {}
+        '403':
+          description: Клиент не был авторизован
+          content: {}
+        '404':
+          description: Авторизованный пользователь не найден/Профиль клиента не найден/Статус заказа не найден/Заказ не найден
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+
+  /orders/{masterId}/offer-order:
+    patch:
+      tags:
+        - Orders
+      summary: Предложение заказа мастеру от клиента
+      security:
+        - bearerAuth: [ ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreatedOrderRequest'
+      parameters:
+        - name: masterId
+          in: path
+          required: true
+          description: ID мастера
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Клиент предложил заказ мастеру
+          content: {}
+        '403':
+          description: Клиент не был авторизован
+          content: {}
+        '404':
+          description: Авторизованный пользователь не найден/Профиль клиента не найден/Профиль мастера не найден/Сервис не найден/Статус заказа не найден
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+        '409':
+          description: Дублирование предложенного заказа
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+
+  /orders/{orderId}/accept-order:
+    patch:
+      tags:
+        - Orders
+      summary: Принятие заказа мастером
+      security:
+        - bearerAuth: [ ]
+      parameters:
+        - name: orderId
+          in: path
+          required: true
+          description: ID заказа
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Мастер принял заказ
+          content: {}
+        '403':
+          description: Клиент не был авторизован
+          content: {}
+        '404':
+          description: Авторизованный пользователь не найден/Заказ не найден/Профиль мастера не найден/Статус заказа не найден
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+        '409':
+          description: Заказ был отправлен не авторизованному мастеру, а какому-то другому мастеру
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+
+  /orders/{orderId}/decline-order:
+    patch:
+      tags:
+        - Orders
+      summary: Отклонение заказа мастером
+      security:
+        - bearerAuth: [ ]
+      parameters:
+        - name: orderId
+          in: path
+          required: true
+          description: ID заказа
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Мастер отказался от заказа
+          content: {}
+        '403':
+          description: Клиент не был авторизован
+          content: {}
+        '404':
+          description: Авторизованный пользователь не найден/Заказ не найден/Профиль мастера не найден/Статус заказа не найден
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+        '409':
+          description: Заказ был отправлен не авторизованному мастеру, а какому-то другому мастеру
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
 
   /masters/my-orders:
     get:
@@ -372,6 +617,8 @@ paths:
           description: Необходима авторизация
         '404':
           description: Заказы мастера не найдены
+
+
 
 components:
   schemas:
@@ -397,6 +644,26 @@ components:
         isOrganization: { type: boolean }
         organizationName: { type: string }
       required: [login, password, lastName, firstName, services]
+
+    CreatedOrderRequest:
+      type: object
+      properties:
+        serviceName: { type: string }
+        description: { type: string }
+        price: { type: integer }
+        address: { type: string }
+        dateFrom: { type: string, format: date }
+        dateTo: { type: string, format: date }
+      required: [serviceName, description, price, address, dateFrom, dateTo]
+
+    EnumServicesResponse:
+      type: object
+      properties:
+        services:
+          type: array
+          items:
+            {type: string }
+      required: [services]
 
     ClientMainResponse:
       type: object

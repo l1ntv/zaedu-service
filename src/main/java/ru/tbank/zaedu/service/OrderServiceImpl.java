@@ -180,7 +180,7 @@ OrderServiceImpl implements OrderService {
         MasterProfile masterProfile = this.findMasterProfileByUserId(user.getId());
 
         if (!order.getMaster().getId().equals(masterProfile.getId())) {
-            throw new ResourceNotFoundException("OrderNotBelongToMaster");
+            throw new ConflictResourceException("OrderNotBelongToMaster");
         }
 
         OrderStatus orderStatus = this.findOrderStatusByName(OrderStatusEnum.IN_PROGRESS.toString());

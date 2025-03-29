@@ -45,7 +45,7 @@ public class OrderController extends EntityController<Order> {
     }
 
     // Нажатие исполнителем кнопки "Взять заказ"; взятие заказа выставленного клиентом; id заказа
-    @PatchMapping("/{orderId}/assign-order")
+    @PatchMapping("/orders/{orderId}/assign-order")
     public ResponseEntity<Void> assignPlacedOrder(@PathVariable Long orderId, Principal principal) {
         // Нажатие исполнителем кнопки "Взять заказ"; взятие заказа выставленного клиентом
         String masterLogin = principal.getName();
@@ -53,7 +53,7 @@ public class OrderController extends EntityController<Order> {
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping("/get-services")
+    @GetMapping("/orders/get-services")
     public ResponseEntity<EnumServicesResponse> getEnumServices() {
         return ResponseEntity.ok(new EnumServicesResponse(List.of(
                 ServicesEnum.DECORATOR.toString(),
@@ -66,21 +66,21 @@ public class OrderController extends EntityController<Order> {
                 ServicesEnum.HOST.toString())));
     }
 
-    @PostMapping("/create-order")
+    @PostMapping("/orders/create-order")
     public ResponseEntity<Void> createOrder(@RequestBody CreatedOrderRequest request, Principal principal) {
         String clientLogin = principal.getName();
         orderService.createOrder(request, clientLogin);
         return ResponseEntity.ok().build();
     }
 
-    @PatchMapping("/{orderId}/close-order")
+    @PatchMapping("/orders/{orderId}/close-order")
     public ResponseEntity<Void> closeOrder(@PathVariable Long orderId, Principal principal) {
         String clientLogin = principal.getName();
         orderService.closeOrder(orderId, clientLogin);
         return ResponseEntity.ok().build();
     }
 
-    @PostMapping("/{masterId}/offer-order")
+    @PostMapping("/orders/{masterId}/offer-order")
     public ResponseEntity<Void> offerOrder(
             @PathVariable Long masterId, @RequestBody CreatedOrderRequest request, Principal principal) {
         String clientLogin = principal.getName();
@@ -88,14 +88,14 @@ public class OrderController extends EntityController<Order> {
         return ResponseEntity.ok().build();
     }
 
-    @PatchMapping("{orderId}/accept-order")
+    @PatchMapping("/orders/{orderId}/accept-order")
     public ResponseEntity<Void> acceptOrder(@PathVariable Long orderId, Principal principal) {
         String masterLogin = principal.getName();
         orderService.acceptOrder(orderId, masterLogin);
         return ResponseEntity.ok().build();
     }
 
-    @PatchMapping("{orderId}/decline-order")
+    @PatchMapping("/orders/{orderId}/decline-order")
     public ResponseEntity<Void> declineOrder(@PathVariable Long orderId, Principal principal) {
         String masterLogin = principal.getName();
         orderService.declineOrder(orderId, masterLogin);
