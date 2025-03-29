@@ -19,7 +19,7 @@ import lombok.experimental.Accessors;
 @SequenceGenerator(name = DEFAULT_GENERATOR, sequenceName = "order_seq")
 public class Order extends AbstractEntity {
     @ManyToOne
-    @JoinColumn(name = "client_id")
+    @JoinColumn(name = "client_id", referencedColumnName = "client_id")
     private ClientProfile client;
 
     @ManyToOne
@@ -27,7 +27,7 @@ public class Order extends AbstractEntity {
     private Services services;
 
     @ManyToOne
-    @JoinColumn(name = "master_id")
+    @JoinColumn(name = "master_id", referencedColumnName = "master_id")
     private MasterProfile master;
 
     private String description;

@@ -1,0 +1,49 @@
+<databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+
+    <!-- Добавление уникальных ограничений -->
+    <changeSet id="v2-add-unique-constraint-client-profile" author="Vadim Lint">
+        <addUniqueConstraint tableName="client_profile" columnNames="client_id" constraintName="UC_CLIENT_PROFILE_CLIENT_ID"/>
+    </changeSet>
+
+    <changeSet id="v2-add-unique-constraint-master-profile" author="Vadim Lint">
+        <addUniqueConstraint tableName="master_profile" columnNames="master_id" constraintName="UC_MASTER_PROFILE_MASTER_ID"/>
+    </changeSet>
+
+    <!-- Удаление старых внешних ключей -->
+    <changeSet id="v2-update-fk-order" author="Vadim Lint">
+        <dropForeignKeyConstraint baseTableName="orders" constraintName="FK_ORDER_ON_CLIENT"/>
+        <dropForeignKeyConstraint baseTableName="orders" constraintName="FK_ORDER_ON_MASTER"/>
+
+        <addForeignKeyConstraint baseColumnNames="client_id"
+                                 baseTableName="orders"
+                                 constraintName="FK_ORDER_ON_CLIENT_USER"
+                                 referencedColumnNames="id"
+                                 referencedTableName="users"/>
+        <addForeignKeyConstraint baseColumnNames="master_id"
+                                 baseTableName="orders"
+                                 constraintName="FK_ORDER_ON_MASTER_USER"
+                                 referencedColumnNames="id"
+                                 referencedTableName="users"/>
+    </changeSet>
+
+    <!-- Удаление новых внешних ключей -->
+    <changeSet id="v2-update-fk-order2" author="Vadim Lint">
+        <dropForeignKeyConstraint baseTableName="orders" constraintName="FK_ORDER_ON_CLIENT_USER"/>
+        <dropForeignKeyConstraint baseTableName="orders" constraintName="FK_ORDER_ON_MASTER_USER"/>
+
+        <addForeignKeyConstraint baseColumnNames="client_id"
+                                 baseTableName="orders"
+                                 constraintName="FK_ORDER_ON_CLIENT_PROFILE"
+                                 referencedColumnNames="client_id"
+                                 referencedTableName="client_profile"/>
+
+        <addForeignKeyConstraint baseColumnNames="master_id"
+                                 baseTableName="orders"
+                                 constraintName="FK_ORDER_ON_MASTER_PROFILE"
+                                 referencedColumnNames="master_id"
+                                 referencedTableName="master_profile"/>
+    </changeSet>
+</databaseChangeLog>

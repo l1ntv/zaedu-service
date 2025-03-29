@@ -5,5 +5,7 @@
 
     <include file="initial/v1-accumulate-changelog.xml" relativeToChangelogFile="true"/>
 
+    <include file="v2/v2-accumulate-changelog.xml" relativeToChangelogFile="true"/>
+
     <include file="insert-changelogs/v1-accumulate-insert-changelog.xml" relativeToChangelogFile="true"/>
 </databaseChangeLog>
