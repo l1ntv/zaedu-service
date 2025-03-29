@@ -20,4 +20,8 @@ public interface OrderService {
     void offerOrder(Long masterId, CreatedOrderRequest request, String clientLogin);
 
     List<Order> getClientOrders(String name);
+
+    void acceptOrder(Long id, String masterLogin);
+
+    void declineOrder(Long id, String masterLogin);
 }

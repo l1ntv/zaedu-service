@@ -86,5 +86,19 @@ public class OrderController extends EntityController<Order> {
         orderService.offerOrder(masterId, request, clientLogin);
         return ResponseEntity.ok().build();
     }
+
+    @PatchMapping("{orderId}/accept-order")
+    public ResponseEntity<Void> acceptOrder(@PathVariable Long orderId, Principal principal) {
+        String masterLogin = principal.getName();
+        orderService.acceptOrder(orderId, masterLogin);
+        return ResponseEntity.ok().build();
+    }
+
+    @PatchMapping("{orderId}/decline-order")
+    public ResponseEntity<Void> declineOrder(@PathVariable Long orderId, Principal principal) {
+        String masterLogin = principal.getName();
+        orderService.declineOrder(orderId, masterLogin);
+        return ResponseEntity.ok().build();
+    }
 }
 

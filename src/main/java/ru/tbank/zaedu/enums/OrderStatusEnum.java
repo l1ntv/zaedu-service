@@ -4,5 +4,6 @@ public enum OrderStatusEnum {
     PENDING,
     IN_PROGRESS,
     COMPLETED,
-    PLACED
+    PLACED,
+    DECLINED
 }

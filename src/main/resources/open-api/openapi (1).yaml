@@ -279,7 +279,21 @@ paths:
           description: Мастер не был авторизован
           content: {}
 
-
+    /orders/{orderId}/assign-order:
+      patch:
+      tags:
+        - Orders
+      summary:
+      responses:
+        '200':
+          description: Список выставленных заказов клиентами, фото и баланс мастера
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClientsOrdersResponse'
+        '403':
+          description: Мастер не был авторизован
+          content: {}
 
 components:
   schemas:

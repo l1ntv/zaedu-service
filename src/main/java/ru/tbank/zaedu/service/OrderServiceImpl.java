@@ -13,6 +13,7 @@ import ru.tbank.zaedu.exceptionhandler.ResourceNotFoundException;
 import ru.tbank.zaedu.models.*;
 import ru.tbank.zaedu.repo.*;
 
+import java.time.LocalDate;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -72,7 +73,7 @@ public class OrderServiceImpl implements OrderService {
     @Transactional
     @Override
     public void assignOrderToMaster(Long id, String masterLogin) {
-        Order order = orderRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("OrderNotFound"));
+        Order order = this.findOrderById(id);
 
         if (!this.isOrderHasPlacedStatus(order)) {
             throw new ConflictResourceException("OrderAlreadyPickedUp");
@@ -94,6 +95,18 @@ public class OrderServiceImpl implements OrderService {
         ClientProfile clientProfile = this.findClientProfileByUserId(user.getId());
         Services service = this.findServiceByName(request.getServiceName());
         OrderStatus placedOrderStatus = this.findOrderStatusByName(OrderStatusEnum.PLACED.toString());
+
+        List<Order> listPossibleDuplicates = this.findPossibleDuplicates(
+                clientProfile,
+                service,
+                request.getAddress(),
+                request.getDateFrom(),
+                request.getDateTo()
+        );
+
+        if (!listPossibleDuplicates.isEmpty()) {
+            throw new ConflictResourceException("DuplicateOrder");
+        }
 
         Order order = Order.builder()
                 .client(clientProfile)
@@ -131,6 +144,18 @@ public class OrderServiceImpl implements OrderService {
         Services service = this.findServiceByName(request.getServiceName());
         OrderStatus placedOrderStatus = this.findOrderStatusByName(OrderStatusEnum.PENDING.toString());
 
+        List<Order> listPossibleDuplicates = this.findPossibleDuplicates(
+                clientProfile,
+                service,
+                request.getAddress(),
+                request.getDateFrom(),
+                request.getDateTo()
+        );
+
+        if (!listPossibleDuplicates.isEmpty()) {
+            throw new ConflictResourceException("DuplicateOrder");
+        }
+
         Order order = Order.builder()
                 .client(clientProfile)
                 .master(masterProfile)
@@ -142,7 +167,76 @@ public class OrderServiceImpl implements OrderService {
                 .address(request.getAddress())
                 .price(request.getPrice())
                 .build();
+
         orderRepository.save(order);
+    }
+
+    @Transactional
+    @Override
+    public void acceptOrder(Long id, String masterLogin) {
+        Order order = this.findOrderById(id);
+        User user = this.findUserByLogin(masterLogin);
+        MasterProfile masterProfile = this.findMasterProfileByUserId(user.getId());
+
+        if (!order.getMaster().getId().equals(masterProfile.getId())) {
+            throw new ResourceNotFoundException("OrderNotBelongToMaster");
+        }
+
+        OrderStatus orderStatus = this.findOrderStatusByName(OrderStatusEnum.IN_PROGRESS.toString());
+        order.setStatus(orderStatus);
+        orderRepository.save(order);
+    }
+
+    @Transactional
+    @Override
+    public void declineOrder(Long id, String masterLogin) {
+        Order order = this.findOrderById(id);
+        User user = this.findUserByLogin(masterLogin);
+        MasterProfile masterProfile = this.findMasterProfileByUserId(user.getId());
+
+        if (!this.isOrderBelongToMaster(order.getId(), masterProfile.getId())) {
+            throw new ResourceNotFoundException("OrderNotBelongToMaster");
+        }
+
+        OrderStatus orderStatus = this.findOrderStatusByName(OrderStatusEnum.DECLINED.toString());
+
+        order.setStatus(orderStatus);
+        orderRepository.save(order);
+    }
+
+    @Override
+    public List<Order> getClientOrders(String name) {
+        Optional<User> user = userRepository.findByLogin(name);
+        List<Order> orders = orderRepository.findByClientId(user.get().getId());
+
+        Map<String, Integer> statusOrder = Map.of(
+                "IN_PROGRESS", 1,
+                "PENDING", 2,
+                "COMPLETED", 3
+        );
+
+        orders.sort(Comparator.comparingInt(
+                order -> statusOrder.getOrDefault(order.getStatus().getName(), Integer.MAX_VALUE)
+        ));
+
+        return orders;
+    }
+
+    private List<Order> findPossibleDuplicates(ClientProfile clientProfile, Services service, String address, LocalDate dateFrom, LocalDate dateTo) throws ConflictResourceException {
+        List<Order> listPossibleDuplicates = orderRepository.findByClientAndServicesAndAddressAndDateFromLessThanEqualAndDateToGreaterThanEqual(
+                clientProfile,
+                service,
+                address,
+                dateFrom,
+                dateTo
+        );
+        return listPossibleDuplicates;
+    }
+
+    private Order findOrderById(Long id) throws ResourceNotFoundException {
+        Order order = orderRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("NotFoundOrder"));
+        return order;
     }
 
     private User findUserByLogin(String login) throws ResourceNotFoundException {
@@ -179,21 +273,7 @@ public class OrderServiceImpl implements OrderService {
         return order.getStatus().getName().equals(OrderStatusEnum.PLACED.toString());
     }
 
-    @Override
-    public List<Order> getClientOrders(String name) {
-        Optional<User> user = userRepository.findByLogin(name);
-        List<Order> orders = orderRepository.findByClientId(user.get().getId());
-
-        Map<String, Integer> statusOrder = Map.of(
-                "IN_PROGRESS", 1,
-                "PENDING", 2,
-                "COMPLETED", 3
-        );
-
-        orders.sort(Comparator.comparingInt(
-                order -> statusOrder.getOrDefault(order.getStatus().getName(), Integer.MAX_VALUE)
-        ));
-
-        return orders;
+    private boolean isOrderBelongToMaster(Long masterIdFromOrder, Long masterIdFromProfile) {
+        return masterIdFromOrder.equals(masterIdFromProfile);
     }
 }
