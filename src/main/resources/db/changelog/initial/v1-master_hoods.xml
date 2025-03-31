@@ -4,6 +4,7 @@
    http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
 
     <changeSet id="v1-create-master_hoods" author="Vadim Duz">
+        <createSequence incrementBy="50" sequenceName="master_hoods_seq" startValue="1"/>
         <createTable tableName="master_hoods">
             <column name="id" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="pk_master_hoods"/>
