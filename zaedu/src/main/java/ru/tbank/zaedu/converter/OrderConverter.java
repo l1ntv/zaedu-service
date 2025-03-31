@@ -1,13 +1,13 @@
-package src.main.java.ru.tbank.zaedu.converter;
+package ru.tbank.zaedu.converter;
 
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.Converter;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
-import src.main.java.ru.tbank.zaedu.DTO.OrderClientDTO;
-import src.main.java.ru.tbank.zaedu.DTO.OrderMasterDTO;
-import src.main.java.ru.tbank.zaedu.models.*;
+import ru.tbank.zaedu.DTO.OrderClientDTO;
+import ru.tbank.zaedu.DTO.OrderMasterDTO;
+import ru.tbank.zaedu.models.*;
 
 @Component
 @RequiredArgsConstructor

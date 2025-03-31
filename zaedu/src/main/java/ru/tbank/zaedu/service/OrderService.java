@@ -1,10 +1,9 @@
-package src.main.java.ru.tbank.zaedu.service;
+package ru.tbank.zaedu.service;
 
 import java.util.List;
-
-import src.main.java.ru.tbank.zaedu.DTO.ClientsOrdersResponse;
-import src.main.java.ru.tbank.zaedu.DTO.CreatedOrderRequest;
-import src.main.java.ru.tbank.zaedu.models.Order;
+import ru.tbank.zaedu.DTO.ClientsOrdersResponse;
+import ru.tbank.zaedu.DTO.CreatedOrderRequest;
+import ru.tbank.zaedu.models.Order;
 
 public interface OrderService {
 

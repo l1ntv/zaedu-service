@@ -1,10 +1,10 @@
-package src.main.java.ru.tbank.zaedu.service;
+package ru.tbank.zaedu.service;
 
 import java.security.Principal;
 import java.util.List;
-import src.main.java.ru.tbank.zaedu.DTO.MasterPrivateProfileUpdateRequestDTO;
-import src.main.java.ru.tbank.zaedu.DTO.MasterUpdateRequestDTO;
-import src.main.java.ru.tbank.zaedu.models.MasterProfile;
+import ru.tbank.zaedu.DTO.MasterPrivateProfileUpdateRequestDTO;
+import ru.tbank.zaedu.DTO.MasterUpdateRequestDTO;
+import ru.tbank.zaedu.models.MasterProfile;
 
 public interface MasterService {
     List<MasterProfile> searchMastersByCategory(String category);

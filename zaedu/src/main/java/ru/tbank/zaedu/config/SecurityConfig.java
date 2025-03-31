@@ -1,4 +1,4 @@
-package src.main.java.ru.tbank.zaedu.config;
+package ru.tbank.zaedu.config;
 
 import java.util.List;
 import lombok.RequiredArgsConstructor;

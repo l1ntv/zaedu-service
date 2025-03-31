@@ -1,4 +1,4 @@
-package src.main.java.ru.tbank.zaedu.config;
+package ru.tbank.zaedu.config;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -12,7 +12,7 @@ import java.util.Map;
 import java.util.function.Function;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
-import src.main.java.ru.tbank.zaedu.models.User;
+import ru.tbank.zaedu.models.User;
 
 @Service
 public class JwtService {

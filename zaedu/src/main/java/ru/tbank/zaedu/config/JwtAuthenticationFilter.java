@@ -1,4 +1,4 @@
-package src.main.java.ru.tbank.zaedu.config;
+package ru.tbank.zaedu.config;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

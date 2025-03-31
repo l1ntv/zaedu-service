@@ -1,4 +1,4 @@
-package src.main.java.ru.tbank.zaedu.DTO;
+package ru.tbank.zaedu.DTO;
 
 import java.util.List;
 import lombok.AllArgsConstructor;

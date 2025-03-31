@@ -1,9 +1,9 @@
-package src.main.java.ru.tbank.zaedu.service;
+package ru.tbank.zaedu.service;
 
-import src.main.java.ru.tbank.zaedu.DTO.AuthenticationRequest;
-import src.main.java.ru.tbank.zaedu.DTO.AuthenticationResponse;
-import src.main.java.ru.tbank.zaedu.DTO.RegistrationClientRequest;
-import src.main.java.ru.tbank.zaedu.DTO.RegistrationMasterRequest;
+import ru.tbank.zaedu.DTO.AuthenticationRequest;
+import ru.tbank.zaedu.DTO.AuthenticationResponse;
+import ru.tbank.zaedu.DTO.RegistrationClientRequest;
+import ru.tbank.zaedu.DTO.RegistrationMasterRequest;
 
 public interface AuthenticationService {
 

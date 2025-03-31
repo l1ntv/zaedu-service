@@ -1,4 +1,4 @@
-package src.main.java.ru.tbank.zaedu.enums;
+package ru.tbank.zaedu.enums;
 
 public enum OrderStatusEnum {
     PENDING,

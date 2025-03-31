@@ -1,4 +1,4 @@
-package src.main.java.ru.tbank.zaedu.config;
+package ru.tbank.zaedu.config;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -12,7 +12,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import src.main.java.ru.tbank.zaedu.repo.UserRepository;
+import ru.tbank.zaedu.repo.UserRepository;
 
 @Configuration
 @RequiredArgsConstructor
