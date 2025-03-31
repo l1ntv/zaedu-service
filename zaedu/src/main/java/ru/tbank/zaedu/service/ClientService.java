@@ -1,15 +1,15 @@
-package src.main.java.ru.tbank.zaedu.service;
+package ru.tbank.zaedu.service;
 
 import java.util.Objects;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
-import src.main.java.ru.tbank.zaedu.DTO.ClientProfileRequestDTO;
-import src.main.java.ru.tbank.zaedu.models.*;
-import src.main.java.ru.tbank.zaedu.repo.ClientMainImageRepository;
-import src.main.java.ru.tbank.zaedu.repo.ClientProfileRepository;
-import src.main.java.ru.tbank.zaedu.repo.UserRepository;
+import ru.tbank.zaedu.DTO.ClientProfileRequestDTO;
+import ru.tbank.zaedu.models.*;
+import ru.tbank.zaedu.repo.ClientMainImageRepository;
+import ru.tbank.zaedu.repo.ClientProfileRepository;
+import ru.tbank.zaedu.repo.UserRepository;
 
 @Service
 @RequiredArgsConstructor

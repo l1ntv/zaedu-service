@@ -1,4 +1,4 @@
-package src.main.java.ru.tbank.zaedu.service;
+package ru.tbank.zaedu.service;
 
 import jakarta.transaction.Transactional;
 import java.util.List;
@@ -8,16 +8,16 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import src.main.java.ru.tbank.zaedu.DTO.*;
-import src.main.java.ru.tbank.zaedu.config.JwtService;
-import src.main.java.ru.tbank.zaedu.enums.UserRoleEnum;
-import src.main.java.ru.tbank.zaedu.enums.UserStatusEnum;
-import src.main.java.ru.tbank.zaedu.exceptionhandler.InvalidDataException;
-import src.main.java.ru.tbank.zaedu.exceptionhandler.LockedUserException;
-import src.main.java.ru.tbank.zaedu.exceptionhandler.ResourceNotFoundException;
-import src.main.java.ru.tbank.zaedu.exceptionhandler.WrongDataException;
-import src.main.java.ru.tbank.zaedu.models.*;
-import src.main.java.ru.tbank.zaedu.repo.*;
+import ru.tbank.zaedu.DTO.*;
+import ru.tbank.zaedu.config.JwtService;
+import ru.tbank.zaedu.enums.UserRoleEnum;
+import ru.tbank.zaedu.enums.UserStatusEnum;
+import ru.tbank.zaedu.exceptionhandler.InvalidDataException;
+import ru.tbank.zaedu.exceptionhandler.LockedUserException;
+import ru.tbank.zaedu.exceptionhandler.ResourceNotFoundException;
+import ru.tbank.zaedu.exceptionhandler.WrongDataException;
+import ru.tbank.zaedu.models.*;
+import ru.tbank.zaedu.repo.*;
 
 @Service
 @RequiredArgsConstructor

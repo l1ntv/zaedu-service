@@ -1,4 +1,4 @@
-package src.main.java.ru.tbank.zaedu.exceptionhandler;
+package ru.tbank.zaedu.exceptionhandler;
 
 import java.util.stream.Collectors;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
@@ -7,7 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import src.main.java.ru.tbank.zaedu.DTO.ErrorResponseDTO;
+import ru.tbank.zaedu.DTO.ErrorResponseDTO;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {

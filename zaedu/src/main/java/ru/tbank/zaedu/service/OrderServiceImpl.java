@@ -1,31 +1,27 @@
-package src.main.java.ru.tbank.zaedu.service;
+package ru.tbank.zaedu.service;
 
 import jakarta.transaction.Transactional;
-
+import java.time.LocalDate;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import src.main.java.ru.tbank.zaedu.DTO.ClientsOrdersResponse;
-import src.main.java.ru.tbank.zaedu.DTO.CreatedOrderRequest;
-import src.main.java.ru.tbank.zaedu.DTO.PlacedOrdersByClientsResponse;
-import src.main.java.ru.tbank.zaedu.DTO.ServiceDTO;
-import src.main.java.ru.tbank.zaedu.enums.OrderStatusEnum;
-import src.main.java.ru.tbank.zaedu.exceptionhandler.ConflictResourceException;
-import src.main.java.ru.tbank.zaedu.exceptionhandler.ResourceNotFoundException;
-import src.main.java.ru.tbank.zaedu.models.*;
-import src.main.java.ru.tbank.zaedu.repo.*;
-
-import java.time.LocalDate;
+import ru.tbank.zaedu.DTO.ClientsOrdersResponse;
+import ru.tbank.zaedu.DTO.CreatedOrderRequest;
+import ru.tbank.zaedu.DTO.PlacedOrdersByClientsResponse;
+import ru.tbank.zaedu.DTO.ServiceDTO;
+import ru.tbank.zaedu.enums.OrderStatusEnum;
+import ru.tbank.zaedu.exceptionhandler.ConflictResourceException;
+import ru.tbank.zaedu.exceptionhandler.ResourceNotFoundException;
+import ru.tbank.zaedu.models.*;
+import ru.tbank.zaedu.repo.*;
 
 @Service
 @RequiredArgsConstructor
-public class
-OrderServiceImpl implements OrderService {
+public class OrderServiceImpl implements OrderService {
 
     private final UserRepository userRepository;
 
@@ -97,12 +93,7 @@ OrderServiceImpl implements OrderService {
         OrderStatus placedOrderStatus = this.findOrderStatusByName(OrderStatusEnum.PLACED.toString());
 
         List<Order> listPossibleDuplicates = this.findPossibleDuplicates(
-                clientProfile,
-                service,
-                request.getAddress(),
-                request.getDateFrom(),
-                request.getDateTo()
-        );
+                clientProfile, service, request.getAddress(), request.getDateFrom(), request.getDateTo());
 
         if (!listPossibleDuplicates.isEmpty()) {
             throw new ConflictResourceException("DuplicateOrder");
@@ -146,12 +137,7 @@ OrderServiceImpl implements OrderService {
         OrderStatus placedOrderStatus = this.findOrderStatusByName(OrderStatusEnum.PENDING.toString());
 
         List<Order> listPossibleDuplicates = this.findPossibleDuplicates(
-                clientProfile,
-                service,
-                request.getAddress(),
-                request.getDateFrom(),
-                request.getDateTo()
-        );
+                clientProfile, service, request.getAddress(), request.getDateFrom(), request.getDateTo());
 
         if (!listPossibleDuplicates.isEmpty()) {
             throw new ConflictResourceException("DuplicateOrder");
@@ -215,12 +201,10 @@ OrderServiceImpl implements OrderService {
                 "PLACED", 2,
                 "PENDING", 3,
                 "COMPLETED", 4,
-                "DECLINED", 5
-        );
+                "DECLINED", 5);
 
         orders.sort(Comparator.comparingInt(
-                order -> statusOrder.getOrDefault(order.getStatus().getName(), Integer.MAX_VALUE)
-        ));
+                order -> statusOrder.getOrDefault(order.getStatus().getName(), Integer.MAX_VALUE)));
 
         return orders;
     }
@@ -241,20 +225,17 @@ OrderServiceImpl implements OrderService {
         return orders;
     }
 
-    private List<Order> findPossibleDuplicates(ClientProfile clientProfile, Services service, String address, LocalDate dateFrom, LocalDate dateTo) throws ConflictResourceException {
-        List<Order> listPossibleDuplicates = orderRepository.findByClientAndServicesAndAddressAndDateFromLessThanEqualAndDateToGreaterThanEqual(
-                clientProfile,
-                service,
-                address,
-                dateFrom,
-                dateTo
-        );
+    private List<Order> findPossibleDuplicates(
+            ClientProfile clientProfile, Services service, String address, LocalDate dateFrom, LocalDate dateTo)
+            throws ConflictResourceException {
+        List<Order> listPossibleDuplicates =
+                orderRepository.findByClientAndServicesAndAddressAndDateFromLessThanEqualAndDateToGreaterThanEqual(
+                        clientProfile, service, address, dateFrom, dateTo);
         return listPossibleDuplicates;
     }
 
     private Order findOrderById(Long id) throws ResourceNotFoundException {
-        Order order = orderRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("NotFoundOrder"));
+        Order order = orderRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("NotFoundOrder"));
         return order;
     }
 

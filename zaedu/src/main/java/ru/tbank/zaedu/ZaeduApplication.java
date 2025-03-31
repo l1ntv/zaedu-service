@@ -1,4 +1,4 @@
-package src.main.java.ru.tbank.zaedu;
+package ru.tbank.zaedu;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

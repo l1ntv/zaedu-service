@@ -1,4 +1,4 @@
-package src.main.java.ru.tbank.zaedu.models;
+package ru.tbank.zaedu.models;
 
 import jakarta.persistence.*;
 import java.io.Serial;

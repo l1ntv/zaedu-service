@@ -1,13 +1,13 @@
-package src.main.java.ru.tbank.zaedu.controller;
+package ru.tbank.zaedu.controller;
 
 import java.security.Principal;
 import java.util.List;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import src.main.java.ru.tbank.zaedu.DTO.*;
-import src.main.java.ru.tbank.zaedu.models.MasterProfile;
-import src.main.java.ru.tbank.zaedu.service.MasterService;
+import ru.tbank.zaedu.DTO.*;
+import ru.tbank.zaedu.models.MasterProfile;
+import ru.tbank.zaedu.service.MasterService;
 
 @RestController
 @RequestMapping("/masters")

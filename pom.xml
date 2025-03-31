@@ -11,12 +11,9 @@
     <groupId>ru.t-bank</groupId>
     <artifactId>root</artifactId>
     <version>0.0.1-SNAPSHOT</version>
+    <packaging>pom</packaging>
     <name>root</name>
     <description>Zaedu project</description>
-
-    <modules>
-        <module>zaedu</module>
-    </modules>
     <url/>
     <licenses>
         <license/>
@@ -24,6 +21,11 @@
     <developers>
         <developer/>
     </developers>
+
+    <modules>
+        <module>passport-validator</module>
+        <module>zaedu</module>
+    </modules>
     <scm>
         <connection/>
         <developerConnection/>
@@ -51,6 +53,10 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-jpa</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.kafka</groupId>
+            <artifactId>spring-kafka</artifactId>
         </dependency>
         <dependency>
             <groupId>org.liquibase</groupId>
@@ -162,12 +168,6 @@
                             <sortExecutions>false</sortExecutions>
                         </sortPom>
                     </pom>
-                    <markdown>
-                        <includes>
-                            <include>*.md</include>
-                        </includes>
-                        <flexmark/>
-                    </markdown>
                 </configuration>
             </plugin>
 

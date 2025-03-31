@@ -1,4 +1,4 @@
-package src.main.java.ru.tbank.zaedu.repo;
+package ru.tbank.zaedu.repo;
 
 import java.util.List;
 import java.util.Optional;
@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
-import src.main.java.ru.tbank.zaedu.models.MasterProfile;
+import ru.tbank.zaedu.models.MasterProfile;
 
 @Repository
 public interface MasterProfileRepository extends JpaRepository<MasterProfile, Long> {
@@ -18,4 +18,6 @@ public interface MasterProfileRepository extends JpaRepository<MasterProfile, Lo
     Optional<MasterProfile> findByUser_Id(Long id);
 
     Optional<MasterProfile> findByUser_Login(String login);
+
+    Optional<MasterProfile> findByPassportSeriesAndPassportNumber(String series, String number);
 }

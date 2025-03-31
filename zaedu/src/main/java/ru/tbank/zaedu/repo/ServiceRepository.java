@@ -1,9 +1,9 @@
-package src.main.java.ru.tbank.zaedu.repo;
+package ru.tbank.zaedu.repo;
 
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-import src.main.java.ru.tbank.zaedu.models.Services;
+import ru.tbank.zaedu.models.Services;
 
 @Repository
 public interface ServiceRepository extends JpaRepository<Services, Long> {

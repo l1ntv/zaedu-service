@@ -1,4 +1,4 @@
-package src.main.java.ru.tbank.zaedu.controller;
+package ru.tbank.zaedu.controller;
 
 import java.security.Principal;
 import java.util.Optional;
@@ -7,10 +7,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
-import src.main.java.ru.tbank.zaedu.DTO.ClientProfileRequestDTO;
-import src.main.java.ru.tbank.zaedu.DTO.ClientProfileResponseDTO;
-import src.main.java.ru.tbank.zaedu.models.ClientProfile;
-import src.main.java.ru.tbank.zaedu.service.ClientService;
+import ru.tbank.zaedu.DTO.ClientProfileRequestDTO;
+import ru.tbank.zaedu.DTO.ClientProfileResponseDTO;
+import ru.tbank.zaedu.models.ClientProfile;
+import ru.tbank.zaedu.service.ClientService;
 
 @RestController
 @RequestMapping("/clients")

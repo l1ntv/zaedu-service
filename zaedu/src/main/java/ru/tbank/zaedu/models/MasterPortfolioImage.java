@@ -1,6 +1,6 @@
-package src.main.java.ru.tbank.zaedu.models;
+package ru.tbank.zaedu.models;
 
-import static src.main.java.ru.tbank.zaedu.models.AbstractEntity.DEFAULT_GENERATOR;
+import static ru.tbank.zaedu.models.AbstractEntity.DEFAULT_GENERATOR;
 
 import jakarta.persistence.*;
 import lombok.*;

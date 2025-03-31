@@ -1,4 +1,4 @@
-package src.main.java.ru.tbank.zaedu.mapper;
+package ru.tbank.zaedu.mapper;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Bean;

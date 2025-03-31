@@ -1,4 +1,4 @@
-package src.main.java.ru.tbank.zaedu.converter;
+package ru.tbank.zaedu.converter;
 
 import jakarta.annotation.PostConstruct;
 import java.util.Objects;
@@ -6,11 +6,11 @@ import lombok.RequiredArgsConstructor;
 import org.modelmapper.Converter;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
-import src.main.java.ru.tbank.zaedu.DTO.ClientProfileRequestDTO;
-import src.main.java.ru.tbank.zaedu.DTO.ClientProfileResponseDTO;
-import src.main.java.ru.tbank.zaedu.models.City;
-import src.main.java.ru.tbank.zaedu.models.ClientProfile;
-import src.main.java.ru.tbank.zaedu.repo.CityRepository;
+import ru.tbank.zaedu.DTO.ClientProfileRequestDTO;
+import ru.tbank.zaedu.DTO.ClientProfileResponseDTO;
+import ru.tbank.zaedu.models.City;
+import ru.tbank.zaedu.models.ClientProfile;
+import ru.tbank.zaedu.repo.CityRepository;
 
 @Component
 @RequiredArgsConstructor

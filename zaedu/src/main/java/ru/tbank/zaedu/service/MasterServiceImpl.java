@@ -1,4 +1,4 @@
-package src.main.java.ru.tbank.zaedu.service;
+package ru.tbank.zaedu.service;
 
 import jakarta.transaction.Transactional;
 import java.security.Principal;
@@ -8,14 +8,16 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
-import src.main.java.ru.tbank.zaedu.DTO.*;
-import src.main.java.ru.tbank.zaedu.exceptionhandler.ConflictResourceException;
-import src.main.java.ru.tbank.zaedu.exceptionhandler.ResourceNotFoundException;
-import src.main.java.ru.tbank.zaedu.models.*;
-import src.main.java.ru.tbank.zaedu.repo.HoodRepository;
-import src.main.java.ru.tbank.zaedu.repo.MasterProfileRepository;
-import src.main.java.ru.tbank.zaedu.repo.ServiceRepository;
+import ru.tbank.zaedu.DTO.*;
+import ru.tbank.zaedu.exceptionhandler.ConflictResourceException;
+import ru.tbank.zaedu.exceptionhandler.ResourceNotFoundException;
+import ru.tbank.zaedu.models.*;
+import ru.tbank.zaedu.repo.HoodRepository;
+import ru.tbank.zaedu.repo.MasterProfileRepository;
+import ru.tbank.zaedu.repo.ServiceRepository;
 
 @Service
 @RequiredArgsConstructor
@@ -25,6 +27,9 @@ public class MasterServiceImpl implements MasterService {
     private final ServiceRepository serviceRepository;
     private final HoodRepository hoodRepository;
     private final ModelMapper modelMapper; // Добавьте ModelMapper
+
+    @Autowired
+    private KafkaTemplate<String, String> kafkaTemplate;
 
     @Override
     public List<MasterProfile> searchMastersByCategory(String category) {
@@ -162,10 +167,13 @@ public class MasterServiceImpl implements MasterService {
         master.setEmail(request.getEmail());
         master.setTelephoneNumber(request.getTelephoneNumber());
         master.setIsCompany(request.getIsCompany());
-        master.setIsConfirmedPassport(request.getIsConfirmedPassport());
         master.setPassportSeries(request.getPassportSeries());
         master.setPassportNumber(request.getPassportNumber());
 
         masterProfileRepository.save(master);
+
+        // Отправка данных в Kafka
+        String passportKey = request.getPassportSeries() + ":" + request.getPassportNumber();
+        kafkaTemplate.send("passport-validation-request", passportKey);
     }
 }

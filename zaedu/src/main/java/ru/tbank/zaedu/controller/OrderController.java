@@ -1,14 +1,14 @@
-package src.main.java.ru.tbank.zaedu.controller;
+package ru.tbank.zaedu.controller;
 
 import java.security.Principal;
 import java.util.List;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import src.main.java.ru.tbank.zaedu.DTO.*;
-import src.main.java.ru.tbank.zaedu.enums.ServicesEnum;
-import src.main.java.ru.tbank.zaedu.models.Order;
-import src.main.java.ru.tbank.zaedu.service.OrderService;
+import ru.tbank.zaedu.DTO.*;
+import ru.tbank.zaedu.enums.ServicesEnum;
+import ru.tbank.zaedu.models.Order;
+import ru.tbank.zaedu.service.OrderService;
 
 @RestController
 @RequestMapping
