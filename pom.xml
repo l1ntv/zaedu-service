@@ -9,10 +9,14 @@
         <!-- lookup parent from repository -->
     </parent>
     <groupId>ru.t-bank</groupId>
-    <artifactId>zaedu</artifactId>
+    <artifactId>root</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>zaedu</name>
+    <name>root</name>
     <description>Zaedu project</description>
+
+    <modules>
+        <module>zaedu</module>
+    </modules>
     <url/>
     <licenses>
         <license/>
