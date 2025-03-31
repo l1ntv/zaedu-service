@@ -771,9 +771,6 @@ components:
         isCompany:
           type: boolean
           description: Является ли мастер компанией
-        isConfirmedPassport:
-          type: boolean
-          description: Подтвержден ли паспорт мастера
         passportSeries:
           type: string
           description: Серия паспорта мастера
