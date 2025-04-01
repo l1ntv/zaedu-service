@@ -24,19 +24,23 @@ public class FeedbackServiceImpl implements FeedbackService {
 
     @Override
     public void giveFeedback(Long orderId, FeedbackRequest feedbackRequest, String clientLogin) {
-        if (feedbackRequest.getEvaluation() < 1 || feedbackRequest.getEvaluation() > 5 || feedbackRequest.getDescription().length() > 255) {
+        if (!this.isEvaluationCorrect(feedbackRequest.getEvaluation())
+                || !this.isDescriptionCorrect(feedbackRequest.getDescription())) {
             throw new ResourceNotFoundException("IncorrectFeedbackData");
         }
 
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new ResourceNotFoundException("OrderNotFound"));
-
+        MasterProfile masterProfile = order.getMaster();
+        if (masterProfile == null) {
+            throw new ResourceNotFoundException("MasterProfileNotFound");
+        }
+        ClientProfile clientProfile = order.getClient();
         List<MasterFeedback> potentialDuplicateMasterFeedback = masterFeedbackRepository.findByOrder(order);
+
         if (!potentialDuplicateMasterFeedback.isEmpty()) {
             throw new ConflictResourceException("DuplicateMasterFeedback");
         }
-
-        ClientProfile clientProfile = order.getClient();
 
         User client = userRepository.findByLogin(clientLogin)
                 .orElseThrow(() -> new ResourceNotFoundException("AuthUserNotFound"));
@@ -46,12 +50,6 @@ public class FeedbackServiceImpl implements FeedbackService {
         if (!clientProfile.equals(authClientProfile)) {
             throw new ConflictResourceException("OrderNotBelongToClient");
         }
-
-        MasterProfile masterProfile = order.getMaster();
-        if (masterProfile == null) {
-            throw new ResourceNotFoundException("MasterProfileNotFound");
-        }
-
 
         var masterFeedback = MasterFeedback.builder()
                 .master(masterProfile)
@@ -63,4 +61,13 @@ public class FeedbackServiceImpl implements FeedbackService {
 
         masterFeedbackRepository.save(masterFeedback);
     }
+
+    private boolean isEvaluationCorrect(int evaluation) {
+        return evaluation >= 1 && evaluation <= 5;
+    }
+
+    private boolean isDescriptionCorrect(String description) {
+        return description.length() < 255;
+    }
+
 }
