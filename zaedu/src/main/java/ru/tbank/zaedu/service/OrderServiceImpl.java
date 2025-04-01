@@ -1,12 +1,14 @@
 package ru.tbank.zaedu.service;
 
 import jakarta.transaction.Transactional;
+
 import java.time.LocalDate;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.tbank.zaedu.DTO.ClientsOrdersResponse;
@@ -131,6 +133,9 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public void offerOrder(Long masterId, CreatedOrderRequest request, String clientLogin) {
         User user = this.findUserByLogin(clientLogin);
+
+        System.out.println(user.getId());
+
         ClientProfile clientProfile = this.findClientProfileByUserId(user.getId());
         MasterProfile masterProfile = this.findMasterProfileByUserId(masterId);
         Services service = this.findServiceByName(request.getServiceName());
@@ -248,8 +253,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     private ClientProfile findClientProfileByUserId(Long id) throws ResourceNotFoundException {
-        ClientProfile clientProfile = clientProfileRepository
-                .findByUser_Id(id)
+        ClientProfile clientProfile = clientProfileRepository.findByUser_Id(id)
                 .orElseThrow(() -> new ResourceNotFoundException("ClientNotFound"));
         return clientProfile;
     }
