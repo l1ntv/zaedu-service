@@ -12,6 +12,8 @@ import ru.tbank.zaedu.models.Services;
 public interface OrderRepository extends JpaRepository<Order, Long> {
     List<Order> findByClient_Id(Long clientId);
 
+    List<Order> findByClient(ClientProfile client);
+
     List<Order> findByMaster_Id(Long masterId);
 
     List<Order> findByStatus(OrderStatus orderStatus);

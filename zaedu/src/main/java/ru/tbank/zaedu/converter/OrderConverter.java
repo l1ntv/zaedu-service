@@ -33,7 +33,7 @@ public class OrderConverter {
             }
 
             // Извлечение phone из ClientProfile
-            if (source.getClient() != null && source.getMaster().getTelephoneNumber() != null) {
+            if (source.getClient() != null && source.getMaster()!=null && source.getMaster().getTelephoneNumber() != null) {
                 destination.setPhoneMaster(source.getClient().getTelephoneNumber());
             } else {
                 destination.setPhoneMaster(null); // Если телефон не указан

@@ -194,7 +194,10 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public List<Order> getClientOrders(String name) {
         Optional<User> user = userRepository.findByLogin(name);
-        List<Order> orders = orderRepository.findByClient_Id(user.get().getId());
+
+        Optional<ClientProfile> clientProfile = clientProfileRepository.findByUser_Id(user.get().getId());
+
+        List<Order> orders = orderRepository.findByClient(clientProfile.get());
 
         Map<String, Integer> statusOrder = Map.of(
                 "IN_PROGRESS", 1,
