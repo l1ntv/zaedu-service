@@ -24,8 +24,8 @@ public class FeedbackServiceImpl implements FeedbackService {
 
     @Override
     public void giveFeedback(Long orderId, FeedbackRequest feedbackRequest, String clientLogin) {
-        if (feedbackRequest.getEvaluation() < 1 || feedbackRequest.getEvaluation() > 5) {
-            throw new ResourceNotFoundException("EvaluationValueNotFound");
+        if (feedbackRequest.getEvaluation() < 1 || feedbackRequest.getEvaluation() > 5 || feedbackRequest.getDescription().length() > 255) {
+            throw new ResourceNotFoundException("IncorrectFeedbackData");
         }
 
         Order order = orderRepository.findById(orderId)

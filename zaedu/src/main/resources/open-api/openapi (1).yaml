@@ -618,10 +618,61 @@ paths:
         '404':
           description: Заказы мастера не найдены
 
-
+  /feedback/{orderId}:
+    patch:
+      tags:
+        - Feedback
+      summary: Оставление отзыва на заказ от клиента
+      security:
+        - bearerAuth: [ ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FeedbackRequest'
+      parameters:
+        - name: orderId
+          in: path
+          required: true
+          description: ID заказа
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Клиент оставил отзыв
+          content: {}
+        '403':
+          description: Клиент не был авторизован
+          content: {}
+        '404':
+          description: Данные отзыва некорректные/Авторизованный пользователь не найден/Профиль клиента не найден/Профиль мастера не найден/Заказ не найден
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+        '409':
+          description: Дублирование отзыва/Заказ не принадлежит клиенту
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
 
 components:
   schemas:
+    FeedbackRequest:
+      type: object
+      properties:
+        evaluation: { type: integer }
+        description: { type: string, maxLength: 255 }
+      required: [ evaluation, description ]
+
     ClientRegistrationRequest:
       type: object
       properties:
