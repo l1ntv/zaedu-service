@@ -1,0 +1,21 @@
+<databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+
+    <changeSet id="v2-update-fk-master-feedback" author="Vadim Lint">
+        <dropForeignKeyConstraint baseTableName="master_feedback" constraintName="FK_MASTER_FEEDBACK_ON_CLIENT"/>
+        <dropForeignKeyConstraint baseTableName="master_feedback" constraintName="FK_MASTER_FEEDBACK_ON_MASTER"/>
+
+        <addForeignKeyConstraint baseColumnNames="client_id"
+                                 baseTableName="master_feedback"
+                                 constraintName="FK_MASTER_FEEDBACK_ON_CLIENT"
+                                 referencedColumnNames="client_id"
+                                 referencedTableName="client_profile"/>
+        <addForeignKeyConstraint baseColumnNames="master_id"
+                                 baseTableName="master_feedback"
+                                 constraintName="FK_MASTER_FEEDBACK_ON_MASTER"
+                                 referencedColumnNames="master_id"
+                                 referencedTableName="master_profile"/>
+    </changeSet>
+</databaseChangeLog>

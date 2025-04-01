@@ -4,5 +4,6 @@
    http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
 
     <include file="v2-order-changelog.xml" relativeToChangelogFile="true"/>
+    <include file="v2-master-feedback-changelog.xml" relativeToChangelogFile="true"/>
 
 </databaseChangeLog>
