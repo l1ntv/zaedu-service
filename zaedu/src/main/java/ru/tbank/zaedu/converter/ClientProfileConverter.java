@@ -1,7 +1,7 @@
 package ru.tbank.zaedu.converter;
 
 import jakarta.annotation.PostConstruct;
-import java.util.Objects;
+
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.Converter;
 import org.modelmapper.ModelMapper;
@@ -44,11 +44,6 @@ public class ClientProfileConverter {
                 destination.setCity(city);
             }
 
-            if (source.getMainImage() != null && Objects.nonNull(destination.getMainImage())) {
-                destination.getMainImage().setClient(destination);
-                destination.getMainImage().setUrl(source.getMainImage());
-            }
-
             return destination;
         };
     }
@@ -58,12 +53,11 @@ public class ClientProfileConverter {
             var source = it.getSource();
             var destination = it.getDestination();
 
-            // destination.setCity(source.getCity().getName());
             if (source.getCity() != null) {
                 destination.setCity(source.getCity().getName());
             }
             if (source.getMainImage() != null) {
-                destination.setPhotoUrl(String.valueOf(source.getMainImage().getUrl()));
+                destination.setPhotoUrl(String.valueOf(source.getMainImage().getFilename()));
             }
             destination.setBalance(DEFAULT_BALANCE);
 

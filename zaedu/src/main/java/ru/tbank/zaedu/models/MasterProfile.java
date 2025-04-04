@@ -67,9 +67,9 @@ public class MasterProfile extends AbstractEntity {
     @ToString.Exclude
     private List<Order> orders;
 
-    @OneToMany(mappedBy = "master", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToOne(mappedBy = "master", cascade = CascadeType.ALL, orphanRemoval = true)
     @ToString.Exclude
-    private List<MasterMainImage> mainImages;
+    private MasterMainImage mainImage;
 
     @OneToMany(mappedBy = "master", cascade = CascadeType.ALL)
     @ToString.Exclude

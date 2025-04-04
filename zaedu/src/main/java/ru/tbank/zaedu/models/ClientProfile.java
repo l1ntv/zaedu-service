@@ -31,7 +31,7 @@ public class ClientProfile extends AbstractEntity {
     @JoinColumn(name = "client_id")
     private User user;
 
-    @OneToOne(mappedBy = "client", cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "client", cascade = CascadeType.ALL, orphanRemoval = true)
     @ToString.Exclude
     private ClientMainImage mainImage;
 }
