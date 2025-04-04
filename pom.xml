@@ -21,13 +21,6 @@
     <developers>
         <developer/>
     </developers>
-
-    <modules>
-        <module>passport-validator</module>
-        <module>zaedu</module>
-        <module>finance-service</module>
-        <module>finance-service</module>
-    </modules>
     <scm>
         <connection/>
         <developerConnection/>
