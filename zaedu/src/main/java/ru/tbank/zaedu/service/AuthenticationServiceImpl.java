@@ -1,7 +1,9 @@
 package ru.tbank.zaedu.service;
 
 import jakarta.transaction.Transactional;
+
 import java.util.List;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -37,6 +39,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     private final ServiceRepository serviceRepository;
 
+    private final FinanceBalanceRepository financeBalanceRepository;
+
     private final PasswordEncoder passwordEncoder;
 
     private final JwtService jwtService;
@@ -63,6 +67,9 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
         var clientProfile = ClientProfile.builder().user(user).build();
         clientProfileRepository.save(clientProfile);
+
+        var financeBalance = FinanceBalance.builder().user(user).balance(0L).build();
+        financeBalanceRepository.save(financeBalance);
 
         var jwtToken = jwtService.generateToken(user);
         return AuthenticationResponse.builder().token(jwtToken).build();
@@ -112,6 +119,9 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             masterServiceEntity.setPrice(service.getCost());
             masterServiceEntityRepository.save(masterServiceEntity);
         }
+
+        var financeBalance = FinanceBalance.builder().user(user).balance(0L).build();
+        financeBalanceRepository.save(financeBalance);
 
         var jwtToken = jwtService.generateToken(user);
         return AuthenticationResponse.builder().token(jwtToken).build();
