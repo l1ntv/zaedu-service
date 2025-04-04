@@ -21,6 +21,9 @@
     <developers>
         <developer/>
     </developers>
+    <modules>
+        <module>finance-service</module>
+    </modules>
     <scm>
         <connection/>
         <developerConnection/>
