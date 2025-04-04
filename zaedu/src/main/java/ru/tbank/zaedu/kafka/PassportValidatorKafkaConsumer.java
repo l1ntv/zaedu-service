@@ -5,11 +5,11 @@ import org.springframework.stereotype.Service;
 import ru.tbank.zaedu.repo.MasterProfileRepository;
 
 @Service
-public class KafkaConsumer {
+public class PassportValidatorKafkaConsumer {
 
     private final MasterProfileRepository masterProfileRepository;
 
-    public KafkaConsumer(MasterProfileRepository masterProfileRepository) {
+    public PassportValidatorKafkaConsumer(MasterProfileRepository masterProfileRepository) {
         this.masterProfileRepository = masterProfileRepository;
     }
 
