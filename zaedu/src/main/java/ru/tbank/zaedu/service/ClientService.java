@@ -48,23 +48,22 @@ public class ClientService {
 
         if (requestDTO.getFilename() != null && requestDTO.getUuid() != null
                 && Objects.isNull(clientProfile.getMainImage())) {
+
             ClientMainImage clientMainImage = new ClientMainImage
                     (requestDTO.getUuid(), clientProfile, requestDTO.getFilename());
+
             clientMainImageRepository.save(clientMainImage);
             clientProfile.setMainImage(clientMainImage);
         } else if (requestDTO.getFilename() != null && requestDTO.getUuid() != null) {
-            fileService.delete(clientProfile.getMainImage().getFilename());
 
+            fileService.delete(clientProfile.getMainImage().getFilename());
             clientProfile.getMainImage().setFilename(requestDTO.getFilename());
             clientProfile.getMainImage().setUploadId(requestDTO.getUuid());
         } else if (requestDTO.getFilename() == null && requestDTO.getUuid() == null
                 && Objects.nonNull(clientProfile.getMainImage())) {
+
             fileService.delete(clientProfile.getMainImage().getFilename());
-
-            ClientMainImage clientMainImageForDelete = clientMainImageRepository.findByUploadId(clientProfile.getMainImage().getUploadId()).orElseThrow(ResourceNotFoundException::new);
-
             clientProfile.setMainImage(null);
-            clientMainImageRepository.delete(clientMainImageForDelete);
         }
 
         clientProfileRepository.save(clientProfile);
