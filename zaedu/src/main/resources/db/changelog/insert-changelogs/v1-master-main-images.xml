@@ -8,6 +8,7 @@
                   file="db/data/master-main-images-data.csv"
                   separator=",">
             <column name="id" type="NUMERIC"/>
+            <column name="upload_id" type="UUID"/>
             <column name="created_at" type="DATETIME"/>
             <column name="updated_at" type="DATETIME"/>
             <column name="master_id" type="NUMERIC"/>

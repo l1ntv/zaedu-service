@@ -1,6 +1,8 @@
 package ru.tbank.zaedu.DTO;
 
 import java.util.List;
+import java.util.UUID;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -10,8 +12,9 @@ import lombok.Setter;
 @Setter
 public class MasterUpdateRequestDTO {
     private String description;
-    private String personalPhoto;
-    private List<String> photos; // URLs of photos
+    private List<FileResponseDto> photos;
     private List<ServiceDTO> services;
     private List<String> districts;
+    private String filename;
+    private UUID uuid;
 }

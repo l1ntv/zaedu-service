@@ -57,11 +57,11 @@ public class MasterProfileConverter {
                     .collect(Collectors.toList()));
 
             destination.setPhotos(source.getPortfolioImages().stream()
-                    .map(MasterPortfolioImage::getUrl)
+                    .map(MasterPortfolioImage::getFilename)
                     .collect(Collectors.toList()));
 
-            if (source.getMainImages() != null && !source.getMainImages().isEmpty()) {
-                destination.setPersonalPhoto(source.getMainImages().get(0).getUrl());
+            if (source.getMainImage() != null) {
+                destination.setPersonalPhoto(source.getMainImage().getFilename());
             }
 
             return destination;

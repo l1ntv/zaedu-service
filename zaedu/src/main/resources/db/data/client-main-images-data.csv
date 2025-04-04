@@ -1,2 +1,2 @@
-id,client_id,url,created_at,updated_at
-1,1,https://example.com/main.jpg,2024-01-01 00:00:00,2024-01-01 00:00:00
+id,upload_id,client_id,url,created_at,updated_at
+1,550e8400-e29b-41d4-a716-446655440000,1,https://example.com/main.jpg,2024-01-01 00:00:00,2024-01-01 00:00:00
