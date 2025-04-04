@@ -61,7 +61,7 @@ public class OrderServiceImpl implements OrderService {
 
         User user = this.findUserByLogin(masterLogin);
         Optional<MasterMainImage> masterMainImage = masterMainImageRepository.findByMasterId(user.getId());
-        String imageUrl = masterMainImage.map(MasterMainImage::getUrl).orElse(null);
+        String imageUrl = masterMainImage.map(MasterMainImage::getFilename).orElse(null);
         return new ClientsOrdersResponse(
                 placedOrdersByClientsResponses, imageUrl, OrderServiceImpl.DEFAULT_BALANCE_CONST);
     }

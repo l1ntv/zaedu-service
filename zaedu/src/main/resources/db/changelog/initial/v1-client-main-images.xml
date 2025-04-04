@@ -9,6 +9,9 @@
             <column name="id" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="pk_client_main_images"/>
             </column>
+            <column name="upload_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
             <column name="created_at" type="DATETIME">
                 <constraints nullable="false"/>
             </column>

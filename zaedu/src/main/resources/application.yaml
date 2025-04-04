@@ -29,3 +29,9 @@ spring:
       auto-offset-reset: earliest
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+
+s3:
+  url: http://localhost:9000
+  accessKey: root
+  secretKey: minio123
+  bucket: zaedu

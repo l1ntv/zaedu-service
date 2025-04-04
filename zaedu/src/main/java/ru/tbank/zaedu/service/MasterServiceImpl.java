@@ -4,6 +4,7 @@ import jakarta.transaction.Transactional;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -13,19 +14,24 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import ru.tbank.zaedu.DTO.*;
 import ru.tbank.zaedu.exceptionhandler.ConflictResourceException;
-import ru.tbank.zaedu.exceptionhandler.ResourceNotFoundException;
+import ru.tbank.zaedu.exception.ResourceNotFoundException;
+import ru.tbank.zaedu.exceptionhandler.InvalidDataException;
 import ru.tbank.zaedu.models.*;
 import ru.tbank.zaedu.repo.HoodRepository;
+import ru.tbank.zaedu.repo.MasterMainImageRepository;
 import ru.tbank.zaedu.repo.MasterProfileRepository;
 import ru.tbank.zaedu.repo.ServiceRepository;
+import ru.tbank.zaedu.service.file.FileService;
 
 @Service
 @RequiredArgsConstructor
 public class MasterServiceImpl implements MasterService {
 
     private final MasterProfileRepository masterProfileRepository;
+    private final MasterMainImageRepository masterMainImageRepository;
     private final ServiceRepository serviceRepository;
     private final HoodRepository hoodRepository;
+    private final FileService fileService;
     private final ModelMapper modelMapper; // Добавьте ModelMapper
 
     @Autowired
@@ -124,29 +130,53 @@ public class MasterServiceImpl implements MasterService {
         }
 
         // Обновление портфолио
-        List<MasterPortfolioImage> portfolio = request.getPhotos().stream()
-                .map(url -> {
-                    // Проверка на дублирование ссылки на фото
-                    if (master.getPortfolioImages().stream()
-                            .anyMatch(image -> image.getUrl().equals(url))) {
-                        throw new ConflictResourceException("Photo with URL " + url + " already exists in portfolio");
-                    }
-                    return new MasterPortfolioImage().setMaster(master).setUrl(url);
-                })
-                .collect(Collectors.toList());
+        if (request.getPhotos() != null) {
+            int totalPhotos = master.getPortfolioImages().size() + request.getPhotos().size();
 
-        master.getPortfolioImages().addAll(portfolio); // Добавляем новые изображения
-
-        // Обновление основного изображения профиля
-        if (request.getPersonalPhoto() != null) {
-            // Удаляем старые основные изображения, если они есть
-            if (master.getMainImages() != null && !master.getMainImages().isEmpty()) {
-                master.getMainImages().clear();
+            if (totalPhotos > 10) {
+                throw new InvalidDataException("Portfolio cannot contain more than 10 photos");
             }
 
-            // Добавляем новое основное изображение
-            MasterMainImage mainImage = new MasterMainImage().setMaster(master).setUrl(request.getPersonalPhoto());
-            master.getMainImages().add(mainImage);
+            List<MasterPortfolioImage> newPortfolio = request.getPhotos().stream()
+                    .map(photo -> {
+                        boolean alreadyExists = master.getPortfolioImages().stream()
+                                .anyMatch(img -> img.getUploadId().equals(photo.getUuid()));
+
+                        if (alreadyExists) {
+                            throw new ConflictResourceException(
+                                    "Photo with UUID " + photo.getUuid() + " already exists in portfolio");
+                        }
+
+                        return new MasterPortfolioImage()
+                                .setMaster(master)
+                                .setUploadId(photo.getUuid())
+                                .setFilename(photo.getFilename());
+                    })
+                    .toList();
+
+            master.getPortfolioImages().addAll(newPortfolio);
+        }
+
+        // Обновление основного изображения профиля
+        if (request.getFilename() != null && request.getUuid() != null
+                && Objects.isNull(master.getMainImage())) {
+            MasterMainImage masterMainImage = new MasterMainImage
+                    (request.getUuid(), master, request.getFilename());
+            masterMainImageRepository.save(masterMainImage);
+            master.setMainImage(masterMainImage);
+        } else if (request.getFilename() != null && request.getUuid() != null) {
+            fileService.delete(master.getMainImage().getFilename());
+
+            master.getMainImage().setFilename(request.getFilename());
+            master.getMainImage().setUploadId(request.getUuid());
+        } else if (request.getFilename() == null && request.getUuid() == null
+                && Objects.nonNull(master.getMainImage())) {
+            fileService.delete(master.getMainImage().getFilename());
+
+            MasterMainImage masterMainImageForDelete = masterMainImageRepository.findByUploadId(master.getMainImage().getUploadId()).orElseThrow(ResourceNotFoundException::new);
+
+            master.setMainImage(null);
+            masterMainImageRepository.delete(masterMainImageForDelete);
         }
 
         masterProfileRepository.save(master);
