@@ -18,11 +18,11 @@ import lombok.experimental.Accessors;
 @SequenceGenerator(name = DEFAULT_GENERATOR, sequenceName = "master_feedback_seq")
 public class MasterFeedback extends AbstractEntity {
     @ManyToOne
-    @JoinColumn(name = "master_id")
+    @JoinColumn(name = "master_id", referencedColumnName = "master_id")
     private MasterProfile master;
 
     @ManyToOne
-    @JoinColumn(name = "client_id")
+    @JoinColumn(name = "client_id", referencedColumnName = "client_id")
     private ClientProfile client;
 
     @ManyToOne
