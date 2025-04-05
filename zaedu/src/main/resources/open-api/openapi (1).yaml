@@ -1105,7 +1105,7 @@ components:
       properties:
         id: { type: integer }
         serviceDTO: { $ref: '#/components/schemas/Service' }
-        clientName: { type: string }
+        serviceType: { type: string }
         address: { type: string }
         price: { type: integer }
         dateFrom: { type: string, format: date }
