@@ -50,8 +50,7 @@ public class OrderServiceImpl implements OrderService {
                 .map(order -> {
                     PlacedOrdersByClientsResponse response = new PlacedOrdersByClientsResponse();
                     response.setId(order.getId());
-                    response.setServiceDTO(new ServiceDTO(
-                            order.getServices().getId(), order.getServices().getName(), order.getPrice()));
+                    response.setServiceType(order.getServices().getName());
                     response.setClientName(order.getClient().getName());
                     response.setAddress(order.getAddress());
                     response.setPrice(order.getPrice());

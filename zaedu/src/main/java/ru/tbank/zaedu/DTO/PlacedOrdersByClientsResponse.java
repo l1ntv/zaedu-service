@@ -6,7 +6,7 @@ import lombok.Data;
 @Data
 public class PlacedOrdersByClientsResponse {
     private Long id;
-    private ServiceDTO serviceDTO;
+    private String serviceType;
     private String clientName;
     private String address;
     private Long price;

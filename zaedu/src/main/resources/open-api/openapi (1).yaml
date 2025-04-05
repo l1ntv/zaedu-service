@@ -849,13 +849,13 @@ components:
     CreatedOrderRequest:
       type: object
       properties:
-        serviceName: { type: string }
+        serviceType: { type: string }
         description: { type: string }
         price: { type: integer }
         address: { type: string }
         dateFrom: { type: string, format: date }
         dateTo: { type: string, format: date }
-      required: [ serviceName, description, price, address, dateFrom, dateTo ]
+      required: [ serviceType, description, price, address, dateFrom, dateTo ]
 
     EnumServicesResponse:
       type: object
@@ -895,7 +895,7 @@ components:
         telephoneNumber: { type: string }
         city: { type: string }
         filename: { type: string }
-        uuid: {type: string, format: uuid}
+        uuid: { type: string, format: uuid }
 
     Service:
       type: object
@@ -1104,7 +1104,6 @@ components:
       type: object
       properties:
         id: { type: integer }
-        serviceDTO: { $ref: '#/components/schemas/Service' }
         serviceType: { type: string }
         address: { type: string }
         price: { type: integer }
