@@ -9,7 +9,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 public class CreatedOrderRequest {
-    private String serviceName;
+    private String serviceType;
     private String description;
     private Long price;
     private String address;
