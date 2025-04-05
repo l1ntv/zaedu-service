@@ -160,23 +160,22 @@ public class MasterServiceImpl implements MasterService {
         // Обновление основного изображения профиля
         if (request.getFilename() != null && request.getUuid() != null
                 && Objects.isNull(master.getMainImage())) {
+
             MasterMainImage masterMainImage = new MasterMainImage
                     (request.getUuid(), master, request.getFilename());
+
             masterMainImageRepository.save(masterMainImage);
             master.setMainImage(masterMainImage);
         } else if (request.getFilename() != null && request.getUuid() != null) {
-            fileService.delete(master.getMainImage().getFilename());
 
+            fileService.delete(master.getMainImage().getFilename());
             master.getMainImage().setFilename(request.getFilename());
             master.getMainImage().setUploadId(request.getUuid());
         } else if (request.getFilename() == null && request.getUuid() == null
                 && Objects.nonNull(master.getMainImage())) {
+
             fileService.delete(master.getMainImage().getFilename());
-
-            MasterMainImage masterMainImageForDelete = masterMainImageRepository.findByUploadId(master.getMainImage().getUploadId()).orElseThrow(ResourceNotFoundException::new);
-
             master.setMainImage(null);
-            masterMainImageRepository.delete(masterMainImageForDelete);
         }
 
         masterProfileRepository.save(master);

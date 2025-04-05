@@ -12,6 +12,7 @@ tags:
   - name: Clients
   - name: Masters
   - name: Orders
+  - name: Files
 
 paths:
   /auth/register/master:
@@ -117,6 +118,29 @@ paths:
                 $ref: '#/components/schemas/ClientMainResponse'
         '401':
           description: Неавторизованный доступ
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error: { type: string }
+
+  /clients/{id}:
+    get:
+      tags:
+        - Clients
+      summary: Профиль клиента по id
+      parameters:
+        - $ref: '#/components/parameters/ClientId'
+      responses:
+        '200':
+          description: Профиль клиента
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClientMainResponse'
+        '404':
+          description: Клиент не найден
           content:
             application/json:
               schema:
@@ -663,6 +687,66 @@ paths:
                 properties:
                   error:
                     type: string
+  /images/upload:
+    post:
+      tags:
+        - Files
+      summary: Загрузка изображения
+      description: Загружает файл изображения в хранилище
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+                  description: Файл изображения для загрузки
+      responses:
+        '200':
+          description: Файл успешно загружен
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FileResponseDto'
+        '400':
+          description: Неверный формат файла
+        '401':
+          description: Требуется авторизация
+        '500':
+          description: Ошибка загрузки файла
+
+  /images/delete:
+    post:
+      tags:
+        - Files
+      summary: Удаление изображения
+      description: Удаляет файл изображения из хранилища по имени файла
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                filename:
+                  type: string
+                  description: Имя файла для удаления
+      responses:
+        '200':
+          description: Файл успешно удален
+        '400':
+          description: Не указано имя файла
+        '401':
+          description: Требуется авторизация
+        '404':
+          description: Файл не найден
+        '500':
+          description: Ошибка удаления файла
+
+
 
 components:
   schemas:
@@ -744,7 +828,8 @@ components:
         email: { type: string }
         telephoneNumber: { type: string }
         city: { type: string }
-        mainImage: { type: string }
+        filename: { type: string }
+        uuid: {type: string, format: uuid}
 
     Service:
       type: object
@@ -753,6 +838,15 @@ components:
           type: string
           enum: [DECORATOR, SOUND_ENGINEER, LIGHT_ENGINEER, PHOTOGRAPHER, VIDEOGRAPHER, CHEF, WAITER, HOST]
         cost: { type: integer }
+
+    FileResponse:
+      type: object
+      properties:
+        filename:
+          type: string
+        uuid:
+          type: string
+          format: uuid
 
     MasterProfile:
       type: object
@@ -840,7 +934,8 @@ components:
           description: URL основного изображения профиля (необязательный параметр)
         photos:
           type: array
-          items: { type: string, format: uri }
+          items:
+            $ref: '#/components/schemas/FileResponse'
         services:
           type: array
           items:
@@ -849,6 +944,15 @@ components:
           type: array
           items:
             type: string
+        filename:
+          type: string
+          description: Имя файла основного изображения
+          nullable: true
+        uuid:
+          type: string
+          format: uuid
+          description: UUID основного изображения
+          nullable: true
 
 
     MasterProfileForMeDTO:
@@ -910,6 +1014,15 @@ components:
           type: string
           description: Номер телефона клиента
 
+    FileResponseDto:
+      type: object
+      properties:
+        filename:
+          type: string
+        uuid:
+          type: string
+          format: uuid
+
     ClientsOrdersResponse:
       type: object
       properties:
@@ -944,6 +1057,14 @@ components:
       name: id
       in: path
       description: ID мастера
+      required: true
+      schema:
+        type: integer
+
+    ClientId:
+      name: id
+      in: path
+      description: ID клиента
       required: true
       schema:
         type: integer
