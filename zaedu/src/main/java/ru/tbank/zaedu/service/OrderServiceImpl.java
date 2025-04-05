@@ -91,7 +91,7 @@ public class OrderServiceImpl implements OrderService {
     public void createOrder(CreatedOrderRequest request, String clientLogin) {
         User user = this.findUserByLogin(clientLogin);
         ClientProfile clientProfile = this.findClientProfileByUserId(user.getId());
-        Services service = this.findServiceByName(request.getServiceName());
+        Services service = this.findServiceByName(request.getServiceType());
         OrderStatus placedOrderStatus = this.findOrderStatusByName(OrderStatusEnum.PLACED.toString());
 
         List<Order> listPossibleDuplicates = this.findPossibleDuplicates(
@@ -138,7 +138,7 @@ public class OrderServiceImpl implements OrderService {
 
         ClientProfile clientProfile = this.findClientProfileByUserId(user.getId());
         MasterProfile masterProfile = this.findMasterProfileByUserId(masterId);
-        Services service = this.findServiceByName(request.getServiceName());
+        Services service = this.findServiceByName(request.getServiceType());
         OrderStatus placedOrderStatus = this.findOrderStatusByName(OrderStatusEnum.PENDING.toString());
 
         List<Order> listPossibleDuplicates = this.findPossibleDuplicates(

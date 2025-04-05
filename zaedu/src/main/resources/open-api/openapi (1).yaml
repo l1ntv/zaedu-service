@@ -75,7 +75,7 @@ paths:
               properties:
                 login: { type: string }
                 password: { type: string }
-              required: [login, password]
+              required: [ login, password ]
       responses:
         '200':
           description: Успешная авторизация
@@ -108,7 +108,7 @@ paths:
         - Clients
       summary: Основная информация клиента
       security:
-        - bearerAuth: []
+        - bearerAuth: [ ]
       responses:
         '200':
           description: Успешный запрос
@@ -154,7 +154,7 @@ paths:
         - Clients
       summary: Список заказов клиента
       security:
-        - bearerAuth: []
+        - bearerAuth: [ ]
       responses:
         '200':
           description: Успешный запрос
@@ -360,7 +360,7 @@ paths:
                 $ref: '#/components/schemas/ClientsOrdersResponse'
         '403':
           description: Мастер не был авторизован
-          content: {}
+          content: { }
         '404':
           description: Статус заказа не найден/Авторизованный пользователь не найден
           content:
@@ -387,10 +387,10 @@ paths:
       responses:
         '200':
           description: Мастер забрал заказа клиента
-          content: {}
+          content: { }
         '403':
           description: Мастер не был авторизован
-          content: {}
+          content: { }
         '404':
           description: Заказ не найден/Статус заказа не найден/Авторизованный пользователь не найден/Профиль мастера не найден
           content:
@@ -441,10 +441,10 @@ paths:
       responses:
         '200':
           description: Клиент выставил заказ
-          content: {}
+          content: { }
         '403':
           description: Клиент не был авторизован
-          content: {}
+          content: { }
         '404':
           description: Авторизованный пользователь не найден/Профиль клиента не найден/Сервис не найден/Статус заказа не найден
           content:
@@ -481,10 +481,10 @@ paths:
       responses:
         '200':
           description: Клиент закрыл заказ
-          content: {}
+          content: { }
         '403':
           description: Клиент не был авторизован
-          content: {}
+          content: { }
         '404':
           description: Авторизованный пользователь не найден/Профиль клиента не найден/Статус заказа не найден/Заказ не найден
           content:
@@ -518,10 +518,10 @@ paths:
       responses:
         '200':
           description: Клиент предложил заказ мастеру
-          content: {}
+          content: { }
         '403':
           description: Клиент не был авторизован
-          content: {}
+          content: { }
         '404':
           description: Авторизованный пользователь не найден/Профиль клиента не найден/Профиль мастера не найден/Сервис не найден/Статус заказа не найден
           content:
@@ -558,10 +558,10 @@ paths:
       responses:
         '200':
           description: Мастер принял заказ
-          content: {}
+          content: { }
         '403':
           description: Клиент не был авторизован
-          content: {}
+          content: { }
         '404':
           description: Авторизованный пользователь не найден/Заказ не найден/Профиль мастера не найден/Статус заказа не найден
           content:
@@ -598,10 +598,10 @@ paths:
       responses:
         '200':
           description: Мастер отказался от заказа
-          content: {}
+          content: { }
         '403':
           description: Клиент не был авторизован
-          content: {}
+          content: { }
         '404':
           description: Авторизованный пользователь не найден/Заказ не найден/Профиль мастера не найден/Статус заказа не найден
           content:
@@ -665,10 +665,10 @@ paths:
       responses:
         '200':
           description: Клиент оставил отзыв
-          content: {}
+          content: { }
         '403':
           description: Клиент не был авторизован
-          content: {}
+          content: { }
         '404':
           description: Данные отзыва некорректные/Авторизованный пользователь не найден/Профиль клиента не найден/Профиль мастера не найден/Заказ не найден
           content:
@@ -748,8 +748,74 @@ paths:
 
 
 
+  /finance/withdrawal:
+    patch:
+      tags:
+        - Finance
+      summary: Вывод денег с баланса
+      security:
+        - bearerAuth: [ ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FinanceOperationRequest'
+      responses:
+        '200':
+          description: В сервис финансов был отправлен запрос. Баланс пользователя будет обновлен спустя время.
+          content: { }
+        '403':
+          description: Клиент не был авторизован
+          content: { }
+        '404':
+          description: Авторизованный пользователь не найден/Финансовый баланс не найден
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+
+  /finance/replenishment:
+    patch:
+      tags:
+        - Finance
+      summary: Пополнение денег баланса
+      security:
+        - bearerAuth: [ ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FinanceOperationRequest'
+      responses:
+        '200':
+          description: В сервис финансов был отправлен запрос. Баланс пользователя будет обновлен спустя время.
+          content: { }
+        '403':
+          description: Клиент не был авторизован
+          content: { }
+        '404':
+          description: Авторизованный пользователь не найден/Финансовый баланс не найден
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+
 components:
   schemas:
+    FinanceOperationRequest:
+      type: object
+      properties:
+        moneyCount: { type: integer }
+      required: [ moneyCount ]
+
     FeedbackRequest:
       type: object
       properties:
@@ -762,7 +828,7 @@ components:
       properties:
         login: { type: string, format: email }
         password: { type: string, minLength: 8 }
-      required: [login, password]
+      required: [ login, password ]
 
     MasterRegistrationRequest:
       type: object
@@ -778,7 +844,7 @@ components:
             $ref: '#/components/schemas/Service'
         isOrganization: { type: boolean }
         organizationName: { type: string }
-      required: [login, password, lastName, firstName, services]
+      required: [ login, password, lastName, firstName, services ]
 
     CreatedOrderRequest:
       type: object
@@ -789,7 +855,7 @@ components:
         address: { type: string }
         dateFrom: { type: string, format: date }
         dateTo: { type: string, format: date }
-      required: [serviceName, description, price, address, dateFrom, dateTo]
+      required: [ serviceName, description, price, address, dateFrom, dateTo ]
 
     EnumServicesResponse:
       type: object
@@ -797,8 +863,8 @@ components:
         services:
           type: array
           items:
-            {type: string }
-      required: [services]
+            { type: string }
+      required: [ services ]
 
     ClientMainResponse:
       type: object
@@ -811,7 +877,7 @@ components:
       properties:
         serviceType:
           type: string
-          enum: [DECORATOR, SOUND_ENGINEER, LIGHT_ENGINEER, PHOTOGRAPHER, VIDEOGRAPHER, CHEF, WAITER, HOST]
+          enum: [ DECORATOR, SOUND_ENGINEER, LIGHT_ENGINEER, PHOTOGRAPHER, VIDEOGRAPHER, CHEF, WAITER, HOST ]
         description: { type: string }
         address: { type: string }
         price: { type: integer }
@@ -836,7 +902,7 @@ components:
       properties:
         serviceName:
           type: string
-          enum: [DECORATOR, SOUND_ENGINEER, LIGHT_ENGINEER, PHOTOGRAPHER, VIDEOGRAPHER, CHEF, WAITER, HOST]
+          enum: [ DECORATOR, SOUND_ENGINEER, LIGHT_ENGINEER, PHOTOGRAPHER, VIDEOGRAPHER, CHEF, WAITER, HOST ]
         cost: { type: integer }
 
     FileResponse:
@@ -1032,7 +1098,7 @@ components:
             $ref: '#/components/schemas/PlacedOrdersByClientsResponse'
         photoUrl: { type: string }
         balance: { type: integer }
-      required: [placedOrdersByClients, balance]
+      required: [ placedOrdersByClients, balance ]
 
     PlacedOrdersByClientsResponse:
       type: object
