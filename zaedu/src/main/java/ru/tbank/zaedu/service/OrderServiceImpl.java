@@ -14,7 +14,6 @@ import org.springframework.stereotype.Service;
 import ru.tbank.zaedu.DTO.ClientsOrdersResponse;
 import ru.tbank.zaedu.DTO.CreatedOrderRequest;
 import ru.tbank.zaedu.DTO.PlacedOrdersByClientsResponse;
-import ru.tbank.zaedu.DTO.ServiceDTO;
 import ru.tbank.zaedu.enums.OrderStatusEnum;
 import ru.tbank.zaedu.exceptionhandler.ConflictResourceException;
 import ru.tbank.zaedu.exceptionhandler.ResourceNotFoundException;
@@ -41,6 +40,8 @@ public class OrderServiceImpl implements OrderService {
 
     private final FinanceBalanceRepository financeBalanceRepository;
 
+    private final OrderDeletionService orderDeletionService;
+
     @Override
     public ClientsOrdersResponse findPlacedOrdersByClients(String masterLogin) {
         User user = this.findUserByLogin(masterLogin);
@@ -66,8 +67,7 @@ public class OrderServiceImpl implements OrderService {
 
         Optional<MasterMainImage> masterMainImage = masterMainImageRepository.findByMasterId(user.getId());
         String imageUrl = masterMainImage.map(MasterMainImage::getFilename).orElse(null);
-        FinanceBalance financeBalance = financeBalanceRepository.findByUser_Id(user.getId())
-                .orElseThrow(() -> new ResourceNotFoundException("FinanceBalanceNotFound"));
+        FinanceBalance financeBalance = this.findFinanceBalanceByUserId(user.getId());
         return new ClientsOrdersResponse(
                 placedOrdersByClientsResponses, imageUrl, financeBalance.getBalance());
     }
@@ -80,19 +80,6 @@ public class OrderServiceImpl implements OrderService {
         if (!this.isOrderHasPlacedStatus(order)) {
             throw new ConflictResourceException("OrderAlreadyPickedUp");
         }
-
-        ClientProfile clientProfile = order.getClient();
-        FinanceBalance financeBalance = financeBalanceRepository.findByUser_Id(clientProfile.getUser().getId())
-                .orElseThrow(() -> new ResourceNotFoundException("FinanceBalanceNotFound"));
-
-        Long orderPrice = order.getPrice();
-        Long clientBalance = financeBalance.getBalance();
-
-        if (orderPrice > clientBalance) {
-            throw new ConflictResourceException("NotEnoughMoney");
-        }
-        financeBalance.setBalance(clientBalance - orderPrice);
-        financeBalanceRepository.save(financeBalance);
 
         OrderStatus orderStatus = this.findOrderStatusByName(OrderStatusEnum.IN_PROGRESS.toString());
         User user = this.findUserByLogin(masterLogin);
@@ -108,23 +95,25 @@ public class OrderServiceImpl implements OrderService {
     public void createOrder(CreatedOrderRequest request, String clientLogin) {
         User user = this.findUserByLogin(clientLogin);
 
-        FinanceBalance financeBalance = financeBalanceRepository.findByUser_Id(user.getId())
-                .orElseThrow(() -> new ResourceNotFoundException("FinanceBalanceNotFound"));
+        FinanceBalance financeBalance = this.findFinanceBalanceByUserId(user.getId());
         Long orderPrice = request.getPrice();
         Long clientBalance = financeBalance.getBalance();
 
-        if (orderPrice > clientBalance) {
+        if (!this.isEnoughMoney(clientBalance, orderPrice)) {
             throw new ConflictResourceException("NotEnoughMoney");
         }
-        financeBalance.setBalance(clientBalance - orderPrice);
+        financeBalance.setBalance(this.calculateNewBalanceAfterDebit(clientBalance, orderPrice));
         financeBalanceRepository.save(financeBalance);
 
         ClientProfile clientProfile = this.findClientProfileByUserId(user.getId());
         Services service = this.findServiceByName(request.getServiceType());
         OrderStatus placedOrderStatus = this.findOrderStatusByName(OrderStatusEnum.PLACED.toString());
 
-        List<Order> listPossibleDuplicates = this.findPossibleDuplicates(
-                clientProfile, service, request.getAddress(), request.getDateFrom(), request.getDateTo());
+        List<Order> listPossibleDuplicates = this.findPossibleDuplicates(clientProfile,
+                service,
+                request.getAddress(),
+                request.getDateFrom(),
+                request.getDateTo());
 
         if (!listPossibleDuplicates.isEmpty()) {
             throw new ConflictResourceException("DuplicateOrder");
@@ -154,9 +143,10 @@ public class OrderServiceImpl implements OrderService {
                 .findByIdAndClient_Id(id, clientProfile.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("OrderNotFound"));
 
-        FinanceBalance financeBalance = financeBalanceRepository.findByUser_Id(order.getMaster().getUser().getId())
+        FinanceBalance financeBalance = financeBalanceRepository.findByUser_Id(
+                        order.getMaster().getUser().getId())
                 .orElseThrow(() -> new ResourceNotFoundException("FinanceBalanceNotFound"));
-        financeBalance.setBalance(financeBalance.getBalance() + ((order.getPrice() * 95 + 50) / 100));
+        financeBalance.setBalance(financeBalance.getBalance() + this.calculateMasterRevenue(order.getPrice()));
 
         order.setStatus(completedOrderStatus);
         orderRepository.save(order);
@@ -166,9 +156,6 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public void offerOrder(Long masterId, CreatedOrderRequest request, String clientLogin) {
         User user = this.findUserByLogin(clientLogin);
-
-        System.out.println(user.getId());
-
         ClientProfile clientProfile = this.findClientProfileByUserId(user.getId());
         MasterProfile masterProfile = this.findMasterProfileByUserId(masterId);
         Services service = this.findServiceByName(request.getServiceType());
@@ -207,6 +194,17 @@ public class OrderServiceImpl implements OrderService {
             throw new ConflictResourceException("OrderNotBelongToMaster");
         }
 
+        FinanceBalance financeBalanceClient = this.findFinanceBalanceByUserId(
+                order.getClient().getUser().getId());
+        if (!this.isEnoughMoney(financeBalanceClient.getBalance(), order.getPrice())) {
+            orderDeletionService.deleteOrderInNewTransaction(order);
+            throw new ConflictResourceException("NotEnoughMoney");
+        }
+        financeBalanceClient.setBalance(this.calculateNewBalanceAfterDebit(
+                financeBalanceClient.getBalance(),
+                order.getPrice()));
+        financeBalanceRepository.save(financeBalanceClient);
+
         OrderStatus orderStatus = this.findOrderStatusByName(OrderStatusEnum.IN_PROGRESS.toString());
         order.setStatus(orderStatus);
         orderRepository.save(order);
@@ -224,7 +222,6 @@ public class OrderServiceImpl implements OrderService {
         }
 
         OrderStatus orderStatus = this.findOrderStatusByName(OrderStatusEnum.DECLINED.toString());
-
         order.setStatus(orderStatus);
         orderRepository.save(order);
     }
@@ -266,49 +263,52 @@ public class OrderServiceImpl implements OrderService {
         return orders;
     }
 
-    private List<Order> findPossibleDuplicates(
-            ClientProfile clientProfile, Services service, String address, LocalDate dateFrom, LocalDate dateTo)
-            throws ConflictResourceException {
-        List<Order> listPossibleDuplicates =
-                orderRepository.findByClientAndServicesAndAddressAndDateFromLessThanEqualAndDateToGreaterThanEqual(
-                        clientProfile, service, address, dateFrom, dateTo);
-        return listPossibleDuplicates;
+    private List<Order> findPossibleDuplicates(ClientProfile clientProfile,
+                                               Services service,
+                                               String address,
+                                               LocalDate dateFrom,
+                                               LocalDate dateTo) throws ConflictResourceException {
+        return orderRepository
+                .findByClientAndServicesAndAddressAndDateFromLessThanEqualAndDateToGreaterThanEqual(clientProfile,
+                        service,
+                        address,
+                        dateFrom,
+                        dateTo);
     }
 
     private Order findOrderById(Long id) throws ResourceNotFoundException {
-        Order order = orderRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("NotFoundOrder"));
-        return order;
+        return orderRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("NotFoundOrder"));
     }
 
     private User findUserByLogin(String login) throws ResourceNotFoundException {
-        User user = userRepository.findByLogin(login).orElseThrow(() -> new ResourceNotFoundException("UserNotFound"));
-        return user;
+        return userRepository.findByLogin(login)
+                .orElseThrow(() -> new ResourceNotFoundException("UserNotFound"));
     }
 
     private ClientProfile findClientProfileByUserId(Long id) throws ResourceNotFoundException {
-        ClientProfile clientProfile = clientProfileRepository.findByUser_Id(id)
+        return clientProfileRepository.findByUser_Id(id)
                 .orElseThrow(() -> new ResourceNotFoundException("ClientNotFound"));
-        return clientProfile;
     }
 
     private MasterProfile findMasterProfileByUserId(Long id) throws ResourceNotFoundException {
-        MasterProfile masterProfile = masterProfileRepository
-                .findByUser_Id(id)
+        return masterProfileRepository.findByUser_Id(id)
                 .orElseThrow(() -> new ResourceNotFoundException("MasterNotFound"));
-        return masterProfile;
     }
 
     private OrderStatus findOrderStatusByName(String name) throws ResourceNotFoundException {
-        OrderStatus orderStatus = orderStatusRepository
-                .findByName(name)
+        return orderStatusRepository.findByName(name)
                 .orElseThrow(() -> new ResourceNotFoundException("OrderStatusNotFound"));
-        return orderStatus;
     }
 
     private Services findServiceByName(String name) throws ResourceNotFoundException {
-        Services service =
-                serviceRepository.findByName(name).orElseThrow(() -> new ResourceNotFoundException("ServiceNotFound"));
-        return service;
+        return serviceRepository.findByName(name)
+                .orElseThrow(() -> new ResourceNotFoundException("ServiceNotFound"));
+    }
+
+    private FinanceBalance findFinanceBalanceByUserId(Long userId) throws ResourceNotFoundException {
+        return financeBalanceRepository.findByUser_Id(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("FinanceBalanceNotFound"));
     }
 
     private boolean isOrderHasPlacedStatus(Order order) {
@@ -323,5 +323,17 @@ public class OrderServiceImpl implements OrderService {
         return masterProfile.getServices().stream()
                 .map(MasterServiceEntity::getServices)
                 .toList();
+    }
+
+    private boolean isEnoughMoney(Long clientBalance, Long orderPrice) {
+        return clientBalance >= orderPrice;
+    }
+
+    private Long calculateNewBalanceAfterDebit(Long currentBalance, Long orderPrice) {
+        return currentBalance - orderPrice;
+    }
+
+    private Long calculateMasterRevenue(Long orderPrice) {
+        return (orderPrice * 95 + 50) / 100;
     }
 }
