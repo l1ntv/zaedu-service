@@ -34,10 +34,18 @@ public class OrderConverter {
 
             // Извлечение phone из ClientProfile
             if (source.getClient() != null && source.getMaster()!=null && source.getMaster().getTelephoneNumber() != null) {
-                destination.setPhoneMaster(source.getClient().getTelephoneNumber());
+                destination.setPhoneMaster(source.getMaster().getTelephoneNumber());
             } else {
                 destination.setPhoneMaster(null); // Если телефон не указан
             }
+
+            if (source.getMaster().getName() != null) {
+                destination.setNameMaster(source.getMaster().getName());
+            } else {
+                destination.setNameMaster(null);
+            }
+
+            destination.setStatus(source.getStatus().getName());
 
             return destination;
         };
