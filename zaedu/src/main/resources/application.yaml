@@ -16,8 +16,9 @@ spring:
         format_sql: true
     show-sql: true
   liquibase:
-    enabled: true
-    change-log: classpath:db/changelog/main-changelog.xml
+    enabled: false
+    change-log: db/changelog/main-changelog.xml
+    insert-change-log: db/changelog/insert-changelogs/v1-accumulate-insert-changelog.xml
 
   kafka:
     bootstrap-servers: localhost:9092
