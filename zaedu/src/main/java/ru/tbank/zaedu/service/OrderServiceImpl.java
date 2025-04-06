@@ -256,8 +256,10 @@ public class OrderServiceImpl implements OrderService {
 
         Map<String, Integer> statusOrder = Map.of(
                 "IN_PROGRESS", 1,
-                "PENDING", 2,
-                "COMPLETED", 3);
+                "PLACED", 2,
+                "PENDING", 3,
+                "COMPLETED", 4,
+                "DECLINED", 5);
 
         orders.sort(Comparator.comparingInt(
                 order -> statusOrder.getOrDefault(order.getStatus().getName(), Integer.MAX_VALUE)));
