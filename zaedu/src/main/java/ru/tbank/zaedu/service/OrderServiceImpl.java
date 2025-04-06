@@ -39,12 +39,16 @@ public class OrderServiceImpl implements OrderService {
 
     private final MasterMainImageRepository masterMainImageRepository;
 
-    private static final int DEFAULT_BALANCE_CONST = 500;
+    private final FinanceBalanceRepository financeBalanceRepository;
 
     @Override
     public ClientsOrdersResponse findPlacedOrdersByClients(String masterLogin) {
+        User user = this.findUserByLogin(masterLogin);
+        MasterProfile masterProfile = this.findMasterProfileByUserId(user.getId());
+        List<Services> services = this.getMasterServices(masterProfile);
         OrderStatus placedOrderStatus = this.findOrderStatusByName(OrderStatusEnum.PLACED.toString());
-        List<Order> placedOrders = orderRepository.findByStatus(placedOrderStatus);
+
+        List<Order> placedOrders = orderRepository.findByStatusAndServicesIn(placedOrderStatus, services);
 
         List<PlacedOrdersByClientsResponse> placedOrdersByClientsResponses = placedOrders.stream()
                 .map(order -> {
@@ -60,11 +64,12 @@ public class OrderServiceImpl implements OrderService {
                 })
                 .collect(Collectors.toList());
 
-        User user = this.findUserByLogin(masterLogin);
         Optional<MasterMainImage> masterMainImage = masterMainImageRepository.findByMasterId(user.getId());
         String imageUrl = masterMainImage.map(MasterMainImage::getFilename).orElse(null);
+        FinanceBalance financeBalance = financeBalanceRepository.findByUser_Id(user.getId())
+                .orElseThrow(() -> new ResourceNotFoundException("FinanceBalanceNotFound"));
         return new ClientsOrdersResponse(
-                placedOrdersByClientsResponses, imageUrl, OrderServiceImpl.DEFAULT_BALANCE_CONST);
+                placedOrdersByClientsResponses, imageUrl, financeBalance.getBalance());
     }
 
     @Transactional
@@ -75,6 +80,19 @@ public class OrderServiceImpl implements OrderService {
         if (!this.isOrderHasPlacedStatus(order)) {
             throw new ConflictResourceException("OrderAlreadyPickedUp");
         }
+
+        ClientProfile clientProfile = order.getClient();
+        FinanceBalance financeBalance = financeBalanceRepository.findByUser_Id(clientProfile.getUser().getId())
+                .orElseThrow(() -> new ResourceNotFoundException("FinanceBalanceNotFound"));
+
+        Long orderPrice = order.getPrice();
+        Long clientBalance = financeBalance.getBalance();
+
+        if (orderPrice > clientBalance) {
+            throw new ConflictResourceException("NotEnoughMoney");
+        }
+        financeBalance.setBalance(clientBalance - orderPrice);
+        financeBalanceRepository.save(financeBalance);
 
         OrderStatus orderStatus = this.findOrderStatusByName(OrderStatusEnum.IN_PROGRESS.toString());
         User user = this.findUserByLogin(masterLogin);
@@ -89,6 +107,18 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public void createOrder(CreatedOrderRequest request, String clientLogin) {
         User user = this.findUserByLogin(clientLogin);
+
+        FinanceBalance financeBalance = financeBalanceRepository.findByUser_Id(user.getId())
+                .orElseThrow(() -> new ResourceNotFoundException("FinanceBalanceNotFound"));
+        Long orderPrice = request.getPrice();
+        Long clientBalance = financeBalance.getBalance();
+
+        if (orderPrice > clientBalance) {
+            throw new ConflictResourceException("NotEnoughMoney");
+        }
+        financeBalance.setBalance(clientBalance - orderPrice);
+        financeBalanceRepository.save(financeBalance);
+
         ClientProfile clientProfile = this.findClientProfileByUserId(user.getId());
         Services service = this.findServiceByName(request.getServiceType());
         OrderStatus placedOrderStatus = this.findOrderStatusByName(OrderStatusEnum.PLACED.toString());
@@ -123,6 +153,10 @@ public class OrderServiceImpl implements OrderService {
         Order order = orderRepository
                 .findByIdAndClient_Id(id, clientProfile.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("OrderNotFound"));
+
+        FinanceBalance financeBalance = financeBalanceRepository.findByUser_Id(order.getMaster().getUser().getId())
+                .orElseThrow(() -> new ResourceNotFoundException("FinanceBalanceNotFound"));
+        financeBalance.setBalance(financeBalance.getBalance() + ((order.getPrice() * 95 + 50) / 100));
 
         order.setStatus(completedOrderStatus);
         orderRepository.save(order);
@@ -283,5 +317,11 @@ public class OrderServiceImpl implements OrderService {
 
     private boolean isOrderBelongToMaster(Long masterIdFromOrder, Long masterIdFromProfile) {
         return masterIdFromOrder.equals(masterIdFromProfile);
+    }
+
+    private List<Services> getMasterServices(MasterProfile masterProfile) {
+        return masterProfile.getServices().stream()
+                .map(MasterServiceEntity::getServices)
+                .toList();
     }
 }

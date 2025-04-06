@@ -2,6 +2,7 @@ package ru.tbank.zaedu.controller;
 
 import java.security.Principal;
 import java.util.List;
+
 import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -25,12 +26,14 @@ public class OrderController extends EntityController<Order> {
     }
 
     // Отображение заказов клиента
+    // + возвращать статус заказа и id
     @GetMapping("/clients/my-orders")
     public ResponseEntity<List<OrderClientDTO>> getClientOrders(Principal principal) {
         List<Order> orders = orderService.getClientOrders(principal.getName());
         return ResponseEntity.ok(serialize(orders, ORDER_CLIENT_DTO_CLASS));
     }
 
+    // + возвращать статус заказа и id
     @GetMapping("/masters/my-orders")
     public ResponseEntity<List<OrderMasterDTO>> getMasterOrders(Principal principal) {
         List<Order> orders = orderService.getMasterOrders(principal.getName());

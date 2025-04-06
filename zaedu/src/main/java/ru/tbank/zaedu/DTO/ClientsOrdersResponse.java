@@ -9,5 +9,5 @@ import lombok.Data;
 public class ClientsOrdersResponse {
     List<PlacedOrdersByClientsResponse> placedOrdersByClients;
     private String photoUrl;
-    private int balance;
+    private Long balance;
 }

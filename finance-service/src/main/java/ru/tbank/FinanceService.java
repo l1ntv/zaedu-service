@@ -2,8 +2,6 @@ package ru.tbank;
 
 import org.springframework.stereotype.Service;
 
-import java.util.regex.Pattern;
-
 @Service
 public class FinanceService {
 
@@ -15,9 +13,9 @@ public class FinanceService {
 
     public boolean isFinanceOperationCorrect(Long balance, Long count, OperationType operationType) {
         if (this.isInputFinanceOperationDataCorrect(balance, count)) {
-            if (operationType.equals(OperationType.REPLENISHMENT))
-                return true;
-            if (operationType.equals(OperationType.WITHDRAWAL) && this.isBalanceGreaterOrEqualsThenFinanceOperationCount(balance, count)) {
+            if (operationType.equals(OperationType.REPLENISHMENT)) return true;
+            if (operationType.equals(OperationType.WITHDRAWAL)
+                    && this.isBalanceGreaterOrEqualsThenFinanceOperationCount(balance, count)) {
                 return true;
             }
         }
@@ -25,8 +23,7 @@ public class FinanceService {
     }
 
     public Long getNewBalance(Long balance, Long count, OperationType operationType) {
-        if (operationType.equals(OperationType.REPLENISHMENT))
-            return balance + count;
+        if (operationType.equals(OperationType.REPLENISHMENT)) return balance + count;
         return balance - count;
     }
 
