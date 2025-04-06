@@ -9,6 +9,8 @@ import ru.tbank.zaedu.DTO.*;
 import ru.tbank.zaedu.models.MasterProfile;
 import ru.tbank.zaedu.service.MasterService;
 
+import static ru.tbank.zaedu.config.AppConstants.BASE_IMAGE_URL;
+
 @RestController
 @RequestMapping("/masters")
 public class MasterController extends EntityController<MasterProfile> {
@@ -37,7 +39,7 @@ public class MasterController extends EntityController<MasterProfile> {
 
         if (principal != null) {
             ClientProfileResponseDTO clientProfileResponseDTO = clientController.getClientProfileResponseDTO(principal);
-            photoUrl = clientProfileResponseDTO.getPhotoUrl();
+            photoUrl = BASE_IMAGE_URL + clientProfileResponseDTO.getPhotoUrl();
             balance = clientProfileResponseDTO.getBalance();
         }
         return ResponseEntity.ok(new MastersListResponseDTO(dtos, photoUrl, balance));

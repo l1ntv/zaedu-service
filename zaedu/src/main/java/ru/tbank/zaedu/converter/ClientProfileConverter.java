@@ -12,6 +12,8 @@ import ru.tbank.zaedu.models.City;
 import ru.tbank.zaedu.models.ClientProfile;
 import ru.tbank.zaedu.repo.CityRepository;
 
+import static ru.tbank.zaedu.config.AppConstants.BASE_IMAGE_URL;
+
 @Component
 @RequiredArgsConstructor
 public class ClientProfileConverter {
@@ -57,7 +59,7 @@ public class ClientProfileConverter {
                 destination.setCity(source.getCity().getName());
             }
             if (source.getMainImage() != null) {
-                destination.setPhotoUrl(String.valueOf(source.getMainImage().getFilename()));
+                destination.setPhotoUrl(BASE_IMAGE_URL + source.getMainImage().getFilename());
             }
             destination.setBalance(DEFAULT_BALANCE);
 

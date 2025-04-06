@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import ru.tbank.zaedu.exception.ResourceNotFoundException;
+import ru.tbank.zaedu.exceptionhandler.file.ResourceNotFoundException;
 import ru.tbank.zaedu.models.MasterPortfolioImage;
 import ru.tbank.zaedu.repo.MasterPortfolioImageRepository;
 import ru.tbank.zaedu.s3storage.S3File;
