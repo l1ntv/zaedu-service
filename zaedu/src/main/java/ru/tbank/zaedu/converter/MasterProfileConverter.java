@@ -14,6 +14,8 @@ import ru.tbank.zaedu.DTO.MasterProfileForMeDTO;
 import ru.tbank.zaedu.DTO.ServiceDTO;
 import ru.tbank.zaedu.models.*;
 
+import static ru.tbank.zaedu.config.AppConstants.BASE_IMAGE_URL;
+
 @Component
 @RequiredArgsConstructor
 public class MasterProfileConverter {
@@ -58,10 +60,11 @@ public class MasterProfileConverter {
 
             destination.setPhotos(source.getPortfolioImages().stream()
                     .map(MasterPortfolioImage::getFilename)
+                    .map(filename -> BASE_IMAGE_URL + filename)
                     .collect(Collectors.toList()));
 
             if (source.getMainImage() != null) {
-                destination.setPersonalPhoto(source.getMainImage().getFilename());
+                destination.setPersonalPhoto(BASE_IMAGE_URL + source.getMainImage().getFilename());
             }
 
             return destination;

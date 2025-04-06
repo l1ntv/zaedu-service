@@ -1,4 +1,4 @@
-package ru.tbank.zaedu.exception;
+package ru.tbank.zaedu.exceptionhandler.file;
 
 public class AppException extends RuntimeException {
     public AppException() {

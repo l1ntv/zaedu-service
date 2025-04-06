@@ -7,7 +7,6 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.tbank.zaedu.DTO.ClientProfileRequestDTO;
-import ru.tbank.zaedu.exception.ResourceNotFoundException;
 import ru.tbank.zaedu.models.*;
 import ru.tbank.zaedu.repo.ClientMainImageRepository;
 import ru.tbank.zaedu.repo.ClientProfileRepository;
