@@ -9,11 +9,14 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class OrderMasterDTO {
+    private Long id;
+    private String status;
     private String serviceType;
     private String description;
     private String address;
     private Long price;
     private LocalDate dateFrom;
     private LocalDate dateTo;
+    private String nameClient;
     private String phoneClient;
 }

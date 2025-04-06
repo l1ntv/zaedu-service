@@ -42,7 +42,8 @@ public class OrderConverter {
             if (source.getMaster().getName() != null) {
                 destination.setNameMaster(source.getMaster().getName());
             } else {
-                destination.setNameMaster(null);
+                String masterName = "Мастер  " + source.getMaster().getId();
+                destination.setNameMaster(masterName);
             }
 
             destination.setStatus(source.getStatus().getName());
@@ -69,6 +70,15 @@ public class OrderConverter {
             } else {
                 destination.setPhoneClient(null); // Если телефон не указан
             }
+
+            if (source.getClient().getName() != null) {
+                destination.setNameClient(source.getClient().getName());
+            } else {
+                String clientName = "Клиент " + source.getClient().getId();
+                destination.setNameClient(clientName);
+            }
+
+            destination.setStatus(source.getStatus().getName());
 
             return destination;
         };
