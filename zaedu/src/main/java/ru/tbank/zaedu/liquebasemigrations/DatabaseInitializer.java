@@ -35,6 +35,6 @@ public class DatabaseInitializer {
     private boolean shouldLoadInitialData() {
         // Здесь можно добавить логику для определения, нужно ли заполнять начальные данные
         // Например, проверка профиля среды (dev, test, prod)
-        return !"test".equals(System.getProperty("spring.profiles.active"));
+        return "dev".equals(System.getProperty("spring.profiles.active"));
     }
 }

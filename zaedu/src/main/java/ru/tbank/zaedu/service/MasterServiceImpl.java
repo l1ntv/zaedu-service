@@ -32,7 +32,6 @@ public class MasterServiceImpl implements MasterService {
     private final ServiceRepository serviceRepository;
     private final HoodRepository hoodRepository;
     private final FileService fileService;
-    private final ModelMapper modelMapper; // Добавьте ModelMapper
 
     @Autowired
     private KafkaTemplate<String, String> kafkaTemplate;
@@ -85,7 +84,11 @@ public class MasterServiceImpl implements MasterService {
                     .orElseThrow(() -> new ResourceNotFoundException("Service not found"));
 
             // Проверяем, существует ли уже такой сервис у мастера
-            Optional<MasterServiceEntity> existingService = master.getServices().stream()
+            List<MasterServiceEntity> services = master.getServices(); // Получаем список услуг
+            if (services == null) {
+                services = new ArrayList<>(); // Инициализируем пустой список, если он null
+            }
+            Optional<MasterServiceEntity> existingService = services.stream()
                     .filter(ms -> ms.getServices().getName().equals(dto.getServiceName()))
                     .findFirst();
 
@@ -106,11 +109,13 @@ public class MasterServiceImpl implements MasterService {
 
         // Обновляем список услуг мастера
         // Удаляем только те услуги, которые больше не переданы в запросе
-        master.getServices()
-                .removeIf(existingService -> updatedServices.stream().noneMatch(updatedService -> updatedService
-                        .getServices()
-                        .getName()
-                        .equals(existingService.getServices().getName())));
+        if (master.getServices() != null) {
+            master.getServices()
+                    .removeIf(existingService -> updatedServices.stream().noneMatch(updatedService -> updatedService
+                            .getServices()
+                            .getName()
+                            .equals(existingService.getServices().getName())));
+        }
 
         // Добавляем обновленные и новые услуги
         master.getServices().addAll(updatedServices);
@@ -154,7 +159,7 @@ public class MasterServiceImpl implements MasterService {
                     })
                     .toList();
 
-            master.getPortfolioImages().addAll(newPortfolio);
+            //master.getPortfolioImages().addAll(newPortfolio);
         }
 
         // Обновление основного изображения профиля

@@ -46,7 +46,7 @@ public class MasterProfile extends AbstractEntity {
 
     @OneToMany(mappedBy = "master", cascade = CascadeType.ALL, orphanRemoval = true)
     @ToString.Exclude
-    private List<MasterServiceEntity> services;
+    private List<MasterServiceEntity> services = new ArrayList<>();
 
     @OneToMany(mappedBy = "master")
     @ToString.Exclude
