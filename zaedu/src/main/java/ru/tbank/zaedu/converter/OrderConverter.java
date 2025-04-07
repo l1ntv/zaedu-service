@@ -39,12 +39,15 @@ public class OrderConverter {
                 destination.setPhoneMaster(null); // Если телефон не указан
             }
 
-            if (source.getMaster().getName() != null) {
-                destination.setNameMaster(source.getMaster().getName());
-            } else {
-                String masterName = "Мастер  " + source.getMaster().getId();
-                destination.setNameMaster(masterName);
-            }
+            if (source.getMaster()!=null) {
+                if (source.getMaster().getName() != null) {
+                    destination.setNameMaster(source.getMaster().getName());
+                } else {
+                    String masterName = "Мастер  " + source.getMaster().getId();
+                    destination.setNameMaster(masterName);
+                }
+            } else {destination.setNameMaster("Мастер не назначен");}
+
 
             destination.setStatus(source.getStatus().getName());
 
@@ -71,12 +74,15 @@ public class OrderConverter {
                 destination.setPhoneClient(null); // Если телефон не указан
             }
 
-            if (source.getClient().getName() != null) {
-                destination.setNameClient(source.getClient().getName());
-            } else {
-                String clientName = "Клиент " + source.getClient().getId();
-                destination.setNameClient(clientName);
-            }
+            if (source.getMaster()!=null) {
+                if (source.getClient().getName() != null) {
+                    destination.setNameClient(source.getClient().getName());
+                } else {
+                    String clientName = "Клиент " + source.getClient().getId();
+                    destination.setNameClient(clientName);
+                }
+            } else {destination.setNameClient("Клиент не назначен");}
+
 
             destination.setStatus(source.getStatus().getName());
 
