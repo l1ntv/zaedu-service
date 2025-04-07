@@ -1,16 +1,10 @@
 package ru.tbank.zaedu.masters_tests;
 
-import org.hibernate.Hibernate;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-
-
 import org.springframework.kafka.core.KafkaTemplate;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.transaction.annotation.Transactional;
 import ru.tbank.zaedu.AbstractIntegrationTest;
@@ -20,13 +14,10 @@ import ru.tbank.zaedu.DTO.MasterUpdateRequestDTO;
 import ru.tbank.zaedu.DTO.ServiceDTO;
 import ru.tbank.zaedu.models.*;
 import ru.tbank.zaedu.repo.*;
-import ru.tbank.zaedu.service.MasterService;
 import ru.tbank.zaedu.service.MasterServiceImpl;
 import ru.tbank.zaedu.service.file.FileService;
-
 import java.security.Principal;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 import static org.mockito.Mockito.*;
