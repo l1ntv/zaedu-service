@@ -581,6 +581,46 @@ paths:
                   error:
                     type: string
 
+  /orders/{orderId}/cancel-order:
+    patch:
+      tags:
+        - Orders
+      summary: Отмена выставленного заказа клиента
+      security:
+        - bearerAuth: [ ]
+      parameters:
+        - name: orderId
+          in: path
+          required: true
+          description: ID заказа
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Заказ удален, деньги возвращены клиенту на счет
+          content: { }
+        '403':
+          description: Клиент не был авторизован
+          content: { }
+        '404':
+          description: Авторизованный пользователь не найден/Заказ не найден/Профиль клиента не найден/Баланс клиента не найден
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+        '409':
+          description: Заказ не принадлежит авторизованному клиенту/Заказ уже забрал мастер - отменить нельзя
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+
   /orders/{orderId}/decline-order:
     patch:
       tags:

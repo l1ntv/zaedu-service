@@ -104,4 +104,11 @@ public class OrderController extends EntityController<Order> {
         orderService.declineOrder(orderId, masterLogin);
         return ResponseEntity.ok().build();
     }
+
+    @DeleteMapping("/orders/{orderId}/cancel-order")
+    public ResponseEntity<Void> cancelOrder(@PathVariable Long orderId, Principal principal) {
+        String clientLogin = principal.getName();
+        orderService.cancelOrder(orderId, clientLogin);
+        return ResponseEntity.ok().build();
+    }
 }

@@ -231,13 +231,35 @@ public class OrderServiceImpl implements OrderService {
         User user = this.findUserByLogin(masterLogin);
         MasterProfile masterProfile = this.findMasterProfileByUserId(user.getId());
 
-        if (!this.isOrderBelongToMaster(order.getId(), masterProfile.getId())) {
+        if (!this.isOrderBelongToMaster(order.getMaster().getId(), masterProfile.getId())) {
             throw new ResourceNotFoundException("OrderNotBelongToMaster");
         }
 
         OrderStatus orderStatus = this.findOrderStatusByName(OrderStatusEnum.DECLINED.toString());
         order.setStatus(orderStatus);
         orderRepository.save(order);
+    }
+
+    @Transactional
+    @Override
+    public void cancelOrder(Long id, String masterLogin) {
+        Order order = this.findOrderById(id);
+        User user = this.findUserByLogin(masterLogin);
+        ClientProfile clientProfile = this.findClientProfileByUserId(user.getId());
+
+        if (!order.getClient().getId().equals(clientProfile.getId())) {
+            throw new ConflictResourceException("OrderNotBelongToClient");
+        }
+
+        if (order.getMaster() != null) {
+            throw new ResourceNotFoundException("OrderAlreadyBelongToMaster");
+        }
+
+        FinanceBalance financeBalance = this.findFinanceBalanceByUserId(user.getId());
+        financeBalance.setBalance(financeBalance.getBalance() + order.getPrice());
+        financeBalanceRepository.save(financeBalance);
+
+        orderDeletionService.deleteOrderInNewTransaction(order);
     }
 
     @Override
