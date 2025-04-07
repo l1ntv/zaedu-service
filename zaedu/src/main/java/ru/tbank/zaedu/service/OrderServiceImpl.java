@@ -83,6 +83,14 @@ public class OrderServiceImpl implements OrderService {
             throw new ConflictResourceException("OrderAlreadyPickedUp");
         }
 
+        FinanceBalance clientFinanceBalance = this.findFinanceBalanceByUserId(order.getClient().getUser().getId());
+        if (!this.isEnoughMoney(clientFinanceBalance.getBalance(), order.getPrice())) {
+            orderDeletionService.deleteOrderInNewTransaction(order);
+            throw new ConflictResourceException("NotEnoughMoney");
+        }
+        clientFinanceBalance.setBalance(this.calculateNewBalanceAfterDebit(clientFinanceBalance.getBalance(), order.getPrice()));
+        financeBalanceRepository.save(clientFinanceBalance);
+
         OrderStatus orderStatus = this.findOrderStatusByName(OrderStatusEnum.IN_PROGRESS.toString());
         User user = this.findUserByLogin(masterLogin);
         MasterProfile masterProfile = this.findMasterProfileByUserId(user.getId());
@@ -145,10 +153,9 @@ public class OrderServiceImpl implements OrderService {
                 .findByIdAndClient_Id(id, clientProfile.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("OrderNotFound"));
 
-        FinanceBalance financeBalance = financeBalanceRepository.findByUser_Id(
-                        order.getMaster().getUser().getId())
-                .orElseThrow(() -> new ResourceNotFoundException("FinanceBalanceNotFound"));
+        FinanceBalance financeBalance = this.findFinanceBalanceByUserId(order.getMaster().getUser().getId());
         financeBalance.setBalance(financeBalance.getBalance() + this.calculateMasterRevenue(order.getPrice()));
+        financeBalanceRepository.save(financeBalance);
 
         order.setStatus(completedOrderStatus);
         orderRepository.save(order);
@@ -168,6 +175,11 @@ public class OrderServiceImpl implements OrderService {
 
         if (!listPossibleDuplicates.isEmpty()) {
             throw new ConflictResourceException("DuplicateOrder");
+        }
+
+        FinanceBalance clientFinanceBalance = this.findFinanceBalanceByUserId(user.getId());
+        if (!this.isEnoughMoney(clientFinanceBalance.getBalance(), request.getPrice())) {
+            throw new ConflictResourceException("NotEnoughMoney");
         }
 
         Order order = Order.builder()
