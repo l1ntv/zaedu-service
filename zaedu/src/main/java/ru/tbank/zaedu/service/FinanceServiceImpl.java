@@ -57,6 +57,21 @@ public class FinanceServiceImpl implements FinanceService {
         kafkaTemplate.send("finance-service-request", message);
     }
 
+    @Override
+    public Long getUserBalanceByLogin(String login) {
+        User user = userRepository.findByLogin(login)
+                .orElseThrow(() -> new ResourceNotFoundException("UserNotFound"));
+        FinanceBalance financeBalance = financeBalanceRepository.findByUser_Id(user.getId())
+                .orElseThrow(() -> new ResourceNotFoundException("FinanceBalanceNotFound"));
+        return financeBalance.getBalance();
+    }
+
+    @Override
+    public Long getUserBalanceById(Long id) {
+        return financeBalanceRepository.findByUser_Id(id)
+                .orElseThrow(() -> new ResourceNotFoundException("FinanceBalanceNotFound")).getBalance();
+    }
+
     private String createMessage(Long id, Long balance, OperationType operationType, Long count) {
         return id + ";" + balance + ";" + operationType + ";" + count;
     }
