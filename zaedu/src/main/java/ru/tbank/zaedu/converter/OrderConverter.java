@@ -34,10 +34,19 @@ public class OrderConverter {
 
             // Извлечение phone из ClientProfile
             if (source.getClient() != null && source.getMaster()!=null && source.getMaster().getTelephoneNumber() != null) {
-                destination.setPhoneMaster(source.getClient().getTelephoneNumber());
+                destination.setPhoneMaster(source.getMaster().getTelephoneNumber());
             } else {
                 destination.setPhoneMaster(null); // Если телефон не указан
             }
+
+            if (source.getMaster().getName() != null) {
+                destination.setNameMaster(source.getMaster().getName());
+            } else {
+                String masterName = "Мастер  " + source.getMaster().getId();
+                destination.setNameMaster(masterName);
+            }
+
+            destination.setStatus(source.getStatus().getName());
 
             return destination;
         };
@@ -61,6 +70,15 @@ public class OrderConverter {
             } else {
                 destination.setPhoneClient(null); // Если телефон не указан
             }
+
+            if (source.getClient().getName() != null) {
+                destination.setNameClient(source.getClient().getName());
+            } else {
+                String clientName = "Клиент " + source.getClient().getId();
+                destination.setNameClient(clientName);
+            }
+
+            destination.setStatus(source.getStatus().getName());
 
             return destination;
         };
