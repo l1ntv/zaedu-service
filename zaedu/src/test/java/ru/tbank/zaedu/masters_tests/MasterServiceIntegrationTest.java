@@ -14,6 +14,7 @@ import ru.tbank.zaedu.DTO.MasterUpdateRequestDTO;
 import ru.tbank.zaedu.DTO.ServiceDTO;
 import ru.tbank.zaedu.models.*;
 import ru.tbank.zaedu.repo.*;
+import ru.tbank.zaedu.exceptionhandler.ResourceNotFoundException;
 import ru.tbank.zaedu.service.MasterServiceImpl;
 import ru.tbank.zaedu.service.file.FileService;
 import java.security.Principal;
@@ -194,4 +195,116 @@ class MasterServiceIntegrationTest extends AbstractIntegrationTest {
 
         verify(kafkaTemplate).send(eq("passport-validation-request"), anyString());
     }
+
+    @Test
+    void testSearchMastersByCategory_Success() {
+        // Arrange
+        User user = new User();
+        user.setLogin("testuser");
+        userRepository.save(user);
+
+        MasterProfile masterProfile = new MasterProfile();
+        masterProfile.setUser(user);
+        masterProfile.setDescription("Test description");
+        masterProfileRepository.save(masterProfile);
+
+        Services service = new Services();
+        service.setName("TestCategory");
+        serviceRepository.save(service);
+
+        MasterServiceEntity masterService = new MasterServiceEntity();
+        masterService.setMaster(masterProfile);
+        masterService.setServices(service);
+        masterService.setPrice(100L);
+        masterProfile.getServices().add(masterService);
+        masterProfileRepository.save(masterProfile);
+
+        // Act
+        List<MasterProfile> result = masterProfileRepository.findByServiceCategory("TestCategory");
+
+        // Assert
+        assertEquals(1, result.size());
+        assertEquals("Test description", result.get(0).getDescription());
+    }
+
+    @Test
+    void testSearchMastersByCategory_EmptyResult() {
+        // Act
+        List<MasterProfile> result = masterService.searchMastersByCategory("NonExistentCategory");
+
+        // Assert
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
+    void testGetMasterProfile_Success() {
+        // Arrange
+        User user = new User();
+        user.setLogin("testuser");
+        userRepository.save(user);
+
+        MasterProfile mockProfile = new MasterProfile();
+        mockProfile.setUser(user);
+        mockProfile.setDescription("Test description");
+        masterProfileRepository.save(mockProfile);
+
+        // Act
+        MasterProfile result = masterService.getMasterProfile(mockProfile.getId());
+
+        // Assert
+        assertNotNull(result);
+        assertEquals("Test description", result.getDescription());
+    }
+
+    @Test
+    void testGetMasterProfile_NotFound() {
+        // Act & Assert
+        ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, () -> {
+            masterService.getMasterProfile(999L); // Не существующий ID
+        });
+
+        assertEquals("Master not found", exception.getMessage());
+    }
+
+    @Test
+    void testGetMyPrivateProfile_Success() {
+        // Arrange
+        User user = new User();
+        user.setLogin("testuser");
+        user.setPassword("password");
+        userRepository.save(user);
+
+        MasterProfile mockProfile = new MasterProfile();
+        mockProfile.setUser(user);
+        mockProfile.setSurname("Old Surname");
+        mockProfile.setEmail("old.email@example.com");
+        masterProfileRepository.save(mockProfile);
+
+        Principal principal = mock(Principal.class);
+        when(principal.getName()).thenReturn("testuser");
+
+        // Act
+        MasterProfile result = masterService.getMyPrivateProfile(principal);
+
+        // Assert
+        assertNotNull(result);
+        assertEquals("testuser", result.getUser().getLogin());
+        assertEquals("Old Surname", result.getSurname());
+        assertEquals("old.email@example.com", result.getEmail());
+    }
+
+    @Test
+    void testGetMyPrivateProfile_NotFound() {
+        // Arrange
+        Principal principal = mock(Principal.class);
+        when(principal.getName()).thenReturn("nonexistentuser");
+
+        // Act & Assert
+        ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, () -> {
+            masterService.getMyPrivateProfile(principal);
+        });
+
+        assertEquals("Master not found for login: nonexistentuser", exception.getMessage());
+    }
+
 }

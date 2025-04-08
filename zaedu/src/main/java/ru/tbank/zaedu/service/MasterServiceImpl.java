@@ -14,7 +14,7 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import ru.tbank.zaedu.DTO.*;
 import ru.tbank.zaedu.exceptionhandler.ConflictResourceException;
-import ru.tbank.zaedu.exceptionhandler.file.ResourceNotFoundException;
+import ru.tbank.zaedu.exceptionhandler.ResourceNotFoundException;
 import ru.tbank.zaedu.exceptionhandler.InvalidDataException;
 import ru.tbank.zaedu.models.*;
 import ru.tbank.zaedu.repo.HoodRepository;
