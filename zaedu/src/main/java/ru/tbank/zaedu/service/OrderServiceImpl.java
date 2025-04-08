@@ -287,7 +287,10 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public List<Order> getMasterOrders(String name) {
         Optional<User> user = userRepository.findByLogin(name);
-        List<Order> orders = orderRepository.findByMaster_Id(user.get().getId());
+        MasterProfile masterProfile = masterProfileRepository.findByUser_Id(user.get().getId())
+                .orElseThrow(() -> new ResourceNotFoundException("MasterProfileNotFound"));
+
+        List<Order> orders = orderRepository.findByMaster(masterProfile);
 
         Map<String, Integer> statusOrder = Map.of(
                 "IN_PROGRESS", 1,
