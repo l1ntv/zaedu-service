@@ -43,11 +43,11 @@ public class MasterController extends EntityController<MasterProfile> {
         List<MasterProfileDTO> dtos = serialize(masters, MASTER_PROFILE_DTO_CLASS);
 
         String photoUrl = null;
-
-        Long balance = financeService.getUserBalanceByLogin(principal.getName());
+        Long balance = null;
 
         if (principal != null) {
             ClientProfileResponseDTO clientProfileResponseDTO = clientController.getClientProfileResponseDTO(principal);
+            balance = financeService.getUserBalanceByLogin(principal.getName());
             photoUrl = BASE_IMAGE_URL + clientProfileResponseDTO.getPhotoUrl();
         }
 

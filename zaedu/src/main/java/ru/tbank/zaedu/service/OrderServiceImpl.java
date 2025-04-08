@@ -58,11 +58,12 @@ public class OrderServiceImpl implements OrderService {
                     PlacedOrdersByClientsResponse response = new PlacedOrdersByClientsResponse();
                     response.setId(order.getId());
                     response.setServiceType(order.getServices().getName());
-                    response.setClientName(order.getClient().getName());
+                    response.setNameClient(order.getClient().getName() != null ? order.getClient().getName() : "Клиент " + order.getClient().getUser().getId());
                     response.setAddress(order.getAddress());
                     response.setPrice(order.getPrice());
                     response.setDateFrom(order.getDateFrom());
                     response.setDateTo(order.getDateTo());
+                    response.setDescription(order.getDescription());
                     return response;
                 })
                 .collect(Collectors.toList());
