@@ -3,10 +3,7 @@ package ru.tbank.zaedu.service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import lombok.RequiredArgsConstructor;
@@ -70,7 +67,10 @@ public class OrderServiceImpl implements OrderService {
 
         Optional<MasterMainImage> masterMainImage = masterMainImageRepository.findByMasterId(user.getId());
         FinanceBalance financeBalance = this.findFinanceBalanceByUserId(user.getId());
-        String imageUrl = masterMainImage.map(MasterMainImage::getFilename).map(filename -> BASE_IMAGE_URL + filename).orElse(null);
+
+        String imageUrl = masterMainImage.map(MasterMainImage::getFilename)
+                .map(filename -> BASE_IMAGE_URL + filename)
+                .orElse(null);
         return new ClientsOrdersResponse(
                 placedOrdersByClientsResponses, imageUrl, financeBalance.getBalance());
     }

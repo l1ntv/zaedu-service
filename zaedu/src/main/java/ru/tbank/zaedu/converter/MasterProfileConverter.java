@@ -2,6 +2,7 @@ package ru.tbank.zaedu.converter;
 
 import jakarta.annotation.PostConstruct;
 import java.util.Collections;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -60,11 +61,14 @@ public class MasterProfileConverter {
 
             destination.setPhotos(source.getPortfolioImages().stream()
                     .map(MasterPortfolioImage::getFilename)
+                    .filter(Objects::nonNull)
                     .map(filename -> BASE_IMAGE_URL + filename)
                     .collect(Collectors.toList()));
 
-            if (source.getMainImage() != null) {
+            if (source.getMainImage() != null && source.getMainImage().getFilename() != null) {
                 destination.setPersonalPhoto(BASE_IMAGE_URL + source.getMainImage().getFilename());
+            } else {
+                destination.setPersonalPhoto(null);
             }
 
             return destination;
