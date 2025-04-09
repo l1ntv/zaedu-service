@@ -8,14 +8,12 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.transaction.annotation.Transactional;
 import ru.tbank.zaedu.AbstractIntegrationTest;
-import ru.tbank.zaedu.DTO.FileResponseDto;
-import ru.tbank.zaedu.DTO.MasterPrivateProfileUpdateRequestDTO;
-import ru.tbank.zaedu.DTO.MasterUpdateRequestDTO;
-import ru.tbank.zaedu.DTO.ServiceDTO;
+import ru.tbank.zaedu.DTO.*;
 import ru.tbank.zaedu.models.*;
 import ru.tbank.zaedu.repo.*;
 import ru.tbank.zaedu.exceptionhandler.ResourceNotFoundException;
 import ru.tbank.zaedu.service.MasterServiceImpl;
+import ru.tbank.zaedu.service.OrderServiceImpl;
 import ru.tbank.zaedu.service.file.FileService;
 import java.security.Principal;
 import java.util.List;
@@ -29,6 +27,7 @@ class MasterServiceIntegrationTest extends AbstractIntegrationTest {
 
     @Autowired
     private MasterServiceImpl masterService;
+
 
     @Autowired
     private MasterProfileRepository masterProfileRepository;
@@ -45,11 +44,14 @@ class MasterServiceIntegrationTest extends AbstractIntegrationTest {
     @Autowired
     private HoodRepository hoodRepository;
 
+
+
+
     @MockitoBean
     private KafkaTemplate<String, String> kafkaTemplate;
 
     @MockitoBean
-    private FileService fileService;
+    private FileService fileervice;
 
     @BeforeEach
     void setUp() {
