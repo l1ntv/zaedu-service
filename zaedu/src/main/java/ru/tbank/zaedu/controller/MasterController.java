@@ -7,12 +7,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.tbank.zaedu.DTO.*;
-import ru.tbank.zaedu.exceptionhandler.ResourceNotFoundException;
-import ru.tbank.zaedu.models.FinanceBalance;
 import ru.tbank.zaedu.models.MasterProfile;
-import ru.tbank.zaedu.models.User;
-import ru.tbank.zaedu.repo.FinanceBalanceRepository;
-import ru.tbank.zaedu.repo.UserRepository;
 import ru.tbank.zaedu.service.FinanceService;
 import ru.tbank.zaedu.service.MasterService;
 
@@ -48,7 +43,9 @@ public class MasterController extends EntityController<MasterProfile> {
         if (principal != null) {
             ClientProfileResponseDTO clientProfileResponseDTO = clientController.getClientProfileResponseDTO(principal);
             balance = financeService.getUserBalanceByLogin(principal.getName());
-            photoUrl = BASE_IMAGE_URL + clientProfileResponseDTO.getPhotoUrl();
+
+            String photoFilename = clientProfileResponseDTO.getPhotoUrl();
+            photoUrl = (photoFilename != null) ? BASE_IMAGE_URL + photoFilename : null;
         }
 
         return ResponseEntity.ok(new MastersListResponseDTO(dtos, photoUrl, balance));

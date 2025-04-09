@@ -58,9 +58,13 @@ public class ClientProfileConverter {
             if (source.getCity() != null) {
                 destination.setCity(source.getCity().getName());
             }
-            if (source.getMainImage() != null) {
+
+            if (source.getMainImage().getFilename() != null) {
                 destination.setPhotoUrl(BASE_IMAGE_URL + source.getMainImage().getFilename());
+            } else {
+                destination.setPhotoUrl(null);
             }
+
             destination.setBalance(DEFAULT_BALANCE);
 
             return destination;
