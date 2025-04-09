@@ -38,6 +38,7 @@ public class MasterProfileConverter {
             destination.setOnlineStatus(source.getIsOnline());
             destination.setPassportVerified(source.getIsConfirmedPassport());
             destination.setContractWork(source.getIsWorkingWithContract());
+            destination.setId(Math.toIntExact(source.getUser().getId()));
 
             // Расчет рейтинга
             double averageRating = Optional.ofNullable(source.getFeedbacks()).orElse(Collections.emptyList()).stream()
