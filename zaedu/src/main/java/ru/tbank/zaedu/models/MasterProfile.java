@@ -44,7 +44,7 @@ public class MasterProfile extends AbstractEntity {
     @JoinColumn(name = "master_id")
     private User user;
 
-    @OneToMany(mappedBy = "master", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "master", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     @ToString.Exclude
     private List<MasterServiceEntity> services = new ArrayList<>();
 
