@@ -7,28 +7,30 @@ import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.tbank.zaedu.DTO.*;
+import ru.tbank.zaedu.models.ClientProfile;
 import ru.tbank.zaedu.models.MasterProfile;
+import ru.tbank.zaedu.service.ClientService;
 import ru.tbank.zaedu.service.FinanceService;
 import ru.tbank.zaedu.service.MasterService;
-
-import static ru.tbank.zaedu.config.AppConstants.BASE_IMAGE_URL;
 
 @RestController
 @RequestMapping("/masters")
 public class MasterController extends EntityController<MasterProfile> {
 
     private final MasterService masterService;
-    private final ClientController clientController;
     private final FinanceService financeService;
+
+    private final ClientService clientService;
+
     private static final Class<ClientProfileResponseDTO> CLIENT_PROFILE_DTO_CLASS = ClientProfileResponseDTO.class;
     private static final Class<MasterProfileForMeDTO> MASTER_PROFILE_FOR_ME_DTO_CLASS = MasterProfileForMeDTO.class;
     private static final Class<MasterProfileDTO> MASTER_PROFILE_DTO_CLASS = MasterProfileDTO.class;
 
-    public MasterController(ModelMapper modelMapper, MasterService masterService, ClientController clientController, FinanceService financeService) {
+    public MasterController(ModelMapper modelMapper, MasterService masterService, ClientController clientController, FinanceService financeService, ClientService clientService) {
         super(modelMapper);
         this.masterService = masterService;
-        this.clientController = clientController;
         this.financeService = financeService;
+        this.clientService = clientService;
     }
 
     @GetMapping
@@ -41,11 +43,10 @@ public class MasterController extends EntityController<MasterProfile> {
         Long balance = null;
 
         if (principal != null) {
-            ClientProfileResponseDTO clientProfileResponseDTO = clientController.getClientProfileResponseDTO(principal);
+            ClientProfile clientProfile = clientService.getClientProfileByName(principal.getName());
             balance = financeService.getUserBalanceByLogin(principal.getName());
 
-            String photoFilename = clientProfileResponseDTO.getPhotoUrl();
-            photoUrl = (photoFilename != null) ? BASE_IMAGE_URL + photoFilename : null;
+            photoUrl = String.valueOf(clientProfile.getMainImage().getUploadId());
         }
 
         return ResponseEntity.ok(new MastersListResponseDTO(dtos, photoUrl, balance));

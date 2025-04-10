@@ -4,6 +4,7 @@ import jakarta.annotation.PostConstruct;
 import java.util.Collections;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.Converter;
@@ -14,8 +15,6 @@ import ru.tbank.zaedu.DTO.MasterProfileDTO;
 import ru.tbank.zaedu.DTO.MasterProfileForMeDTO;
 import ru.tbank.zaedu.DTO.ServiceDTO;
 import ru.tbank.zaedu.models.*;
-
-import static ru.tbank.zaedu.config.AppConstants.BASE_IMAGE_URL;
 
 @Component
 @RequiredArgsConstructor
@@ -61,13 +60,13 @@ public class MasterProfileConverter {
                     .collect(Collectors.toList()));
 
             destination.setPhotos(source.getPortfolioImages().stream()
-                    .map(MasterPortfolioImage::getFilename)
+                    .map(MasterPortfolioImage::getUploadId)
                     .filter(Objects::nonNull)
-                    .map(filename -> BASE_IMAGE_URL + filename)
+                    .map(UUID::toString)
                     .collect(Collectors.toList()));
 
             if (source.getMainImage() != null && source.getMainImage().getFilename() != null) {
-                destination.setPersonalPhoto(BASE_IMAGE_URL + source.getMainImage().getFilename());
+                destination.setPersonalPhoto(String.valueOf(source.getMainImage().getUploadId()));
             } else {
                 destination.setPersonalPhoto(null);
             }
