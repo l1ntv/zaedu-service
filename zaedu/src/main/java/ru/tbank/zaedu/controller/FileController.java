@@ -1,6 +1,7 @@
 package ru.tbank.zaedu.controller;
 
 import lombok.AllArgsConstructor;
+import org.apache.commons.codec.binary.Base64;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -10,7 +11,6 @@ import ru.tbank.zaedu.DTO.FileResponseDto;
 import ru.tbank.zaedu.s3storage.S3File;
 import ru.tbank.zaedu.service.ImageService;
 
-import java.net.URLConnection;
 import java.util.UUID;
 
 @RestController
@@ -36,13 +36,14 @@ public class FileController {
     }
 
     @GetMapping(value = "/get/{uuid}", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
-    public ResponseEntity<byte[]> getImageByUuid(@PathVariable UUID uuid) {
+    public ResponseEntity<String> getImageByUuid(@PathVariable UUID uuid) {
         S3File image = imageService.getMediaFileByUuid(uuid);
-        String contentType = URLConnection.guessContentTypeFromName("." + image.getFilename().split("\\.")[1]);
+
+        String base64Image = Base64.encodeBase64String(image.getContent());
 
         return ResponseEntity
                 .ok()
-                .contentType(MediaType.parseMediaType(contentType))
-                .body(image.getContent());
+                .contentType(MediaType.TEXT_PLAIN)
+                .body(base64Image);
     }
 }
