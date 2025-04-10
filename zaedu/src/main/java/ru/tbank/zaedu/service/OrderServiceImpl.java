@@ -17,8 +17,6 @@ import ru.tbank.zaedu.exceptionhandler.ResourceNotFoundException;
 import ru.tbank.zaedu.models.*;
 import ru.tbank.zaedu.repo.*;
 
-import static ru.tbank.zaedu.config.AppConstants.BASE_IMAGE_URL;
-
 @Service
 @RequiredArgsConstructor
 public class OrderServiceImpl implements OrderService {
@@ -68,8 +66,8 @@ public class OrderServiceImpl implements OrderService {
         Optional<MasterMainImage> masterMainImage = masterMainImageRepository.findByMasterId(user.getId());
         FinanceBalance financeBalance = this.findFinanceBalanceByUserId(user.getId());
 
-        String imageUrl = masterMainImage.map(MasterMainImage::getFilename)
-                .map(filename -> BASE_IMAGE_URL + filename)
+        String imageUrl = masterMainImage.map(MasterMainImage::getUploadId)
+                .map(UUID::toString)
                 .orElse(null);
         return new ClientsOrdersResponse(
                 placedOrdersByClientsResponses, imageUrl, financeBalance.getBalance());
